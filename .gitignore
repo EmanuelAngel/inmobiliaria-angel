@@ -52,3 +52,8 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Flowbite
+node_modules
+pnpm-lock.yaml
+pnpm-workspace.yaml
