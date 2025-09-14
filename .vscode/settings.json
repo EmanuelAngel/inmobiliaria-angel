@@ -1,0 +1,7 @@
+{
+  "material-icon-theme.folders.associations": {
+    "jsdoc": "javascript",
+    "adr": "markdown"
+  },
+  "material-icon-theme.hidesExplorerArrows": true
+}
