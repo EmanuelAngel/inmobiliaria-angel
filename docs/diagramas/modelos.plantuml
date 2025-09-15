@@ -1,0 +1,13 @@
+@startuml inmobiliaria_angel
+
+class Propietario {
+    - IdPropietario: String
+    - Nombre: String
+    - Apellido: String
+    - Dni: String
+    - Telefono: String
+    - Email: String
+    - Clave: String
+}
+
+@enduml
