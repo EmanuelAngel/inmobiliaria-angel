@@ -1,7 +1,7 @@
 @startuml inmobiliaria_angel
 
 class Propietario {
-    - IdPropietario: String
+    - IdPropietario: Int
     - Nombre: String
     - Apellido: String
     - Dni: String
