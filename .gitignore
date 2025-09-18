@@ -58,3 +58,9 @@ nunit-*.xml
 
 # Ejemplos
 docs/diagramas/ejemplo.plantuml
+
+# Node Modules
+node_modules
+
+# Bun specific
+bun.lock
