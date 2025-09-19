@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<inmobiliaria_angel.Models.UsuarioTest>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,3 +8,65 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+
+<section class="overflow-auto">
+    <table id="user-table" class="striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaRegistro)
+                </th>
+                <th>
+                    Acciones
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(userItem => user.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(userItem => user.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(userItem => user.FechaRegistro)
+                    </td>
+                    <td>
+                        <nav>
+                            <ul>
+                                <li>
+                                    <a class="secondary" href="@Url.Action("Edit", "User", new { id = user.Id })"
+                                        data-tooltip="Edit" data-placement="left">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="contrast" href="@Url.Action("Details", "User", new { id = user.Id })"
+                                        data-tooltip="Details" data-placement="left">
+                                        <i class="fa-solid fa-address-card"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="confirm-delete" data-tooltip="Delete" data-placement="left"
+                                        data-target="confirm-delete" data-id="@user.Id" onclick="toggleModal(event)">
+                                        <i class="fa-solid fa-trash u-text--danger"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
