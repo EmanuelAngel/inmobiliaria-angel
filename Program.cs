@@ -1,7 +1,12 @@
+using inmobiliaria_lab2.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Inyección de dependencias de repositorios
+builder.Services.AddScoped<IRepositorioPropietario, RepositorioPropietario>();
 
 var app = builder.Build();
 
