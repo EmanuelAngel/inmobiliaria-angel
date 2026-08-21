@@ -29,30 +29,6 @@ erDiagram
         string telefono
     }
 
-    TIPO_INMUEBLE {
-        int id PK
-        string descripcion
-    }
-
-    INMUEBLE {
-        int id PK
-        int propietario_id FK
-        int tipo_id FK
-        string direccion
-        int cupo
-        decimal precio_por_dia
-        decimal porcentaje_senia
-        string coordenadas
-        string imagen_portada
-        string estado
-    }
-
-    IMAGEN_INMUEBLE {
-        int id PK
-        int inmueble_id FK
-        string url
-    }
-
     INQUILINO {
         int id PK
         string dni
@@ -60,51 +36,6 @@ erDiagram
         string email
         string telefono
     }
-
-    RESERVA {
-        int id PK
-        int inquilino_id FK
-        int inmueble_id FK
-        int usuario_creacion_id FK
-        int usuario_terminacion_id FK
-        date fecha_desde
-        date fecha_hasta
-        date fecha_fin_anticipado
-        decimal monto_por_dia
-        string estado
-    }
-
-    PAGO {
-        int id PK
-        int reserva_id FK
-        int usuario_creacion_id FK
-        int usuario_anulacion_id FK
-        string concepto
-        date fecha
-        decimal importe
-        string estado
-    }
-
-    USUARIO {
-        int id PK
-        string email
-        string password_hash
-        string nombre
-        string apellido
-        string avatar
-        string rol
-    }
-
-    PROPIETARIO ||--o{ INMUEBLE : posee
-    TIPO_INMUEBLE ||--o{ INMUEBLE : clasifica
-    INMUEBLE ||--o{ IMAGEN_INMUEBLE : tiene
-    INQUILINO ||--o{ RESERVA : realiza
-    INMUEBLE ||--o{ RESERVA : cubre
-    RESERVA ||--o{ PAGO : tiene
-    USUARIO ||--o{ RESERVA : crea
-    USUARIO ||--o{ RESERVA : termina
-    USUARIO ||--o{ PAGO : crea
-    USUARIO ||--o{ PAGO : anula
 ```
 
 ### Creación e inicialización de la base de datos
