@@ -1,0 +1,40 @@
+@model inmobiliaria_lab2.Models.Inquilino
+
+@{
+    ViewData["Title"] = "Detalle del Inquilino";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">@ViewData["Title"]</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Id)</dt>
+                    <dd class="col-sm-8">@Model.Id</dd>
+
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Dni)</dt>
+                    <dd class="col-sm-8">@Model.Dni</dd>
+
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NombreCompleto)</dt>
+                    <dd class="col-sm-8">@Model.NombreCompleto</dd>
+
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Telefono)</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Telefono) ? "-" : Model.Telefono)</dd>
+
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Email)</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Email) ? "-" : Model.Email)</dd>
+                </dl>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
