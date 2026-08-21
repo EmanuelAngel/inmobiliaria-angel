@@ -7,6 +7,7 @@ builder.Services.AddControllersWithViews();
 
 // Inyección de dependencias de repositorios
 builder.Services.AddScoped<IRepositorioPropietario, RepositorioPropietario>();
+builder.Services.AddScoped<IRepositorioInquilino, RepositorioInquilino>();
 
 var app = builder.Build();
 
