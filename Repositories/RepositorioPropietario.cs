@@ -13,10 +13,22 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
 
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT id, nombre, apellido, dni, email, telefono
-            FROM PROPIETARIO
-            ORDER BY apellido, nombre
-            LIMIT @limite OFFSET @offset;
+            SELECT
+                id,
+                nombre,
+                apellido,
+                dni,
+                email,
+                telefono
+            FROM
+                PROPIETARIO
+            ORDER BY
+                apellido,
+                nombre
+            LIMIT
+                @limite
+            OFFSET
+                @offset;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -39,9 +51,17 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
         using var conexion = new MySqlConnection(ConnectionString);
 
         const string query = """
-            SELECT id, nombre, apellido, dni, email, telefono
-            FROM PROPIETARIO
-            WHERE id = @id;
+            SELECT
+                id,
+                nombre,
+                apellido,
+                dni,
+                email,
+                telefono
+            FROM
+                PROPIETARIO
+            WHERE
+                id = @id;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -62,9 +82,17 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT id, nombre, apellido, dni, email, telefono
-            FROM PROPIETARIO
-            WHERE dni = @dni;
+            SELECT
+                id,
+                nombre,
+                apellido,
+                dni,
+                email,
+                telefono
+            FROM
+                PROPIETARIO
+            WHERE
+                dni = @dni;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -85,9 +113,17 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT id, nombre, apellido, dni, email, telefono
-            FROM PROPIETARIO
-            WHERE email = @email;
+            SELECT
+                id,
+                nombre,
+                apellido,
+                dni,
+                email,
+                telefono
+            FROM
+                PROPIETARIO
+            WHERE
+                email = @email;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -108,11 +144,13 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            INSERT INTO PROPIETARIO
-                (nombre, apellido, dni, email, telefono)
+            INSERT INTO
+                PROPIETARIO (nombre, apellido, dni, email, telefono)
             VALUES
                 (@nombre, @apellido, @dni, @email, @telefono);
-            SELECT LAST_INSERT_ID();
+
+            SELECT
+                LAST_INSERT_ID();
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -138,14 +176,15 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            UPDATE PROPIETARIO 
+            UPDATE PROPIETARIO
             SET
                 nombre = @nombre,
                 apellido = @apellido,
                 dni = @dni,
                 email = @email,
-                telefono = @telefono 
-            WHERE id = @id;
+                telefono = @telefono
+            WHERE
+                id = @id;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -165,7 +204,8 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
             DELETE FROM PROPIETARIO
-            WHERE id = @id;
+            WHERE
+                id = @id;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -179,8 +219,10 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT COUNT(id)
-            FROM PROPIETARIO;
+            SELECT
+                COUNT(id)
+            FROM
+                PROPIETARIO;
         """;
 
         using var comando = new MySqlCommand(query, conexion);

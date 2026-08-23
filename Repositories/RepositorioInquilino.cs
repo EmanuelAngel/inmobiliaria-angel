@@ -12,10 +12,20 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
 
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT id, dni, nombre_completo, email, telefono
-            FROM INQUILINO
-            ORDER BY nombre_completo
-            LIMIT @limite OFFSET @offset;
+            SELECT
+                id,
+                dni,
+                nombre_completo,
+                email,
+                telefono
+            FROM
+                INQUILINO
+            ORDER BY
+                nombre_completo
+            LIMIT
+                @limite
+            OFFSET
+                @offset;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -37,9 +47,16 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT id, dni, nombre_completo, email, telefono
-            FROM INQUILINO
-            WHERE id = @id;
+            SELECT
+                id,
+                dni,
+                nombre_completo,
+                email,
+                telefono
+            FROM
+                INQUILINO
+            WHERE
+                id = @id;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -60,9 +77,16 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT id, dni, nombre_completo, email, telefono
-            FROM INQUILINO
-            WHERE dni = @dni;
+            SELECT
+                id,
+                dni,
+                nombre_completo,
+                email,
+                telefono
+            FROM
+                INQUILINO
+            WHERE
+                dni = @dni;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -83,9 +107,16 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT id, dni, nombre_completo, email, telefono
-            FROM INQUILINO
-            WHERE email = @email;
+            SELECT
+                id,
+                dni,
+                nombre_completo,
+                email,
+                telefono
+            FROM
+                INQUILINO
+            WHERE
+                email = @email;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -106,11 +137,13 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            INSERT INTO INQUILINO
-                (dni, nombre_completo, email, telefono)
+            INSERT INTO
+                INQUILINO (dni, nombre_completo, email, telefono)
             VALUES
                 (@dni, @nombre_completo, @email, @telefono);
-            SELECT LAST_INSERT_ID();
+
+            SELECT
+                LAST_INSERT_ID();
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -141,7 +174,8 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
                 nombre_completo = @nombre_completo,
                 email = @email,
                 telefono = @telefono
-            WHERE id = @id;
+            WHERE
+                id = @id;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -160,7 +194,8 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
             DELETE FROM INQUILINO
-            WHERE id = @id;
+            WHERE
+                id = @id;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -174,8 +209,10 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            SELECT COUNT(id)
-            FROM INQUILINO;
+            SELECT
+                COUNT(id)
+            FROM
+                INQUILINO;
         """;
 
         using var comando = new MySqlCommand(query, conexion);

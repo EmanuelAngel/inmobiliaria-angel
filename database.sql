@@ -3,12 +3,11 @@
 -- Motor: MySQL 8.0+
 -- Codificación: utf8mb4
 -- =============================================================================
+CREATE DATABASE IF NOT EXISTS inmobiliaria_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE DATABASE IF NOT EXISTS inmobiliaria_dev
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
 
 USE inmobiliaria_dev;
+
 
 -- -----------------------------------------------------------------------------
 -- 1. TABLA: PROPIETARIO
@@ -20,7 +19,8 @@ CREATE TABLE IF NOT EXISTS PROPIETARIO (
     dni VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(150) NOT NULL,
     telefono VARCHAR(50) NOT NULL
-) ENGINE=InnoDB;
+) ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------------------------------
 -- 2. TABLA: INQUILINO
@@ -31,18 +31,56 @@ CREATE TABLE IF NOT EXISTS INQUILINO (
     nombre_completo VARCHAR(200) NOT NULL,
     email VARCHAR(150) NULL,
     telefono VARCHAR(50) NULL
-) ENGINE=InnoDB;
+) ENGINE = InnoDB;
+
 
 -- =============================================================================
 -- DATOS SEMILLA / PRUEBA INICIALES
 -- =============================================================================
+INSERT INTO
+    PROPIETARIO (nombre, apellido, dni, email, telefono)
+VALUES
+    (
+        'Juan Carlos',
+        'Pérez',
+        '20111222',
+        'juan.perez@email.com',
+        '2664111222'
+    ),
+    (
+        'María Elena',
+        'Gómez',
+        '27333444',
+        'maria.gomez@email.com',
+        '2664333444'
+    ),
+    (
+        'Roberto',
+        'Fernández',
+        '18555666',
+        'roberto.fernandez@email.com',
+        '2664555666'
+    );
 
-INSERT INTO PROPIETARIO (nombre, apellido, dni, email, telefono) VALUES
-('Juan Carlos', 'Pérez', '20111222', 'juan.perez@email.com', '2664111222'),
-('María Elena', 'Gómez', '27333444', 'maria.gomez@email.com', '2664333444'),
-('Roberto', 'Fernández', '18555666', 'roberto.fernandez@email.com', '2664555666');
 
-INSERT INTO INQUILINO (dni, nombre_completo, email, telefono) VALUES
-('35444555', 'Martín Gómez', 'martin.gomez@email.com', '2664555666'),
-('38777888', 'Ana Rossi', 'ana.rossi@email.com', '2664777888'),
-('40123987', 'Lucas Benítez', 'lucas.benitez@email.com', '2664123987');
+INSERT INTO
+    INQUILINO (dni, nombre_completo, email, telefono)
+VALUES
+    (
+        '35444555',
+        'Martín Gómez',
+        'martin.gomez@email.com',
+        '2664555666'
+    ),
+    (
+        '38777888',
+        'Ana Rossi',
+        'ana.rossi@email.com',
+        '2664777888'
+    ),
+    (
+        '40123987',
+        'Lucas Benítez',
+        'lucas.benitez@email.com',
+        '2664123987'
+    );
