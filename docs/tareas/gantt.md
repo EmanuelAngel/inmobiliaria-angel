@@ -15,7 +15,7 @@ gantt
     section Primera Entrega
     ABM de Propietarios e Inquilinos       :done, pe1, 2026-08-19, 2026-08-20
     Hito - Primera Entrega                 :done, milestone, m1, 2026-08-20, 0d
-    Primera Revision Cruzada               :active, rev1, 2026-08-21, 2026-08-24
+    Primera Revision Cruzada               :done, rev1, 2026-08-21, 2026-08-24
 
     section Segunda Entrega
     ABM Inmuebles Reservas y Navegacion    :se1, 2026-08-21, 2026-08-27
