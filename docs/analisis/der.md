@@ -13,6 +13,7 @@ erDiagram
         string dni
         string email
         string telefono
+        tinyint activo
     }
     TIPO_INMUEBLE {
         int id PK
@@ -41,6 +42,7 @@ erDiagram
         string nombre_completo
         string email
         string telefono
+        tinyint activo
     }
     RESERVA {
         int id PK
@@ -103,6 +105,7 @@ Dueno de uno o varios inmuebles. Es el cliente que le confia sus propiedades a l
 | dni | string | NOT NULL | Identificacion unica de la persona |
 | email | string | NOT NULL | Dato de contacto para la agencia |
 | telefono | string | NOT NULL | Dato de contacto para la agencia |
+| activo | tinyint(1) | NOT NULL, DEFAULT 1 | Baja lógica universal. `0` = dado de baja; el registro nunca se elimina físicamente |
 
 ---
 
@@ -167,6 +170,7 @@ Quien alquila el inmueble. NO es usuario del sistema: la agencia carga sus datos
 | nombre_completo | string | NOT NULL | Item 9: ABM inquilino incluye nombre completo |
 | email | string | nullable | Item 9: ABM inquilino incluye datos de contacto |
 | telefono | string | nullable | Item 9: ABM inquilino incluye datos de contacto |
+| activo | tinyint(1) | NOT NULL, DEFAULT 1 | Baja lógica universal. `0` = dado de baja; el registro nunca se elimina físicamente |
 
 ---
 
@@ -233,6 +237,7 @@ Persona que opera el sistema. Es la unica entidad con acceso a la aplicacion. No
 | Entidad / Campo | Decision | Motivo |
 |-----------------|----------|--------|
 | `PROPIETARIO` | Se mantienen campos: nombre, apellido, dni, email, telefono | Suficientes para contacto y facturacion basica de la agencia. |
+| `PROPIETARIO.activo` / `INQUILINO.activo` | Baja lógica (`TINYINT(1) DEFAULT 1`). Nunca `DELETE`. | Ambas entidades tienen Inmuebles / Reservas / Pagos vinculados. Eliminarlas físicamente destruiría historial contable. Convención universal del proyecto: ninguna entidad se borra físicamente. |
 | `INQUILINO.dni` | UNIQUE | Identificador tributario/personal unico por persona fisica. |
 | `INMUEBLE.coordenadas` | Campo `string` unico (VARCHAR) | Almacena `latitud,longitud` sin sobrecargar el modelo relacional. |
 | `INMUEBLE.porcentaje_senia` | Campo en Inmueble | Item 12: los inmuebles establecen el porcentaje |

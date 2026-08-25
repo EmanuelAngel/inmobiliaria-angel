@@ -156,7 +156,7 @@ public class InquilinosController(IRepositorioInquilino repositorio) : Controlle
         try
         {
             _repositorio.Baja(id);
-            TempData["Mensaje"] = "Inquilino eliminado exitosamente.";
+            TempData["Mensaje"] = "Inquilino dado de baja exitosamente.";
         }
         catch (Exception)
         {

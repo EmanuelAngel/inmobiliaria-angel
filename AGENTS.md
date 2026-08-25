@@ -87,9 +87,10 @@ inmobiliaria-lab2/
 5. **Pagos:** Al editar un pago solo se permite modificar el concepto. La eliminación es lógica (cambio de estado a *anulado*).
 6. **Auditoría:** Se registra usuario creador/terminador de reservas y creador/anulador de pagos (visible solo para administradores en vista de detalle).
 7. **Seguridad y Roles:**
-   - `Administrador`: gestión total, usuarios y bajas físicas/lógicas.
+   - `Administrador`: gestión total, gestión de usuarios y puede ejecutar bajas sobre cualquier entidad.
    - `Empleado`: gestión operativa y edición de su propio perfil.
-8. **Consultas y Listados:** Paginación resuelta en servidor y dropdowns con búsqueda asíncrona/server-side.
+8. **Bajas — convención universal:** Todas las entidades usan **baja lógica** (`activo TINYINT(1) DEFAULT 1`). Nunca se usa `DELETE` físico. El método `Baja(int id)` en todos los repositorios hace `UPDATE SET activo = 0`. Todas las queries de listado, búsqueda por id, por dni y por email filtran `AND activo = 1`. La funcionalidad de reactivación (`Activar`) queda pendiente hasta implementar el sistema de roles.
+9. **Consultas y Listados:** Paginación resuelta en servidor y dropdowns con búsqueda asíncrona/server-side.
 
 ---
 

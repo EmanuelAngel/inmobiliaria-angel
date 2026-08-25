@@ -147,7 +147,7 @@ public class PropietariosController(IRepositorioPropietario repositorio) : Contr
         try
         {
             _repositorio.Baja(id);
-            TempData["Mensaje"] = "Propietario eliminado exitosamente.";
+            TempData["Mensaje"] = "Propietario dado de baja exitosamente.";
         }
         catch (Exception)
         {

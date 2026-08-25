@@ -35,5 +35,7 @@ public class Propietario
 
     [Display(Name = "Nombre Completo")]
     public string NombreCompleto => $"{Nombre} {Apellido}";
+
+    public bool Activo { get; set; } = true;
 }
 
