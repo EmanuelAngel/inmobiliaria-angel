@@ -100,6 +100,7 @@ erDiagram
         string dni
         string email
         string telefono
+        tinyint activo
     }
 
     INQUILINO {
@@ -108,5 +109,6 @@ erDiagram
         string nombre_completo
         string email
         string telefono
+        tinyint activo
     }
 ```
