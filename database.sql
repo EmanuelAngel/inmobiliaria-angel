@@ -2,8 +2,12 @@
 -- BASE DE DATOS: INMOBILIARIA LAB 2 (1ra Entrega: Propietarios e Inquilinos)
 -- Motor: MySQL 8.0+
 -- Codificación: utf8mb4
+-- IDEMPOTENTE: si la base ya existe, la elimina y la recrea desde cero.
 -- =============================================================================
-CREATE DATABASE IF NOT EXISTS inmobiliaria_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS inmobiliaria_dev;
+
+
+CREATE DATABASE inmobiliaria_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 USE inmobiliaria_dev;
