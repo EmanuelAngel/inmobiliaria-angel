@@ -1,12 +1,11 @@
 # Casos de Uso — Informes
 
-> **Fuente de verdad:** [
-arrativa.md](../narrativa.md)  
-> **Terminología canónica:** ver [contexto-proyecto.md](../contexto-proyecto.md)
+> **Fuente de verdad:** [`../../narrativa.md`](../../narrativa.md)  
+> **Terminología canónica:** ver [`../../AGENTS.md`](../../AGENTS.md)
 
 ---
 
-> **Nota:** varios informes del enunciado ya fueron capturados como CUs operacionales en otros módulos.
+> **Nota:** varios informes del enunciado ya fueron capturados como CUs operacionales en otros módulos.  
 > Se los lista aquí igualmente para trazabilidad completa.
 
 ---
@@ -74,4 +73,3 @@ flowchart LR
 ## Estado
 
 - [x] Informes relevados
-- [ ] Detalle de cada CU redactado
