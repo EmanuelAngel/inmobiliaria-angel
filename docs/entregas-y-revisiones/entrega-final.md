@@ -1,5 +1,5 @@
 ---
-fecha-tentativa: 2026-10-10
+fecha-confirmada: 2026-09-07 al 2026-09-17
 ---
 
 Vamos finalizando la aplicación web para una inmobiliaria, utilizando ASP.Net Core. La narrativa es la misma de las entregas anteriores.
