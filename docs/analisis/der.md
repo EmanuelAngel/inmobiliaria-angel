@@ -28,7 +28,8 @@ erDiagram
         int cupo
         decimal precio_por_dia
         decimal porcentaje_senia
-        string coordenadas
+        decimal latitud
+        decimal longitud
         string imagen_portada
         string estado
     }
@@ -139,7 +140,8 @@ La propiedad que se ofrece en alquiler. Es la entidad central del modelo: esta r
 | cupo | int | NOT NULL, > 0 | Item 6: la agencia le pide el cupo (cantidad maxima de personas) |
 | precio_por_dia | decimal | NOT NULL, > 0 | Item 6: la agencia le pide el precio por dia |
 | porcentaje_senia | decimal | NOT NULL, 0-100 | Item 12: los inmuebles establecen el porcentaje de alquiler a pagar al momento de reservar |
-| coordenadas | string | nullable | Item 6: la agencia le pide las coordenadas. Campo string único (ej. formato 'latitud,longitud') |
+| latitud | decimal | nullable | Item 6: latitud geográfica del inmueble en grados decimales (ej. -33.29800000) |
+| longitud | decimal | nullable | Item 6: longitud geográfica del inmueble en grados decimales (ej. -66.33500000) |
 | imagen_portada | string | nullable | Entidades (narrativa): los inmuebles tienen una imagen de portada |
 | estado | VARCHAR(20) | NOT NULL, CHECK (estado IN ('Disponible', 'Suspendido')) | Item 8: el propietario puede solicitar suspender temporalmente el inmueble |
 
@@ -242,7 +244,7 @@ Persona que opera el sistema. Es la unica entidad con acceso a la aplicacion. No
 | `PROPIETARIO.activo` / `INQUILINO.activo` | Baja lógica (`TINYINT(1) DEFAULT 1`). Nunca `DELETE`. | Ambas entidades tienen Inmuebles / Reservas / Pagos vinculados. Eliminarlas físicamente destruiría historial contable. Convención universal del proyecto: ninguna entidad se borra físicamente. |
 | `TIPO_INMUEBLE.activo` | Baja lógica (`TINYINT(1) DEFAULT 1`). Nunca `DELETE`. | Un tipo dado de baja se oculta de los dropdowns de creación/edición de inmuebles, pero los inmuebles existentes conservan su referencia histórica intacta. El JOIN al mostrar inmuebles no filtra por `activo` del tipo. |
 | `INQUILINO.dni` | UNIQUE | Identificador tributario/personal unico por persona fisica. |
-| `INMUEBLE.coordenadas` | Campo `string` unico (VARCHAR) | Almacena `latitud,longitud` sin sobrecargar el modelo relacional. |
+| `INMUEBLE.latitud` / `INMUEBLE.longitud` | Campos decimales separados (`DECIMAL(10, 8)` / `DECIMAL(11, 8)`) | Facilita integración directa con mapas (Leaflet / Google Maps), evita bugs de locale y habilita cálculos espaciales eficientes. |
 | `INMUEBLE.porcentaje_senia` | Campo en Inmueble | Item 12: los inmuebles establecen el porcentaje |
 | `RESERVA.fecha_hasta` | Es la fecha original de fin, nunca cambia | Item 18: no se debe perder. Se suma fecha_fin_anticipado para cancelaciones. |
 | `RESERVA.fecha_fin_anticipado` | Nullable | Solo existe si fue cancelada antes de tiempo |
