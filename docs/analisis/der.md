@@ -18,6 +18,7 @@ erDiagram
     TIPO_INMUEBLE {
         int id PK
         string descripcion
+        tinyint activo
     }
     INMUEBLE {
         int id PK
@@ -119,6 +120,7 @@ Catalogo de tipos posibles para un inmueble: casa, departamento, monoambiente, l
 |-------|------|---------------|---------------------------------|
 | id | int | PK, autoincrement | Identificador interno de la tabla |
 | descripcion | string | NOT NULL, UNIQUE | Nombre del tipo. Item 6: tipo (casa, departamento, monoambiente, loft, etc.). Item 7: se debe poder administrar (ABM) los tipos |
+| activo | tinyint(1) | NOT NULL, DEFAULT 1 | Baja lógica. `0` = dado de baja; el tipo no aparece en dropdowns al crear/editar inmuebles, pero los inmuebles existentes mantienen su tipo histórico visible |
 
 ---
 
@@ -238,6 +240,7 @@ Persona que opera el sistema. Es la unica entidad con acceso a la aplicacion. No
 |-----------------|----------|--------|
 | `PROPIETARIO` | Se mantienen campos: nombre, apellido, dni, email, telefono | Suficientes para contacto y facturacion basica de la agencia. |
 | `PROPIETARIO.activo` / `INQUILINO.activo` | Baja lógica (`TINYINT(1) DEFAULT 1`). Nunca `DELETE`. | Ambas entidades tienen Inmuebles / Reservas / Pagos vinculados. Eliminarlas físicamente destruiría historial contable. Convención universal del proyecto: ninguna entidad se borra físicamente. |
+| `TIPO_INMUEBLE.activo` | Baja lógica (`TINYINT(1) DEFAULT 1`). Nunca `DELETE`. | Un tipo dado de baja se oculta de los dropdowns de creación/edición de inmuebles, pero los inmuebles existentes conservan su referencia histórica intacta. El JOIN al mostrar inmuebles no filtra por `activo` del tipo. |
 | `INQUILINO.dni` | UNIQUE | Identificador tributario/personal unico por persona fisica. |
 | `INMUEBLE.coordenadas` | Campo `string` unico (VARCHAR) | Almacena `latitud,longitud` sin sobrecargar el modelo relacional. |
 | `INMUEBLE.porcentaje_senia` | Campo en Inmueble | Item 12: los inmuebles establecen el porcentaje |
