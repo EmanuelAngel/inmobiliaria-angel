@@ -22,6 +22,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStatusCodePagesWithReExecute("/Home/NotFound");
 app.UseRouting();
 
 app.UseAuthorization();
