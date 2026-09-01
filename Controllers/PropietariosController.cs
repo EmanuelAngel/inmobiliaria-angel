@@ -156,4 +156,23 @@ public class PropietariosController(IRepositorioPropietario repositorio) : Contr
 
         return RedirectToAction(nameof(Index));
     }
+
+    // GET: Propietarios/Buscar?q=perez
+    [HttpGet]
+    public IActionResult Buscar(string? q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+        {
+            return Json(new { results = Array.Empty<object>() });
+        }
+
+        var resultados = _repositorio.Buscar(q)
+            .Select(p => new
+            {
+                id = p.Id,
+                text = $"{p.NombreCompleto} (DNI: {p.Dni})"
+            });
+
+        return Json(new { results = resultados });
+    }
 }

@@ -49,6 +49,52 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
         return lista;
     }
 
+    public IList<Propietario> Buscar(string q, int limite = 20)
+    {
+        var lista = new List<Propietario>();
+        limite = Math.Clamp(limite, 1, 50);
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                id,
+                nombre,
+                apellido,
+                dni,
+                email,
+                telefono,
+                activo
+            FROM
+                PROPIETARIO
+            WHERE
+                activo = 1
+                AND (
+                    nombre LIKE @patron
+                    OR apellido LIKE @patron
+                    OR dni LIKE @patron
+                )
+            ORDER BY
+                apellido,
+                nombre
+            LIMIT
+                @limite;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@patron", $"%{q.Trim()}%");
+        comando.Parameters.AddWithValue("@limite", limite);
+
+        conexion.Open();
+
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(Mapear(reader));
+        }
+
+        return lista;
+    }
+
     public Propietario? ObtenerPorId(int id)
     {
         using var conexion = new MySqlConnection(ConnectionString);

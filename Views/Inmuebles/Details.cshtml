@@ -1,0 +1,112 @@
+@model inmobiliaria_lab2.Models.Inmueble
+
+@{
+    ViewData["Title"] = "Detalle del Inmueble";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">@ViewData["Title"] #@Model.Id</h4>
+                @if (Model.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
+                {
+                    <span class="badge bg-success fs-6">Disponible</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark fs-6">Suspendido</span>
+                }
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-7">
+                        <h5 class="text-primary border-bottom pb-2 mb-3">Información del Inmueble</h5>
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Direccion)</dt>
+                            <dd class="col-sm-8 fw-semibold">@Model.Direccion</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TipoId)</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-secondary">@(Model.Tipo?.Descripcion ?? "-")</span>
+                            </dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Cupo)</dt>
+                            <dd class="col-sm-8">@Model.Cupo personas</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.PrecioPorDia)</dt>
+                            <dd class="col-sm-8 text-success fw-bold">@Model.PrecioPorDia.ToString("C")</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.PorcentajeSenia)</dt>
+                            <dd class="col-sm-8">@Model.PorcentajeSenia.ToString("N0")%</dd>
+
+                            <dt class="col-sm-4">Coordenadas</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.Latitud.HasValue && Model.Longitud.HasValue)
+                                {
+                                    <span>Lat: @Model.Latitud.Value, Long: @Model.Longitud.Value</span>
+                                    <a href="https://www.google.com/maps?q=@Model.Latitud.Value,@Model.Longitud.Value" target="_blank" class="btn btn-sm btn-outline-primary ms-2 py-0">
+                                        Ver mapa
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No registradas</span>
+                                }
+                            </dd>
+                        </dl>
+
+                        <h5 class="text-primary border-bottom pb-2 mt-4 mb-3">Datos del Propietario</h5>
+                        @if (Model.Propietario != null)
+                        {
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Nombre</dt>
+                                <dd class="col-sm-8 fw-semibold">@Model.Propietario.NombreCompleto</dd>
+
+                                <dt class="col-sm-4">DNI</dt>
+                                <dd class="col-sm-8">@Model.Propietario.Dni</dd>
+
+                                <dt class="col-sm-4">Teléfono</dt>
+                                <dd class="col-sm-8">@Model.Propietario.Telefono</dd>
+
+                                <dt class="col-sm-4">Email</dt>
+                                <dd class="col-sm-8">@Model.Propietario.Email</dd>
+                            </dl>
+                        }
+                        else
+                        {
+                            <p class="text-muted mb-0">No se encontró información del propietario.</p>
+                        }
+                    </div>
+
+                    <div class="col-md-5 d-flex flex-column align-items-center justify-content-center">
+                        <div class="border rounded p-2 bg-light text-center w-100 h-100 d-flex flex-column align-items-center justify-content-center min-vh-25">
+                            @if (!string.IsNullOrWhiteSpace(Model.ImagenPortada))
+                            {
+                                <img src="@Model.ImagenPortada" alt="Portada de @Model.Direccion" class="img-fluid rounded shadow-sm" style="max-height: 260px; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                                <div style="display:none;" class="text-muted py-4">
+                                    <i class="bi bi-image" style="font-size: 3rem;"></i>
+                                    <p class="mt-2 mb-0">Imagen no disponible</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-muted py-4">
+                                    <i class="bi bi-house-door" style="font-size: 3.5rem;"></i>
+                                    <p class="mt-2 mb-0">Sin imagen de portada cargada</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Baja</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
