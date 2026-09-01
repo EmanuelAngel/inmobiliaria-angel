@@ -23,10 +23,21 @@ public class InmueblesController(
         var lista = _repositorioInmueble.ObtenerPorDisponibilidad(estado, pagina, tamDePagina);
         var total = _repositorioInmueble.ObtenerCantidad(estado);
 
-        ViewBag.Pagina = pagina;
-        ViewBag.TamDePagina = tamDePagina;
-        ViewBag.TotalPaginas = (int)Math.Ceiling((double)total / tamDePagina);
-        ViewBag.TotalRegistros = total;
+        // La paginación se construye aquí y no en la vista para mantener la vista "tonta":
+        // los filtros activos (estado, etc.) se incluyen en ValoresRuta para que al paginar
+        // no se pierdan. El controlador los conoce; la vista no.
+        var valoresRuta = new Dictionary<string, string>();
+        if (!string.IsNullOrEmpty(estado))
+            valoresRuta["estado"] = estado;
+
+        ViewBag.Paginacion = new PaginacionViewModel
+        {
+            PaginaActual = pagina,
+            TamDePagina = tamDePagina,
+            TotalPaginas = (int)Math.Ceiling((double)total / tamDePagina),
+            TotalRegistros = total,
+            ValoresRuta = valoresRuta
+        };
         ViewBag.EstadoFiltro = estado;
         ViewBag.Id = TempData["Id"];
 

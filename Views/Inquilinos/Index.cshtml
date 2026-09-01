@@ -2,9 +2,6 @@
 
 @{
     ViewData["Title"] = "Listado de Inquilinos";
-    int paginaActual = ViewBag.Pagina != null ? (int)ViewBag.Pagina : 1;
-    int totalPaginas = ViewBag.TotalPaginas != null ? (int)ViewBag.TotalPaginas : 1;
-    int tamDePagina = ViewBag.TamDePagina != null ? (int)ViewBag.TamDePagina : 10;
     int? idResaltado = ViewBag.Id != null ? Convert.ToInt32(ViewBag.Id) : null;
 }
 
@@ -60,26 +57,5 @@
             </table>
         </div>
     </div>
-    @if (totalPaginas > 1)
-    {
-        <div class="card-footer d-flex justify-content-between align-items-center">
-            <small class="text-muted">Página @paginaActual de @totalPaginas (@(ViewBag.TotalRegistros ?? 0) registros en total)</small>
-            <nav aria-label="Navegación de páginas">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-pagina="@(paginaActual - 1)" asp-route-tamDePagina="@tamDePagina">Anterior</a>
-                    </li>
-                    @for (int i = 1; i <= totalPaginas; i++)
-                    {
-                        <li class="page-item @(i == paginaActual ? "active" : "")">
-                            <a class="page-link" asp-action="Index" asp-route-pagina="@i" asp-route-tamDePagina="@tamDePagina">@i</a>
-                        </li>
-                    }
-                    <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-pagina="@(paginaActual + 1)" asp-route-tamDePagina="@tamDePagina">Siguiente</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    }
+    <partial name="_Paginador" model="ViewBag.Paginacion as PaginacionViewModel" />
 </div>
