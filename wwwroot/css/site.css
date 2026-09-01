@@ -29,3 +29,40 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Utilidad para la imagen de portada en Details */
+.min-vh-25 {
+  min-height: 25vh;
+}
+
+/* ─── Select2: soporte para tema oscuro ────────────────────────────────────── */
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .select2-dropdown {
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .select2-dropdown .select2-search__field {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option {
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
+  background-color: var(--bs-primary);
+  color: #fff;
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option[aria-selected="true"] {
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
