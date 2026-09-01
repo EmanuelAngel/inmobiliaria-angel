@@ -13,7 +13,7 @@ Sistema de informatización para la gestión de alquileres temporarios de propie
 ## Requisitos Previos
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [MySQL Server 8.0+](https://dev.mysql.com/downloads/mysql/) (o compatible en puerto `3306`)
+- [MySQL Server 8.0.46](https://dev.mysql.com/downloads/mysql/) (o compatible en puerto `3306`)
 - Cliente de línea de comandos de MySQL (`mysql`) o administrador gráfico (DBeaver, MySQL Workbench, phpMyAdmin)
 
 ---
