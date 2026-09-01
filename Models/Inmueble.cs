@@ -45,7 +45,8 @@ public class Inmueble
     public decimal PrecioPorDia { get; set; }
 
     [Required(ErrorMessage = "El porcentaje de seña es obligatorio")]
-    [Range(0.0, 100.0, ErrorMessage = "El porcentaje de seña debe estar entre 0 y 100")]
+    [Range(0, 100, ErrorMessage = "El porcentaje de seña debe estar entre 0 y 100")]
+    [DisplayFormat(DataFormatString = "{0:0}", ApplyFormatInEditMode = true)]
     [Display(Name = "Porcentaje de Seña (%)")]
     public decimal PorcentajeSenia { get; set; }
 
