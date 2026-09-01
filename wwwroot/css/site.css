@@ -42,6 +42,12 @@ body {
   border-color: var(--bs-border-color);
 }
 
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered,
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered,
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection__placeholder {
+  color: var(--bs-body-color) !important;
+}
+
 [data-bs-theme="dark"] .select2-dropdown {
   background-color: var(--bs-body-bg);
   border-color: var(--bs-border-color);
@@ -65,4 +71,18 @@ body {
 [data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option[aria-selected="true"] {
   background-color: var(--bs-secondary-bg);
   color: var(--bs-body-color);
-}
+}
+
+/* ─── Encabezados de tabla: contraste invertido según el tema ──────────────── */
+.table thead {
+  --bs-table-bg: #212529;
+  --bs-table-color: #ffffff;
+  --bs-table-border-color: #373b3e;
+}
+
+[data-bs-theme="dark"] .table thead {
+  --bs-table-bg: #f8f9fa;
+  --bs-table-color: #212529;
+  --bs-table-border-color: #dee2e6;
+}
+
