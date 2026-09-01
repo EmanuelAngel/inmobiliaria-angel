@@ -103,30 +103,16 @@
                                         
                                         @if (item.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
                                         {
-                                            <form asp-action="CambiarEstado" method="post" class="d-inline" onsubmit="return confirm('¿Desea suspender la oferta de este inmueble?');">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.Id" />
-                                                <input type="hidden" name="estado" value="Suspendido" />
-                                                <button type="submit" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" data-bs-title="Suspender oferta">
-                                                    <i class="bi bi-pause-circle"></i>
-                                                </button>
-                                            </form>
+                                            <a asp-action="CambiarEstado" asp-route-id="@item.Id" asp-route-estado="Suspendido" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" data-bs-title="Suspender oferta">
+                                                <i class="bi bi-pause-circle"></i>
+                                            </a>
                                         }
                                         else
                                         {
-                                            <form asp-action="CambiarEstado" method="post" class="d-inline">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.Id" />
-                                                <input type="hidden" name="estado" value="Disponible" />
-                                                <button type="submit" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-title="Habilitar oferta">
-                                                    <i class="bi bi-check-circle"></i>
-                                                </button>
-                                            </form>
+                                            <a asp-action="CambiarEstado" asp-route-id="@item.Id" asp-route-estado="Disponible" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-title="Habilitar oferta">
+                                                <i class="bi bi-check-circle"></i>
+                                            </a>
                                         }
-
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-title="Dar de baja">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
                                     </div>
                                 </td>
                             </tr>

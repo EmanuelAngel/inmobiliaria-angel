@@ -125,8 +125,8 @@ public class InmueblesController(
         return RedirectToAction(nameof(Index));
     }
 
-    // GET: Inmuebles/Delete/5
-    public IActionResult Delete(int id)
+    // GET: Inmuebles/CambiarEstado/5?estado=Suspendido
+    public IActionResult CambiarEstado(int id, string? estado = null)
     {
         var inmueble = _repositorioInmueble.ObtenerPorId(id);
         if (inmueble == null)
@@ -134,23 +134,27 @@ public class InmueblesController(
             return NotFound();
         }
 
+        if (string.IsNullOrWhiteSpace(estado))
+        {
+            estado = inmueble.Estado == EstadoInmueble.Disponible
+                ? EstadoInmueble.Suspendido.ToString()
+                : EstadoInmueble.Disponible.ToString();
+        }
+
+        if (estado != EstadoInmueble.Disponible.ToString() && estado != EstadoInmueble.Suspendido.ToString())
+        {
+            TempData["Error"] = "Estado inválido.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        ViewBag.NuevoEstado = estado;
         return View(inmueble);
     }
 
-    // POST: Inmuebles/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public IActionResult DeleteConfirmed(int id)
-    {
-        _repositorioInmueble.Baja(id);
-        TempData["Mensaje"] = "Inmueble suspendido exitosamente.";
-        return RedirectToAction(nameof(Index));
-    }
-
     // POST: Inmuebles/CambiarEstado
-    [HttpPost]
+    [HttpPost, ActionName("CambiarEstado")]
     [ValidateAntiForgeryToken]
-    public IActionResult CambiarEstado(int id, string estado)
+    public IActionResult CambiarEstadoConfirmado(int id, string estado)
     {
         if (estado != EstadoInmueble.Disponible.ToString() && estado != EstadoInmueble.Suspendido.ToString())
         {
@@ -159,7 +163,10 @@ public class InmueblesController(
         }
 
         _repositorioInmueble.CambiarEstado(id, estado);
-        TempData["Mensaje"] = $"Estado del inmueble actualizado a '{estado}'.";
+        TempData["Mensaje"] = estado == EstadoInmueble.Disponible.ToString()
+            ? "Inmueble habilitado exitosamente."
+            : "Inmueble suspendido exitosamente.";
+        TempData["Id"] = id;
         return RedirectToAction(nameof(Index));
     }
 

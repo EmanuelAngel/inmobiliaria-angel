@@ -104,7 +104,14 @@
                 <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
                 <div>
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Baja</a>
+                    @if (Model.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
+                    {
+                        <a asp-action="CambiarEstado" asp-route-id="@Model.Id" asp-route-estado="Suspendido" class="btn btn-secondary">Suspender</a>
+                    }
+                    else
+                    {
+                        <a asp-action="CambiarEstado" asp-route-id="@Model.Id" asp-route-estado="Disponible" class="btn btn-success">Habilitar</a>
+                    }
                 </div>
             </div>
         </div>
