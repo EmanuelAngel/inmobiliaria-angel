@@ -53,7 +53,7 @@
                         <th>Tipo</th>
                         <th>Propietario</th>
                         <th class="text-center">@Html.DisplayNameFor(model => model.Cupo)</th>
-                        <th class="text-end">@Html.DisplayNameFor(model => model.PrecioPorDia)</th>
+                        <th class="text-end text-nowrap">@Html.DisplayNameFor(model => model.PrecioPorDia)</th>
                         <th class="text-center">@Html.DisplayNameFor(model => model.PorcentajeSenia)</th>
                         <th class="text-center">@Html.DisplayNameFor(model => model.Estado)</th>
                         <th class="text-end">Acciones</th>
@@ -76,7 +76,7 @@
                                 <td class="text-center">
                                     <span class="badge bg-light text-dark border">@item.Cupo pers.</span>
                                 </td>
-                                <td class="text-end fw-semibold">
+                                <td class="text-end fw-semibold text-nowrap">
                                     @item.PrecioPorDia.ToString("C")
                                 </td>
                                 <td class="text-center">
