@@ -12,12 +12,6 @@
                 <h4 class="mb-0">@ViewData["Title"] #@Model.Id</h4>
             </div>
             <div class="card-body">
-                @if (TempData["Error"] != null)
-                {
-                    <div class="alert alert-danger" role="alert">
-                        @TempData["Error"]
-                    </div>
-                }
 
                 <form asp-action="Edit" method="post">
                     <input type="hidden" asp-for="Id" />
