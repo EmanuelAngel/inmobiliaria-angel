@@ -99,6 +99,14 @@
                         </div>
                     </div>
                 </div>
+
+                @if (Model.Latitud.HasValue && Model.Longitud.HasValue)
+                {
+                    <div class="mt-4">
+                        <h5 class="text-primary border-bottom pb-2 mb-3">Ubicación en el Mapa</h5>
+                        <div id="map" class="rounded border shadow-sm" style="height: 320px; width: 100%; z-index: 1;"></div>
+                    </div>
+                }
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
@@ -117,3 +125,33 @@
         </div>
     </div>
 </div>
+
+@if (Model.Latitud.HasValue && Model.Longitud.HasValue)
+{
+    @section Styles {
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    }
+
+    @section Scripts {
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const lat = @Model.Latitud.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                const lng = @Model.Longitud.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                const direccion = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Direccion));
+
+                const map = L.map('map').setView([lat, lng], 16);
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup(`<strong>${direccion}</strong><br>Lat: ${lat}, Lng: ${lng}`)
+                    .openPopup();
+            });
+        </script>
+    }
+}
