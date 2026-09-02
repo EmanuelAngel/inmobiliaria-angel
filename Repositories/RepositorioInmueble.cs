@@ -52,7 +52,7 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         using var reader = comando.ExecuteReader();
         while (reader.Read())
         {
-            lista.Add(Mapear(reader));
+            lista.Add(MapearConJoins(reader));
         }
 
         return lista;
@@ -113,7 +113,7 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         using var reader = comando.ExecuteReader();
         while (reader.Read())
         {
-            lista.Add(Mapear(reader));
+            lista.Add(MapearConJoins(reader));
         }
 
         return lista;
@@ -162,7 +162,7 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         using var reader = comando.ExecuteReader();
         while (reader.Read())
         {
-            lista.Add(Mapear(reader));
+            lista.Add(MapearConJoins(reader));
         }
 
         return lista;
@@ -207,7 +207,7 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         using var reader = comando.ExecuteReader();
         if (reader.Read())
         {
-            return Mapear(reader);
+            return MapearConJoins(reader);
         }
 
         return null;
@@ -369,14 +369,14 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         return Convert.ToInt32(resultado);
     }
 
-    private static Inmueble Mapear(MySqlDataReader reader)
+    private static Inmueble MapearBase(MySqlDataReader reader)
     {
         var estadoRaw = reader.GetString(reader.GetOrdinal("estado"));
         var estado = Enum.TryParse<EstadoInmueble>(estadoRaw, true, out var parsed)
             ? parsed
             : EstadoInmueble.Disponible;
 
-        var inmueble = new Inmueble
+        return new Inmueble
         {
             Id = reader.GetInt32(reader.GetOrdinal("id")),
             PropietarioId = reader.GetInt32(reader.GetOrdinal("propietario_id")),
@@ -390,43 +390,30 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
             ImagenPortada = reader.IsDBNull(reader.GetOrdinal("imagen_portada")) ? null : reader.GetString(reader.GetOrdinal("imagen_portada")),
             Estado = estado
         };
-
-        if (TieneColumna(reader, "propietario_nombre"))
-        {
-            inmueble.Propietario = new Propietario
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("propietario_id")),
-                Nombre = reader.GetString(reader.GetOrdinal("propietario_nombre")),
-                Apellido = reader.GetString(reader.GetOrdinal("propietario_apellido")),
-                Dni = reader.GetString(reader.GetOrdinal("propietario_dni")),
-                Email = reader.GetString(reader.GetOrdinal("propietario_email")),
-                Telefono = reader.GetString(reader.GetOrdinal("propietario_telefono")),
-                Activo = reader.GetBoolean(reader.GetOrdinal("propietario_activo"))
-            };
-        }
-
-        if (TieneColumna(reader, "tipo_descripcion"))
-        {
-            inmueble.Tipo = new TipoInmueble
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("tipo_id")),
-                Descripcion = reader.GetString(reader.GetOrdinal("tipo_descripcion")),
-                Activo = reader.GetBoolean(reader.GetOrdinal("tipo_activo"))
-            };
-        }
-
-        return inmueble;
     }
 
-    private static bool TieneColumna(MySqlDataReader reader, string nombreColumna)
+    private static Inmueble MapearConJoins(MySqlDataReader reader)
     {
-        for (var i = 0; i < reader.FieldCount; i++)
+        var inmueble = MapearBase(reader);
+
+        inmueble.Propietario = new Propietario
         {
-            if (reader.GetName(i).Equals(nombreColumna, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-        }
-        return false;
+            Id = reader.GetInt32(reader.GetOrdinal("propietario_id")),
+            Nombre = reader.GetString(reader.GetOrdinal("propietario_nombre")),
+            Apellido = reader.GetString(reader.GetOrdinal("propietario_apellido")),
+            Dni = reader.GetString(reader.GetOrdinal("propietario_dni")),
+            Email = reader.GetString(reader.GetOrdinal("propietario_email")),
+            Telefono = reader.GetString(reader.GetOrdinal("propietario_telefono")),
+            Activo = reader.GetBoolean(reader.GetOrdinal("propietario_activo"))
+        };
+
+        inmueble.Tipo = new TipoInmueble
+        {
+            Id = reader.GetInt32(reader.GetOrdinal("tipo_id")),
+            Descripcion = reader.GetString(reader.GetOrdinal("tipo_descripcion")),
+            Activo = reader.GetBoolean(reader.GetOrdinal("tipo_activo"))
+        };
+
+        return inmueble;
     }
 }

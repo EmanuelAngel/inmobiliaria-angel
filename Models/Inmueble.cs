@@ -11,21 +11,48 @@ public enum EstadoInmueble
     Suspendido = 2
 }
 
+/// <summary>
+/// Representa un inmueble ofertado por un propietario.
+/// </summary>
+/// <remarks>
+/// <para>
+/// <b>Patrón FK + Propiedad de navegación:</b><br/>
+/// Cada relación expone dos propiedades con responsabilidades distintas:
+/// </para>
+/// <list type="table">
+///   <item>
+///     <term><c>PropietarioId</c> / <c>TipoId</c></term>
+///     <description>Clave foránea. Siempre poblada. Usar para persistencia (INSERT/UPDATE) y filtros sin JOIN.</description>
+///   </item>
+///   <item>
+///     <term><c>Propietario?</c> / <c>Tipo?</c></term>
+///     <description>Propiedad de navegación. Solo poblada cuando el repositorio usa <c>MapearConJoins</c>. Usar en vistas y lógica de presentación.</description>
+///   </item>
+/// </list>
+/// <para>
+/// Nunca asumir que la propiedad de navegación está poblada.
+/// El repositorio decide qué mapper usar; la vista depende solo de lo que el controlador le pasa.
+/// </para>
+/// </remarks>
 public class Inmueble
 {
     [Display(Name = "Código")]
     public int Id { get; set; }
 
+    /// <summary>Clave foránea hacia <see cref="Propietario"/>. Siempre poblada.</summary>
     [Required(ErrorMessage = "Debe seleccionar un propietario")]
     [Display(Name = "Propietario")]
     public int PropietarioId { get; set; }
 
+    /// <summary>Propietario del inmueble. Solo poblado cuando el repositorio hace JOIN con la tabla propietarios.</summary>
     public Propietario? Propietario { get; set; }
 
+    /// <summary>Clave foránea hacia <see cref="TipoInmueble"/>. Siempre poblada.</summary>
     [Required(ErrorMessage = "Debe seleccionar un tipo de inmueble")]
     [Display(Name = "Tipo de Inmueble")]
     public int TipoId { get; set; }
 
+    /// <summary>Tipo del inmueble. Solo poblado cuando el repositorio hace JOIN con la tabla tipos_inmueble.</summary>
     public TipoInmueble? Tipo { get; set; }
 
     [Required(ErrorMessage = "La dirección es obligatoria")]

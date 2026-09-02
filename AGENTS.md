@@ -47,6 +47,25 @@ Este archivo concentra el contexto técnico, arquitectónico y de dominio necesa
 
 ---
 
+## Convenciones de Modelos
+
+### Patrón FK + Propiedad de navegación
+
+La FK (`int`) es **siempre obligatoria**. La propiedad de navegación (`Entidad?`) se agrega **solo cuando una vista o lógica concreta la necesita**.
+
+| Propiedad | Tipo | Garantía | Uso |
+|-----------|------|----------|-----|
+| `PropietarioId`, `TipoId` | `int` (requerido) | Siempre poblada | Persistencia (INSERT/UPDATE), filtros sin JOIN |
+| `Propietario?`, `Tipo?` | objeto nullable | Solo con JOIN explícito | Vistas, lógica de presentación — agregar solo si hay uso real |
+
+**No anticipar relaciones.** Si la pantalla solo necesita mostrar un nombre, usar un ViewModel con `string` es suficiente. La navigation property se incorpora al modelo cuando el controlador la necesita para armar la respuesta.
+
+**Regla para el repositorio:** cada repositorio expone dos mappers privados: `MapearBase` (puebla solo los campos propios de la entidad, siempre incluye las FKs) y `MapearConJoins` (llama a `MapearBase` y agrega las propiedades de navegación). Los métodos de lectura eligen cuál usar según si su `SELECT` incluye JOINs o no.
+
+**Regla para el controlador/vista:** nunca asumir que la propiedad de navegación está poblada. Si la vista la necesita, el controlador debe usar el método de repositorio que llama a `MapearConJoins`.
+
+---
+
 ## Estructura del Proyecto
 
 ```
