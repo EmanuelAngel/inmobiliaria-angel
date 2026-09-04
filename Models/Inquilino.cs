@@ -25,4 +25,6 @@ public class Inquilino
     [StringLength(50, ErrorMessage = "El teléfono no puede superar los 50 caracteres")]
     [Display(Name = "Teléfono")]
     public string? Telefono { get; set; }
+
+    public bool Activo { get; set; } = true;
 }

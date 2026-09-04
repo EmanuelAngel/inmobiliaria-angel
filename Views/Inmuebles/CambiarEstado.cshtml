@@ -1,0 +1,76 @@
+@model inmobiliaria_lab2.Models.Inmueble
+
+@{
+    string nuevoEstado = ViewBag.NuevoEstado ?? (Model.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible ? "Suspendido" : "Disponible");
+    bool esSuspension = nuevoEstado == "Suspendido";
+    ViewData["Title"] = esSuspension ? "Suspender Inmueble" : "Habilitar Inmueble";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-@(esSuspension ? "warning" : "success")">
+            <div class="card-header bg-@(esSuspension ? "warning text-dark" : "success text-white")">
+                <h4 class="mb-0">@ViewData["Title"] #@Model.Id</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-@(esSuspension ? "warning" : "info")" role="alert">
+                    <i class="bi bi-@(esSuspension ? "exclamation-triangle-fill" : "info-circle-fill")"></i>
+                    <strong>¿Está seguro de que desea @(esSuspension ? "suspender" : "habilitar") este inmueble?</strong>
+                    <p class="mb-0 mt-1">
+                        @if (esSuspension)
+                        {
+                            <span>El estado del inmueble pasará a <em>Suspendido</em> y dejará de ofrecerse para nuevas reservas (las reservas confirmadas no se verán afectadas).</span>
+                        }
+                        else
+                        {
+                            <span>El estado del inmueble pasará a <em>Disponible</em> y volverá a ofrecerse en las búsquedas y reservas.</span>
+                        }
+                    </p>
+                </div>
+
+                <dl class="row">
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Id)</dt>
+                    <dd class="col-sm-8">@Model.Id</dd>
+
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Direccion)</dt>
+                    <dd class="col-sm-8 fw-semibold">@Model.Direccion</dd>
+
+                    <dt class="col-sm-4">Tipo</dt>
+                    <dd class="col-sm-8">@(Model.Tipo?.Descripcion ?? "-")</dd>
+
+                    <dt class="col-sm-4">Propietario</dt>
+                    <dd class="col-sm-8">@(Model.Propietario?.NombreCompleto ?? "-")</dd>
+
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Cupo)</dt>
+                    <dd class="col-sm-8">@Model.Cupo personas</dd>
+
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.PrecioPorDia)</dt>
+                    <dd class="col-sm-8 text-success fw-bold">@Model.PrecioPorDia.ToString("C")</dd>
+
+                    <dt class="col-sm-4">Estado Actual</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
+                        {
+                            <span class="badge bg-success">Disponible</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Suspendido</span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                <form asp-action="CambiarEstado" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="hidden" name="estado" value="@nuevoEstado" />
+                    <button type="submit" class="btn btn-@(esSuspension ? "warning" : "success")">
+                        Confirmar @(esSuspension ? "Suspensión" : "Habilitación")
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,10 +17,16 @@ public class PropietariosController(IRepositorioPropietario repositorio) : Contr
         var lista = _repositorio.ObtenerLista(pagina, tamDePagina);
         var total = _repositorio.ObtenerCantidad();
 
-        ViewBag.Pagina = pagina;
-        ViewBag.TamDePagina = tamDePagina;
-        ViewBag.TotalPaginas = (int)Math.Ceiling((double)total / tamDePagina);
-        ViewBag.TotalRegistros = total;
+        // La paginación se construye aquí y no en la vista para mantener la vista "tonta":
+        // si hay filtros activos (búsqueda, estado, etc.), deben ir en ValoresRuta para que
+        // al navegar entre páginas no se pierdan. El controlador los conoce; la vista no.
+        ViewBag.Paginacion = new PaginacionViewModel
+        {
+            PaginaActual = pagina,
+            TamDePagina = tamDePagina,
+            TotalPaginas = (int)Math.Ceiling((double)total / tamDePagina),
+            TotalRegistros = total
+        };
         ViewBag.Id = TempData["Id"];
         if (TempData.ContainsKey("Mensaje"))
         {
@@ -147,7 +153,7 @@ public class PropietariosController(IRepositorioPropietario repositorio) : Contr
         try
         {
             _repositorio.Baja(id);
-            TempData["Mensaje"] = "Propietario eliminado exitosamente.";
+            TempData["Mensaje"] = "Propietario dado de baja exitosamente.";
         }
         catch (Exception)
         {
@@ -155,5 +161,24 @@ public class PropietariosController(IRepositorioPropietario repositorio) : Contr
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    // GET: Propietarios/Buscar?q=perez
+    [HttpGet]
+    public IActionResult Buscar(string? q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+        {
+            return Json(new { results = Array.Empty<object>() });
+        }
+
+        var resultados = _repositorio.Buscar(q)
+            .Select(p => new
+            {
+                id = p.Id,
+                text = $"{p.NombreCompleto} (DNI: {p.Dni})"
+            });
+
+        return Json(new { results = resultados });
     }
 }

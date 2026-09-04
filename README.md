@@ -13,7 +13,7 @@ Sistema de informatización para la gestión de alquileres temporarios de propie
 ## Requisitos Previos
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [MySQL Server 8.0+](https://dev.mysql.com/downloads/mysql/) (o compatible en puerto `3306`)
+- [MySQL Server 8.0.46](https://dev.mysql.com/downloads/mysql/) (o compatible en puerto `3306`)
 - Cliente de línea de comandos de MySQL (`mysql`) o administrador gráfico (DBeaver, MySQL Workbench, phpMyAdmin)
 
 ---
@@ -22,7 +22,7 @@ Sistema de informatización para la gestión de alquileres temporarios de propie
 
 ### 1. Base de Datos
 
-El script [database.sql](database.sql) crea automáticamente la base de datos `inmobiliaria_dev`, las tablas `PROPIETARIO` e `INQUILINO`, e inserta datos semilla de prueba.
+El script [database.sql](database.sql) crea automáticamente la base de datos `inmobiliaria_dev`, las tablas `PROPIETARIO`, `INQUILINO`, `TIPO_INMUEBLE`, `INMUEBLE` y `RESERVA`, e inserta datos semilla de prueba.
 
 #### Vía Terminal (CLI)
 Ejecutar desde la raíz del proyecto:
@@ -95,18 +95,58 @@ Desde la terminal en la raíz del proyecto:
 erDiagram
     PROPIETARIO {
         int id PK
-        string nombre
-        string apellido
-        string dni
-        string email
-        string telefono
+        varchar nombre
+        varchar apellido
+        varchar dni
+        varchar email
+        varchar telefono
+        tinyint activo
     }
 
     INQUILINO {
         int id PK
-        string dni
-        string nombre_completo
-        string email
-        string telefono
+        varchar dni
+        varchar nombre_completo
+        varchar email
+        varchar telefono
+        tinyint activo
     }
+
+    TIPO_INMUEBLE {
+        int id PK
+        varchar descripcion
+        tinyint activo
+    }
+
+    INMUEBLE {
+        int id PK
+        int propietario_id FK
+        int tipo_id FK
+        varchar direccion
+        int cupo
+        decimal precio_por_dia
+        decimal porcentaje_senia
+        decimal latitud
+        decimal longitud
+        varchar imagen_portada
+        varchar estado
+    }
+
+    RESERVA {
+        int id PK
+        int inquilino_id FK
+        int inmueble_id FK
+        int usuario_creacion_id FK
+        int usuario_terminacion_id FK
+        date fecha_desde
+        date fecha_hasta
+        date fecha_fin_anticipado
+        decimal monto_por_dia
+        varchar estado
+    }
+
+    PROPIETARIO ||--o{ INMUEBLE : "tiene"
+    TIPO_INMUEBLE ||--o{ INMUEBLE : "clasifica"
+    INQUILINO ||--o{ RESERVA : "realiza"
+    INMUEBLE ||--o{ RESERVA : "tiene"
 ```

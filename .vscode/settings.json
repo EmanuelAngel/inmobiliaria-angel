@@ -1,0 +1,12 @@
+{
+    "flow-icons.folders.associations": {
+        "Properties": "setting",
+        "captura-de-requisitos": "features",
+        "entregas-y-revisiones": "target",
+        "tareas": "tasks",
+        "analisis": "idea"
+    },
+    "flow-icons.files.associations": {
+        "AGENTS.md": "prompt"
+    }
+}

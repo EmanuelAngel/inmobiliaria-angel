@@ -1,44 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" data-bs-theme="auto">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - inmobiliaria_lab2</title>
-    <script type="importmap"></script>
+    <script>
+        (function () {
+            const stored = localStorage.getItem('theme') || 'auto';
+            const resolved = stored === 'auto'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : stored;
+            document.documentElement.setAttribute('data-bs-theme', resolved);
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/inmobiliaria_lab2.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        @{
+            var ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+        }
+        <nav class="navbar navbar-expand-md bg-body-tertiary border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">inmobiliaria_lab2</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-buildings-fill text-primary"></i> Inmobiliaria Angel
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            <a class="nav-link @(ctrl == "Propietarios" ? "active fw-semibold" : "")"
+                               asp-area="" asp-controller="Propietarios" asp-action="Index">
+                                <i class="bi bi-person-badge"></i> Propietarios
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Propietarios" asp-action="Index">Propietarios</a>
+                            <a class="nav-link @(ctrl == "Inquilinos" ? "active fw-semibold" : "")"
+                               asp-area="" asp-controller="Inquilinos" asp-action="Index">
+                                <i class="bi bi-people"></i> Inquilinos
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Inquilinos" asp-action="Index">Inquilinos</a>
+                            <a class="nav-link @(ctrl == "Inmuebles" ? "active fw-semibold" : "")"
+                               asp-area="" asp-controller="Inmuebles" asp-action="Index">
+                                <i class="bi bi-building"></i> Inmuebles
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+                            <a class="nav-link @(ctrl == "Reservas" ? "active fw-semibold" : "")"
+                               asp-area="" asp-controller="Reservas" asp-action="Index">
+                                <i class="bi bi-calendar-check"></i> Reservas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ctrl == "TiposInmueble" ? "active fw-semibold" : "")"
+                               asp-area="" asp-controller="TiposInmueble" asp-action="Index">
+                                <i class="bi bi-tags"></i> Tipos de Inmueble
+                            </a>
                         </li>
                     </ul>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1"
+                                    type="button" id="themeToggle" data-bs-toggle="dropdown" aria-expanded="false"
+                                    title="Cambiar tema">
+                                <i class="bi bi-circle-half" id="themeIcon"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeToggle">
+                                <li>
+                                    <button class="dropdown-item d-flex align-items-center gap-2" data-theme="light">
+                                        <i class="bi bi-sun-fill"></i> Claro
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item d-flex align-items-center gap-2" data-theme="dark">
+                                        <i class="bi bi-moon-stars-fill"></i> Oscuro
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item d-flex align-items-center gap-2" data-theme="auto">
+                                        <i class="bi bi-circle-half"></i> Sistema
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Alerts" />
             @RenderBody()
         </main>
     </div>
@@ -50,6 +115,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

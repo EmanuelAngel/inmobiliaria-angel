@@ -19,9 +19,12 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
                 apellido,
                 dni,
                 email,
-                telefono
+                telefono,
+                activo
             FROM
                 PROPIETARIO
+            WHERE
+                activo = 1
             ORDER BY
                 apellido,
                 nombre
@@ -46,6 +49,52 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
         return lista;
     }
 
+    public IList<Propietario> Buscar(string q, int limite = 20)
+    {
+        var lista = new List<Propietario>();
+        limite = Math.Clamp(limite, 1, 50);
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                id,
+                nombre,
+                apellido,
+                dni,
+                email,
+                telefono,
+                activo
+            FROM
+                PROPIETARIO
+            WHERE
+                activo = 1
+                AND (
+                    nombre LIKE @patron
+                    OR apellido LIKE @patron
+                    OR dni LIKE @patron
+                )
+            ORDER BY
+                apellido,
+                nombre
+            LIMIT
+                @limite;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@patron", $"%{q.Trim()}%");
+        comando.Parameters.AddWithValue("@limite", limite);
+
+        conexion.Open();
+
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(Mapear(reader));
+        }
+
+        return lista;
+    }
+
     public Propietario? ObtenerPorId(int id)
     {
         using var conexion = new MySqlConnection(ConnectionString);
@@ -57,11 +106,13 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
                 apellido,
                 dni,
                 email,
-                telefono
+                telefono,
+                activo
             FROM
                 PROPIETARIO
             WHERE
-                id = @id;
+                id = @id
+                AND activo = 1;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -88,11 +139,13 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
                 apellido,
                 dni,
                 email,
-                telefono
+                telefono,
+                activo
             FROM
                 PROPIETARIO
             WHERE
-                dni = @dni;
+                dni = @dni
+                AND activo = 1;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -119,11 +172,13 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
                 apellido,
                 dni,
                 email,
-                telefono
+                telefono,
+                activo
             FROM
                 PROPIETARIO
             WHERE
-                email = @email;
+                email = @email
+                AND activo = 1;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -203,7 +258,9 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            DELETE FROM PROPIETARIO
+            UPDATE PROPIETARIO
+            SET
+                activo = 0
             WHERE
                 id = @id;
         """;
@@ -222,7 +279,9 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
             SELECT
                 COUNT(id)
             FROM
-                PROPIETARIO;
+                PROPIETARIO
+            WHERE
+                activo = 1;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -243,7 +302,8 @@ public class RepositorioPropietario(IConfiguration configuration) : RepositorioB
             Apellido = reader.GetString(reader.GetOrdinal("apellido")),
             Dni = reader.GetString(reader.GetOrdinal("dni")),
             Email = reader.GetString(reader.GetOrdinal("email")),
-            Telefono = reader.GetString(reader.GetOrdinal("telefono"))
+            Telefono = reader.GetString(reader.GetOrdinal("telefono")),
+            Activo = reader.GetBoolean(reader.GetOrdinal("activo"))
         };
     }
 }

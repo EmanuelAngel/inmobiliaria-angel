@@ -13,10 +13,12 @@ erDiagram
         string dni
         string email
         string telefono
+        tinyint activo
     }
     TIPO_INMUEBLE {
         int id PK
         string descripcion
+        tinyint activo
     }
     INMUEBLE {
         int id PK
@@ -26,7 +28,8 @@ erDiagram
         int cupo
         decimal precio_por_dia
         decimal porcentaje_senia
-        string coordenadas
+        decimal latitud
+        decimal longitud
         string imagen_portada
         string estado
     }
@@ -41,6 +44,7 @@ erDiagram
         string nombre_completo
         string email
         string telefono
+        tinyint activo
     }
     RESERVA {
         int id PK
@@ -103,6 +107,7 @@ Dueno de uno o varios inmuebles. Es el cliente que le confia sus propiedades a l
 | dni | string | NOT NULL | Identificacion unica de la persona |
 | email | string | NOT NULL | Dato de contacto para la agencia |
 | telefono | string | NOT NULL | Dato de contacto para la agencia |
+| activo | tinyint(1) | NOT NULL, DEFAULT 1 | Baja lógica universal. `0` = dado de baja; el registro nunca se elimina físicamente |
 
 ---
 
@@ -116,6 +121,7 @@ Catalogo de tipos posibles para un inmueble: casa, departamento, monoambiente, l
 |-------|------|---------------|---------------------------------|
 | id | int | PK, autoincrement | Identificador interno de la tabla |
 | descripcion | string | NOT NULL, UNIQUE | Nombre del tipo. Item 6: tipo (casa, departamento, monoambiente, loft, etc.). Item 7: se debe poder administrar (ABM) los tipos |
+| activo | tinyint(1) | NOT NULL, DEFAULT 1 | Baja lógica. `0` = dado de baja; el tipo no aparece en dropdowns al crear/editar inmuebles, pero los inmuebles existentes mantienen su tipo histórico visible |
 
 ---
 
@@ -134,9 +140,10 @@ La propiedad que se ofrece en alquiler. Es la entidad central del modelo: esta r
 | cupo | int | NOT NULL, > 0 | Item 6: la agencia le pide el cupo (cantidad maxima de personas) |
 | precio_por_dia | decimal | NOT NULL, > 0 | Item 6: la agencia le pide el precio por dia |
 | porcentaje_senia | decimal | NOT NULL, 0-100 | Item 12: los inmuebles establecen el porcentaje de alquiler a pagar al momento de reservar |
-| coordenadas | string | nullable | Item 6: la agencia le pide las coordenadas. Campo string único (ej. formato 'latitud,longitud') |
+| latitud | decimal | nullable | Item 6: latitud geográfica del inmueble en grados decimales (ej. -33.29800000) |
+| longitud | decimal | nullable | Item 6: longitud geográfica del inmueble en grados decimales (ej. -66.33500000) |
 | imagen_portada | string | nullable | Entidades (narrativa): los inmuebles tienen una imagen de portada |
-| estado | string | NOT NULL | Item 8: el propietario puede solicitar suspender temporalmente el inmueble. Valores: Disponible / Suspendido |
+| estado | VARCHAR(20) | NOT NULL, CHECK (estado IN ('Disponible', 'Suspendido')) | Item 8: el propietario puede solicitar suspender temporalmente el inmueble |
 
 ---
 
@@ -167,6 +174,7 @@ Quien alquila el inmueble. NO es usuario del sistema: la agencia carga sus datos
 | nombre_completo | string | NOT NULL | Item 9: ABM inquilino incluye nombre completo |
 | email | string | nullable | Item 9: ABM inquilino incluye datos de contacto |
 | telefono | string | nullable | Item 9: ABM inquilino incluye datos de contacto |
+| activo | tinyint(1) | NOT NULL, DEFAULT 1 | Baja lógica universal. `0` = dado de baja; el registro nunca se elimina físicamente |
 
 ---
 
@@ -187,7 +195,7 @@ Vincula un inquilino con un inmueble por un periodo de tiempo acordado. Es la en
 | fecha_hasta | date | NOT NULL | Item 11: se debe registrar la fecha de finalizacion. Item 18: no se debe perder la fecha original; este campo nunca se modifica |
 | fecha_fin_anticipado | date | nullable | Item 15: la fecha de terminacion anticipada debe quedar registrada. Item 18: coexiste con fecha_hasta para poder recrear el calculo de la multa |
 | monto_por_dia | decimal | NOT NULL, > 0 | Item 11: se registra el monto de alquiler diario al crear la reserva. Se guarda en la reserva (no se toma del inmueble) para preservar el valor historico |
-| estado | string | NOT NULL | Item 11, 15, 18: Ciclo de vida de la reserva. Valores: 'ACTIVA', 'FINALIZADA', 'CANCELADA' |
+| estado | VARCHAR(20) | NOT NULL, CHECK (estado IN ('Activa', 'Finalizada', 'Cancelada')) | Item 11, 15, 18: Ciclo de vida de la reserva |
 
 ---
 
@@ -206,7 +214,7 @@ Registro de cada transaccion economica asociada a una reserva. Nunca se elimina 
 | concepto | string | NOT NULL | Item 13: se registra el concepto de pago. Item 14: es el unico campo editable despues de creado |
 | fecha | date | NOT NULL | Item 13: se registra la fecha en la que se realizo el pago. Item 14: no puede editarse |
 | importe | decimal | NOT NULL, > 0 | Item 13: se registra el importe. Item 14: no puede editarse |
-| estado | string | NOT NULL | Item 14: la eliminacion debe ser un cambio de estado. Valores: Activo / Anulado |
+| estado | VARCHAR(20) | NOT NULL, CHECK (estado IN ('Activo', 'Anulado')) | Item 14: la eliminacion debe ser un cambio de estado |
 
 ---
 
@@ -224,7 +232,7 @@ Persona que opera el sistema. Es la unica entidad con acceso a la aplicacion. No
 | nombre | string | NOT NULL | Item 22: los empleados pueden cambiar sus datos personales, por lo tanto se almacenan |
 | apellido | string | NOT NULL | Idem nombre |
 | avatar | string | nullable | Item 22: los empleados pueden cambiar su avatar |
-| rol | string | NOT NULL | Item 20: existen dos roles (empleado y administrador) que determinan los permisos en el sistema |
+| rol | VARCHAR(20) | NOT NULL, CHECK (rol IN ('Administrador', 'Empleado')) | Item 20: existen dos roles que determinan los permisos en el sistema |
 
 ---
 
@@ -233,15 +241,17 @@ Persona que opera el sistema. Es la unica entidad con acceso a la aplicacion. No
 | Entidad / Campo | Decision | Motivo |
 |-----------------|----------|--------|
 | `PROPIETARIO` | Se mantienen campos: nombre, apellido, dni, email, telefono | Suficientes para contacto y facturacion basica de la agencia. |
+| `PROPIETARIO.activo` / `INQUILINO.activo` | Baja lógica (`TINYINT(1) DEFAULT 1`). Nunca `DELETE`. | Ambas entidades tienen Inmuebles / Reservas / Pagos vinculados. Eliminarlas físicamente destruiría historial contable. Convención universal del proyecto: ninguna entidad se borra físicamente. |
+| `TIPO_INMUEBLE.activo` | Baja lógica (`TINYINT(1) DEFAULT 1`). Nunca `DELETE`. | Un tipo dado de baja se oculta de los dropdowns de creación/edición de inmuebles, pero los inmuebles existentes conservan su referencia histórica intacta. El JOIN al mostrar inmuebles no filtra por `activo` del tipo. |
 | `INQUILINO.dni` | UNIQUE | Identificador tributario/personal unico por persona fisica. |
-| `INMUEBLE.coordenadas` | Campo `string` unico (VARCHAR) | Almacena `latitud,longitud` sin sobrecargar el modelo relacional. |
-| `RESERVA.estado` | Valores exactos: `'ACTIVA'`, `'FINALIZADA'`, `'CANCELADA'` (uppercase) | Estados normalizados para el ciclo de vida. |
+| `INMUEBLE.latitud` / `INMUEBLE.longitud` | Campos decimales separados (`DECIMAL(10, 8)` / `DECIMAL(11, 8)`) | Facilita integración directa con mapas (Leaflet / Google Maps), evita bugs de locale y habilita cálculos espaciales eficientes. |
+| `INMUEBLE.porcentaje_senia` | Campo en Inmueble | Item 12: los inmuebles establecen el porcentaje |
 | `RESERVA.fecha_hasta` | Es la fecha original de fin, nunca cambia | Item 18: no se debe perder. Se suma fecha_fin_anticipado para cancelaciones. |
 | `RESERVA.fecha_fin_anticipado` | Nullable | Solo existe si fue cancelada antes de tiempo |
-| `INMUEBLE.porcentaje_senia` | Campo en Inmueble | Item 12: los inmuebles establecen el porcentaje |
-| `INMUEBLE.estado` | Disponible / Suspendido | Item 8 |
-| `PAGO.estado` | Activo / Anulado | Item 14: eliminacion = cambio de estado |
-| `USUARIO.rol` | Administrador / Empleado | Item 20 |
+| `RESERVA.estado` | `VARCHAR(20) NOT NULL CHECK (estado IN ('Activa', 'Finalizada', 'Cancelada'))` | Ciclo de vida de la reserva. PascalCase uniforme con el resto de estados. `VARCHAR + CHECK` sobre `ENUM`: misma integridad, sin reconstrucción de tabla, sin indexación posicional opaca |
+| `INMUEBLE.estado` | `VARCHAR(20) NOT NULL CHECK (estado IN ('Disponible', 'Suspendido'))` | Idem criterio anterior. Solo dos estados; CHECK es suficiente y más portable |
+| `PAGO.estado` | `VARCHAR(20) NOT NULL CHECK (estado IN ('Activo', 'Anulado'))` | Idem. La baja es lógica: nunca se borra, solo se marca Anulado |
+| `USUARIO.rol` | `VARCHAR(20) NOT NULL CHECK (rol IN ('Administrador', 'Empleado'))` | Idem. Dos roles fijos; un `CHECK` explicita el contrato sin depender de extensiones propietarias de MySQL |
 | `USUARIO.password_hash` | Hash, nunca texto plano | Seguridad basica |
 | `IMAGEN_INMUEBLE` | Tabla separada para la galeria | Portada (1) + varias imagenes (N) |
 | Auditoria Reserva y Pago | FKs a Usuario para creacion/terminacion/anulacion | Item 23 |

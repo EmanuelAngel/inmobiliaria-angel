@@ -1,5 +1,5 @@
 ---
-fecha-tentativa: 2026-08-27
+fecha-confirmada: 2026-09-03
 ---
 
 Continuamos con el desarrollo de un sitio web utilizando ASP.Net MVC para una inmobiliaria teniendo en cuenta la [narrativa](../narrativa.md).

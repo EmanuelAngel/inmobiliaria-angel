@@ -17,9 +17,12 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
                 dni,
                 nombre_completo,
                 email,
-                telefono
+                telefono,
+                activo
             FROM
                 INQUILINO
+            WHERE
+                activo = 1
             ORDER BY
                 nombre_completo
             LIMIT
@@ -52,11 +55,13 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
                 dni,
                 nombre_completo,
                 email,
-                telefono
+                telefono,
+                activo
             FROM
                 INQUILINO
             WHERE
-                id = @id;
+                id = @id
+                AND activo = 1;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -82,11 +87,13 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
                 dni,
                 nombre_completo,
                 email,
-                telefono
+                telefono,
+                activo
             FROM
                 INQUILINO
             WHERE
-                dni = @dni;
+                dni = @dni
+                AND activo = 1;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -112,11 +119,13 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
                 dni,
                 nombre_completo,
                 email,
-                telefono
+                telefono,
+                activo
             FROM
                 INQUILINO
             WHERE
-                email = @email;
+                email = @email
+                AND activo = 1;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -193,7 +202,9 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
-            DELETE FROM INQUILINO
+            UPDATE INQUILINO
+            SET
+                activo = 0
             WHERE
                 id = @id;
         """;
@@ -212,7 +223,9 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
             SELECT
                 COUNT(id)
             FROM
-                INQUILINO;
+                INQUILINO
+            WHERE
+                activo = 1;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -221,6 +234,48 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
         var resultado = comando.ExecuteScalar();
 
         return Convert.ToInt32(resultado);
+    }
+
+    public IList<Inquilino> Buscar(string q, int limite = 20)
+    {
+        var lista = new List<Inquilino>();
+        var termino = $"%{q}%";
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                id,
+                dni,
+                nombre_completo,
+                email,
+                telefono,
+                activo
+            FROM
+                INQUILINO
+            WHERE
+                activo = 1
+                AND (
+                    nombre_completo LIKE @q
+                    OR dni LIKE @q
+                )
+            ORDER BY
+                nombre_completo
+            LIMIT
+                @limite;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@q", termino);
+        comando.Parameters.AddWithValue("@limite", limite);
+
+        conexion.Open();
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(Mapear(reader));
+        }
+
+        return lista;
     }
 
     private static Inquilino Mapear(MySqlDataReader reader)
@@ -234,7 +289,8 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
             Dni = reader.GetString(reader.GetOrdinal("dni")),
             NombreCompleto = reader.GetString(reader.GetOrdinal("nombre_completo")),
             Email = reader.IsDBNull(emailOrdinal) ? null : reader.GetString(emailOrdinal),
-            Telefono = reader.IsDBNull(telefonoOrdinal) ? null : reader.GetString(telefonoOrdinal)
+            Telefono = reader.IsDBNull(telefonoOrdinal) ? null : reader.GetString(telefonoOrdinal),
+            Activo = reader.GetBoolean(reader.GetOrdinal("activo"))
         };
     }
 }

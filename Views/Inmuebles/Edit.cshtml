@@ -1,0 +1,147 @@
+@model inmobiliaria_lab2.Models.Inmueble
+
+@{
+    ViewData["Title"] = "Editar Inmueble";
+    var tiposInmueble = ViewBag.TiposInmueble as IEnumerable<inmobiliaria_lab2.Models.TipoInmueble> ?? Enumerable.Empty<inmobiliaria_lab2.Models.TipoInmueble>();
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">@ViewData["Title"] #@Model.Id</h4>
+            </div>
+            <div class="card-body">
+
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="PropietarioId" class="form-label fw-semibold"></label>
+                            <select asp-for="PropietarioId" class="form-select select2-propietarios">
+                                @if (Model?.Propietario != null)
+                                {
+                                    <option value="@Model.Propietario.Id" selected>
+                                        @Model.Propietario.NombreCompleto (DNI: @Model.Propietario.Dni)
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="PropietarioId" class="text-danger"></span>
+                            <div class="form-text">Escriba nombre, apellido o DNI para buscar.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="TipoId" class="form-label fw-semibold"></label>
+                            <select asp-for="TipoId" class="form-select">
+                                <option value="">-- Seleccione un tipo --</option>
+                                @foreach (var tipo in tiposInmueble)
+                                {
+                                    <option value="@tipo.Id" selected="@(tipo.Id == Model.TipoId)">@tipo.Descripcion</option>
+                                }
+                            </select>
+                            <span asp-validation-for="TipoId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Direccion" class="form-label fw-semibold"></label>
+                        <input asp-for="Direccion" class="form-control" />
+                        <span asp-validation-for="Direccion" class="text-danger"></span>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="Cupo" class="form-label fw-semibold"></label>
+                            <input asp-for="Cupo" type="number" min="1" max="100" class="form-control" />
+                            <span asp-validation-for="Cupo" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="PrecioPorDia" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="PrecioPorDia" type="number" step="0.01" min="1" class="form-control" />
+                            </div>
+                            <span asp-validation-for="PrecioPorDia" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="PorcentajeSenia" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <input asp-for="PorcentajeSenia" type="number" step="1" min="0" max="100" class="form-control" value="@Model.PorcentajeSenia.ToString("0")" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="PorcentajeSenia" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Latitud" class="form-label"></label>
+                            <input asp-for="Latitud" type="number" step="any" class="form-control" />
+                            <span asp-validation-for="Latitud" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Longitud" class="form-label"></label>
+                            <input asp-for="Longitud" type="number" step="any" class="form-control" />
+                            <span asp-validation-for="Longitud" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="ImagenPortada" class="form-label"></label>
+                            <input asp-for="ImagenPortada" class="form-control" />
+                            <span asp-validation-for="ImagenPortada" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Estado" class="form-label fw-semibold"></label>
+                            <select asp-for="Estado" asp-items="Html.GetEnumSelectList<inmobiliaria_lab2.Models.EstadoInmueble>()" class="form-select"></select>
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('.select2-propietarios').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Escriba para buscar por nombre o DNI...',
+                allowClear: true,
+                minimumInputLength: 2,
+                language: {
+                    inputTooShort: function () {
+                        return 'Por favor ingrese 2 o más caracteres';
+                    },
+                    noResults: function () {
+                        return 'No se encontraron propietarios';
+                    },
+                    searching: function () {
+                        return 'Buscando...';
+                    }
+                },
+                ajax: {
+                    url: '@Url.Action("Buscar", "Propietarios")',
+                    dataType: 'json',
+                    delay: 300,
+                    data: function (params) {
+                        return { q: params.term };
+                    },
+                    processResults: function (data) {
+                        return { results: data.results };
+                    }
+                }
+            });
+        });
+    </script>
+}

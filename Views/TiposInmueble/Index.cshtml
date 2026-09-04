@@ -1,0 +1,72 @@
+@model IEnumerable<inmobiliaria_lab2.Models.TipoInmueble>
+
+@{
+    ViewData["Title"] = "Tipos de Inmueble";
+    int? idResaltado = ViewBag.Id != null ? Convert.ToInt32(ViewBag.Id) : null;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>@ViewData["Title"]</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nuevo Tipo de Inmueble
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Descripcion)</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (TipoInmueble item in Model)
+                        {
+                            <tr class="@(idResaltado.HasValue && idResaltado.Value == item.Id ? "table-warning fw-semibold" : "")">
+                                <td>@item.Descripcion</td>
+                                <td>
+                                    @if (item.Activo)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    <div class="d-inline-flex gap-1 align-items-center">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white" data-bs-toggle="tooltip" data-bs-title="Ver detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" data-bs-title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">
+                                No se encontraron tipos de inmueble registrados.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <partial name="_Paginador" model="ViewBag.Paginacion as PaginacionViewModel" />
+</div>
