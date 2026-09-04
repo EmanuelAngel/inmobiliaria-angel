@@ -369,6 +369,61 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         return Convert.ToInt32(resultado);
     }
 
+    public IList<Inmueble> Buscar(string q, int limite = 20)
+    {
+        var lista = new List<Inmueble>();
+        var termino = $"%{q}%";
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                i.id,
+                i.propietario_id,
+                i.tipo_id,
+                i.direccion,
+                i.cupo,
+                i.precio_por_dia,
+                i.porcentaje_senia,
+                i.latitud,
+                i.longitud,
+                i.imagen_portada,
+                i.estado,
+                p.nombre AS propietario_nombre,
+                p.apellido AS propietario_apellido,
+                p.dni AS propietario_dni,
+                p.email AS propietario_email,
+                p.telefono AS propietario_telefono,
+                p.activo AS propietario_activo,
+                t.descripcion AS tipo_descripcion,
+                t.activo AS tipo_activo
+            FROM
+                INMUEBLE i
+                INNER JOIN PROPIETARIO p ON i.propietario_id = p.id
+                INNER JOIN TIPO_INMUEBLE t ON i.tipo_id = t.id
+            WHERE
+                i.estado = @estado
+                AND i.direccion LIKE @q
+            ORDER BY
+                i.direccion
+            LIMIT
+                @limite;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@estado", EstadoInmueble.Disponible.ToString());
+        comando.Parameters.AddWithValue("@q", termino);
+        comando.Parameters.AddWithValue("@limite", limite);
+
+        conexion.Open();
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(MapearConJoins(reader));
+        }
+
+        return lista;
+    }
+
     private static Inmueble MapearBase(MySqlDataReader reader)
     {
         var estadoRaw = reader.GetString(reader.GetOrdinal("estado"));

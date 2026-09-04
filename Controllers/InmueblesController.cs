@@ -185,4 +185,21 @@ public class InmueblesController(
     {
         ViewBag.TiposInmueble = _repositorioTipoInmueble.ObtenerTodos();
     }
+
+    // GET: Inmuebles/Buscar?q=san+martin
+    [HttpGet]
+    public IActionResult Buscar(string? q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+            return Json(new { results = Array.Empty<object>() });
+
+        var resultados = _repositorioInmueble.Buscar(q)
+            .Select(i => new
+            {
+                id = i.Id,
+                text = $"{i.Direccion} ({i.Tipo?.Descripcion})"
+            });
+
+        return Json(new { results = resultados });
+    }
 }

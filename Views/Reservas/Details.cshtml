@@ -1,0 +1,135 @@
+@model inmobiliaria_lab2.Models.Reserva
+
+@{
+    ViewData["Title"] = $"Reserva #{Model?.Id}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2>@ViewData["Title"]</h2>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        @if (Model?.Estado == inmobiliaria_lab2.Models.EstadoReserva.Activa)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                <i class="bi bi-x-circle"></i> Cancelar Reserva
+            </a>
+        }
+    </div>
+</div>
+
+<div class="row g-4">
+
+    @* Datos de la Reserva *@
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-semibold">
+                <i class="bi bi-calendar-check me-1"></i> Datos de la Reserva
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Estado</dt>
+                    <dd class="col-sm-7">
+                        @switch (Model?.Estado)
+                        {
+                            case inmobiliaria_lab2.Models.EstadoReserva.Activa:
+                                <span class="badge bg-success fs-6">Activa</span>
+                                break;
+                            case inmobiliaria_lab2.Models.EstadoReserva.Finalizada:
+                                <span class="badge bg-secondary fs-6">Finalizada</span>
+                                break;
+                            case inmobiliaria_lab2.Models.EstadoReserva.Cancelada:
+                                <span class="badge bg-danger fs-6">Cancelada</span>
+                                break;
+                        }
+                    </dd>
+
+                    <dt class="col-sm-5">@Html.DisplayNameFor(m => m.FechaDesde)</dt>
+                    <dd class="col-sm-7">@Model?.FechaDesde.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-5">@Html.DisplayNameFor(m => m.FechaHasta)</dt>
+                    <dd class="col-sm-7">@Model?.FechaHasta.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-5">Duración</dt>
+                    <dd class="col-sm-7">@Model?.DiasTotal días</dd>
+
+                    <dt class="col-sm-5">@Html.DisplayNameFor(m => m.MontoPorDia)</dt>
+                    <dd class="col-sm-7">@Model?.MontoPorDia.ToString("C")</dd>
+
+                    <dt class="col-sm-5 fw-bold">@Html.DisplayNameFor(m => m.MontoTotal)</dt>
+                    <dd class="col-sm-7 fw-bold text-primary fs-5">@Model?.MontoTotal.ToString("C")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    @* Inquilino *@
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-semibold">
+                <i class="bi bi-person me-1"></i> Inquilino
+            </div>
+            <div class="card-body">
+                @if (Model?.Inquilino != null)
+                {
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Nombre</dt>
+                        <dd class="col-sm-8">@Model.Inquilino.NombreCompleto</dd>
+
+                        <dt class="col-sm-4">DNI</dt>
+                        <dd class="col-sm-8">@Model.Inquilino.Dni</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@(Model.Inquilino.Email ?? "-")</dd>
+
+                        <dt class="col-sm-4">Teléfono</dt>
+                        <dd class="col-sm-8">@(Model.Inquilino.Telefono ?? "-")</dd>
+                    </dl>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Sin datos de inquilino.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Inmueble *@
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">
+                <i class="bi bi-building me-1"></i> Inmueble
+            </div>
+            <div class="card-body">
+                @if (Model?.Inmueble != null)
+                {
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Dirección</dt>
+                        <dd class="col-sm-9">@Model.Inmueble.Direccion</dd>
+
+                        <dt class="col-sm-3">Tipo</dt>
+                        <dd class="col-sm-9">@(Model.Inmueble.Tipo?.Descripcion ?? "-")</dd>
+
+                        <dt class="col-sm-3">Cupo</dt>
+                        <dd class="col-sm-9">@Model.Inmueble.Cupo personas</dd>
+
+                        <dt class="col-sm-3">Precio por día</dt>
+                        <dd class="col-sm-9">@Model.Inmueble.PrecioPorDia.ToString("C")</dd>
+
+                        <dt class="col-sm-3">Seña requerida</dt>
+                        <dd class="col-sm-9">@Model.Inmueble.PorcentajeSenia.ToString("N0")%</dd>
+                    </dl>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Sin datos de inmueble.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>

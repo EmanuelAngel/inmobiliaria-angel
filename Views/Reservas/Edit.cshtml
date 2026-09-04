@@ -1,0 +1,123 @@
+@model inmobiliaria_lab2.Models.Reserva
+
+@{
+    ViewData["Title"] = $"Editar Reserva #{Model?.Id}";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">@ViewData["Title"]</h4>
+            </div>
+            <div class="card-body">
+
+                <form asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="InquilinoId" class="form-label fw-semibold"></label>
+                            <select asp-for="InquilinoId" class="form-select select2-inquilinos">
+                                @if (Model?.Inquilino != null)
+                                {
+                                    <option value="@Model.Inquilino.Id" selected>
+                                        @Model.Inquilino.NombreCompleto (DNI: @Model.Inquilino.Dni)
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="InquilinoId" class="text-danger"></span>
+                            <div class="form-text">Escriba nombre o DNI para buscar.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="InmuebleId" class="form-label fw-semibold"></label>
+                            <select asp-for="InmuebleId" class="form-select select2-inmuebles">
+                                @if (Model?.Inmueble != null)
+                                {
+                                    <option value="@Model.Inmueble.Id" selected>
+                                        @Model.Inmueble.Direccion (@Model.Inmueble.Tipo?.Descripcion)
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="InmuebleId" class="text-danger"></span>
+                            <div class="form-text">Escriba parte de la dirección para buscar.</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="FechaDesde" class="form-label fw-semibold"></label>
+                            <input asp-for="FechaDesde" type="date" class="form-control" />
+                            <span asp-validation-for="FechaDesde" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="FechaHasta" class="form-label fw-semibold"></label>
+                            <input asp-for="FechaHasta" type="date" class="form-control" />
+                            <span asp-validation-for="FechaHasta" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="MontoPorDia" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="MontoPorDia" type="number" step="0.01" min="0.01" class="form-control" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="MontoPorDia" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+                        <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('.select2-inquilinos').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Escriba para buscar por nombre o DNI...',
+                allowClear: true,
+                minimumInputLength: 2,
+                language: {
+                    inputTooShort: function () { return 'Por favor ingrese 2 o más caracteres'; },
+                    noResults: function () { return 'No se encontraron inquilinos'; },
+                    searching: function () { return 'Buscando...'; }
+                },
+                ajax: {
+                    url: '@Url.Action("Buscar", "Inquilinos")',
+                    dataType: 'json',
+                    delay: 300,
+                    data: function (params) { return { q: params.term }; },
+                    processResults: function (data) { return { results: data.results }; }
+                }
+            });
+
+            $('.select2-inmuebles').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Escriba para buscar por dirección...',
+                allowClear: true,
+                minimumInputLength: 2,
+                language: {
+                    inputTooShort: function () { return 'Por favor ingrese 2 o más caracteres'; },
+                    noResults: function () { return 'No se encontraron inmuebles disponibles'; },
+                    searching: function () { return 'Buscando...'; }
+                },
+                ajax: {
+                    url: '@Url.Action("Buscar", "Inmuebles")',
+                    dataType: 'json',
+                    delay: 300,
+                    data: function (params) { return { q: params.term }; },
+                    processResults: function (data) { return { results: data.results }; }
+                }
+            });
+        });
+    </script>
+}

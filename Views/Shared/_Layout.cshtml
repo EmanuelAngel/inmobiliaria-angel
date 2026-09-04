@@ -59,6 +59,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link @(ctrl == "Reservas" ? "active fw-semibold" : "")"
+                               asp-area="" asp-controller="Reservas" asp-action="Index">
+                                <i class="bi bi-calendar-check"></i> Reservas
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link @(ctrl == "TiposInmueble" ? "active fw-semibold" : "")"
                                asp-area="" asp-controller="TiposInmueble" asp-action="Index">
                                 <i class="bi bi-tags"></i> Tipos de Inmueble

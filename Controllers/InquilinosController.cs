@@ -171,4 +171,21 @@ public class InquilinosController(IRepositorioInquilino repositorio) : Controlle
 
         return RedirectToAction(nameof(Index));
     }
+
+    // GET: Inquilinos/Buscar?q=martin
+    [HttpGet]
+    public IActionResult Buscar(string? q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+            return Json(new { results = Array.Empty<object>() });
+
+        var resultados = _repositorio.Buscar(q)
+            .Select(i => new
+            {
+                id = i.Id,
+                text = $"{i.NombreCompleto} (DNI: {i.Dni})"
+            });
+
+        return Json(new { results = resultados });
+    }
 }

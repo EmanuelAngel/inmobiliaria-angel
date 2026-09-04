@@ -236,6 +236,48 @@ public class RepositorioInquilino(IConfiguration configuration) : RepositorioBas
         return Convert.ToInt32(resultado);
     }
 
+    public IList<Inquilino> Buscar(string q, int limite = 20)
+    {
+        var lista = new List<Inquilino>();
+        var termino = $"%{q}%";
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                id,
+                dni,
+                nombre_completo,
+                email,
+                telefono,
+                activo
+            FROM
+                INQUILINO
+            WHERE
+                activo = 1
+                AND (
+                    nombre_completo LIKE @q
+                    OR dni LIKE @q
+                )
+            ORDER BY
+                nombre_completo
+            LIMIT
+                @limite;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@q", termino);
+        comando.Parameters.AddWithValue("@limite", limite);
+
+        conexion.Open();
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(Mapear(reader));
+        }
+
+        return lista;
+    }
+
     private static Inquilino Mapear(MySqlDataReader reader)
     {
         var emailOrdinal = reader.GetOrdinal("email");

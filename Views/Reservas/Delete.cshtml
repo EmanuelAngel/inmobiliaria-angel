@@ -1,0 +1,50 @@
+@model inmobiliaria_lab2.Models.Reserva
+
+@{
+    ViewData["Title"] = "Cancelar Reserva";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>@ViewData["Title"]</h4>
+            </div>
+            <div class="card-body">
+                <p class="mb-4">
+                    ¿Está seguro de que desea <strong>cancelar</strong> esta reserva?
+                    La acción cambiará su estado a <span class="badge bg-danger">Cancelada</span> y no podrá deshacerse.
+                </p>
+
+                <dl class="row">
+                    <dt class="col-sm-4">Inmueble</dt>
+                    <dd class="col-sm-8">@(Model?.Inmueble?.Direccion ?? "-")</dd>
+
+                    <dt class="col-sm-4">Inquilino</dt>
+                    <dd class="col-sm-8">@(Model?.Inquilino?.NombreCompleto ?? "-")</dd>
+
+                    <dt class="col-sm-4">Período</dt>
+                    <dd class="col-sm-8">
+                        @Model?.FechaDesde.ToString("dd/MM/yyyy") — @Model?.FechaHasta.ToString("dd/MM/yyyy")
+                        <span class="text-muted">(@Model?.DiasTotal días)</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Monto total</dt>
+                    <dd class="col-sm-8 fw-bold text-primary">@Model?.MontoTotal.ToString("C")</dd>
+                </dl>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex justify-content-between mt-3">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-x-circle"></i> Confirmar cancelación
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
