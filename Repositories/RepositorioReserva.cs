@@ -291,28 +291,41 @@ public class RepositorioReserva(IConfiguration configuration) : RepositorioBase(
     public bool VerificarDisponibilidad(int inmuebleId, DateOnly desde, DateOnly hasta, int? excluirReservaId = null)
     {
         using var conexion = new MySqlConnection(ConnectionString);
-        const string query = """
-            SELECT
-                COUNT(id)
-            FROM
-                RESERVA
-            WHERE
-                inmueble_id = @inmuebleId
-                AND estado = @estado
-                AND fecha_desde < @hasta
-                AND fecha_hasta > @desde
-                AND (
-                    @excluirId IS NULL
-                    OR id != @excluirId
-                );
-        """;
 
-        using var comando = new MySqlCommand(query, conexion);
+        // Se usan dos queries distintas para evitar el comportamiento inconsistente
+        // de @param IS NULL con parámetros DBNull en MySqlConnector.
+        var sql = excluirReservaId.HasValue
+            ? """
+                SELECT
+                    COUNT(id)
+                FROM
+                    RESERVA
+                WHERE
+                    inmueble_id = @inmuebleId
+                    AND estado = @estado
+                    AND fecha_desde < @hasta
+                    AND fecha_hasta > @desde
+                    AND id != @excluirId;
+            """
+            : """
+                SELECT
+                    COUNT(id)
+                FROM
+                    RESERVA
+                WHERE
+                    inmueble_id = @inmuebleId
+                    AND estado = @estado
+                    AND fecha_desde < @hasta
+                    AND fecha_hasta > @desde;
+            """;
+
+        using var comando = new MySqlCommand(sql, conexion);
         comando.Parameters.AddWithValue("@inmuebleId", inmuebleId);
         comando.Parameters.AddWithValue("@estado", EstadoReserva.Activa.ToString());
         comando.Parameters.AddWithValue("@desde", desde.ToDateTime(TimeOnly.MinValue));
         comando.Parameters.AddWithValue("@hasta", hasta.ToDateTime(TimeOnly.MinValue));
-        comando.Parameters.AddWithValue("@excluirId", (object?)excluirReservaId ?? DBNull.Value);
+        if (excluirReservaId.HasValue)
+            comando.Parameters.AddWithValue("@excluirId", excluirReservaId.Value);
 
         conexion.Open();
         return Convert.ToInt32(comando.ExecuteScalar()) == 0;
