@@ -90,7 +90,8 @@ inmobiliaria-lab2/
 - **Base de datos / Script SQL:** Inicializado ([database.sql](database.sql)).
 - **Documentación / README:** Creado con DER e instrucciones de despliegue.
 - **Primera entrega:** Realizada (ABM de Propietarios e Inquilinos).
-- **En curso / Próximo hito:** [Segunda entrega](docs/entregas-y-revisiones/segunda-entrega.md) — ABM Inmuebles y Reservas.
+- **Segunda entrega:** Realizada (ABM de Inmuebles y Reservas).
+- **En curso / Próximo hito:** [Entrega final](docs/entregas-y-revisiones/entrega-final.md) — Autenticación, Roles, Pagos, Multas, Auditoría y Consultas avanzadas.
 
 ---
 
