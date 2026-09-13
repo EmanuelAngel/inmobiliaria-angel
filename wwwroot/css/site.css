@@ -1,7 +1,111 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inmobiliaria Angel - Design System & Custom CSS Variables for Bootstrap 5
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ─── 1. Brand Tokens & Light Theme ───────────────────────────────────────── */
 :root {
+  /* Brand Core (Slate Sapphire / Editorial Proptech) */
+  --brand-primary: #1d4ed8;
+  --brand-primary-rgb: 29, 78, 216;
+  --brand-primary-hover: #1e40af;
+  --brand-primary-active: #1e3a8a;
+  --brand-primary-subtle: #eff6ff;
+
+  --brand-accent: #d97706;
+  --brand-accent-rgb: 217, 119, 6;
+  --brand-success: #059669;
+  --brand-success-rgb: 5, 150, 105;
+  --brand-warning: #d97706;
+  --brand-danger: #dc2626;
+
+  /* Bootstrap Core Variables - Light Mode */
+  --bs-primary: var(--brand-primary);
+  --bs-primary-rgb: var(--brand-primary-rgb);
+  --bs-link-color: var(--brand-primary);
+  --bs-link-hover-color: var(--brand-primary-hover);
+  --bs-link-color-rgb: var(--brand-primary-rgb);
+
+  /* Typography */
   --bs-body-font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --bs-body-font-size: 0.9375rem;
+  --bs-body-line-height: 1.6;
+
+  /* Surfaces & Neutrals (Light) */
+  --bs-body-bg: #f8fafc;
+  --bs-body-bg-rgb: 248, 250, 252;
+  --bs-body-color: #0f172a;
+  --bs-body-color-rgb: 15, 23, 42;
+  --bs-secondary-color: #475569;
+  --bs-tertiary-color: #64748b;
+  --bs-secondary-bg: #e2e8f0;
+  --bs-tertiary-bg: #f1f5f9;
+  --bs-border-color: #e2e8f0;
+  --bs-border-color-translucent: rgba(15, 23, 42, 0.08);
+
+  /* Geometry & Border Radii */
+  --bs-border-radius-sm: 0.375rem; /* 6px */
+  --bs-border-radius: 0.5rem;       /* 8px */
+  --bs-border-radius-lg: 0.75rem;    /* 12px */
+  --bs-border-radius-xl: 1rem;       /* 16px */
+  --bs-border-radius-2xl: 1.25rem;
+
+  /* Depth & Shadows (Multi-layered soft ambient depth) */
+  --bs-box-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --bs-box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --bs-box-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --bs-focus-ring-color: rgba(29, 78, 216, 0.25);
+
+  /* Card Component Defaults */
+  --bs-card-border-color: var(--bs-border-color);
+  --bs-card-border-radius: var(--bs-border-radius-lg);
+  --bs-card-box-shadow: var(--bs-box-shadow-sm);
+  --bs-card-bg: #ffffff;
+  --bs-card-cap-bg: transparent;
 }
 
+/* ─── 2. Dark Theme Tokens ───────────────────────────────────────────────── */
+[data-bs-theme="dark"] {
+  --brand-primary: #3b82f6;
+  --brand-primary-rgb: 59, 130, 246;
+  --brand-primary-hover: #60a5fa;
+  --brand-primary-active: #2563eb;
+  --brand-primary-subtle: rgba(59, 130, 246, 0.15);
+
+  --brand-accent: #f59e0b;
+  --brand-accent-rgb: 245, 158, 11;
+  --brand-success: #10b981;
+  --brand-success-rgb: 16, 185, 129;
+  --brand-warning: #f59e0b;
+  --brand-danger: #ef4444;
+
+  --bs-primary: var(--brand-primary);
+  --bs-primary-rgb: var(--brand-primary-rgb);
+  --bs-link-color: var(--brand-primary);
+  --bs-link-hover-color: var(--brand-primary-hover);
+  --bs-link-color-rgb: var(--brand-primary-rgb);
+
+  /* Surfaces & Neutrals (Dark) */
+  --bs-body-bg: #0b0f19;
+  --bs-body-bg-rgb: 11, 15, 25;
+  --bs-body-color: #f1f5f9;
+  --bs-body-color-rgb: 241, 245, 249;
+  --bs-secondary-color: #94a3b8;
+  --bs-tertiary-color: #64748b;
+  --bs-secondary-bg: #1e293b;
+  --bs-tertiary-bg: #111827;
+  --bs-border-color: #1e293b;
+  --bs-border-color-translucent: rgba(255, 255, 255, 0.08);
+
+  --bs-box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
+  --bs-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --bs-box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --bs-focus-ring-color: rgba(59, 130, 246, 0.35);
+
+  --bs-card-bg: #111827;
+  --bs-card-border-color: var(--bs-border-color);
+}
+
+/* ─── 3. Global & Base Settings ──────────────────────────────────────────── */
 html {
   font-size: 14px;
   position: relative;
@@ -10,33 +114,179 @@ html {
 
 @media (min-width: 768px) {
   html {
-    font-size: 16px;
+    font-size: 15px;
   }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 body {
   margin-bottom: 60px;
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+/* ─── 4. Typography ──────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  color: var(--bs-emphasis-color);
+}
+
+/* ─── 5. Buttons ─────────────────────────────────────────────────────────── */
+.btn {
+  border-radius: var(--bs-border-radius);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--brand-primary);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-bg: var(--brand-primary-hover);
+  --bs-btn-hover-border-color: var(--brand-primary-hover);
+  --bs-btn-active-bg: var(--brand-primary-active);
+  --bs-btn-active-border-color: var(--brand-primary-active);
+  --bs-btn-disabled-bg: var(--brand-primary);
+  --bs-btn-disabled-border-color: var(--brand-primary);
+  --bs-btn-focus-shadow-rgb: var(--brand-primary-rgb);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--brand-primary);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-bg: var(--brand-primary);
+  --bs-btn-hover-border-color: var(--brand-primary);
+  --bs-btn-active-bg: var(--brand-primary-active);
+  --bs-btn-active-border-color: var(--brand-primary-active);
+  --bs-btn-focus-shadow-rgb: var(--brand-primary-rgb);
+}
+
+.btn:focus-visible,
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color);
+}
+
+/* ─── 6. Form Controls & Inputs ──────────────────────────────────────────── */
+.form-control,
+.form-select {
+  border-radius: var(--bs-border-radius);
+  border-color: var(--bs-border-color);
+  font-size: 0.9375rem;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color);
+}
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
 
-/* Utilidad para la imagen de portada en Details */
-.min-vh-25 {
-  min-height: 25vh;
+/* ─── 7. Cards & Containers ──────────────────────────────────────────────── */
+.card {
+  border-radius: var(--bs-card-border-radius);
+  border: 1px solid var(--bs-card-border-color);
+  background-color: var(--bs-card-bg);
+  box-shadow: var(--bs-card-box-shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-/* ─── Select2: soporte para tema oscuro ────────────────────────────────────── */
+/* ─── 8. Navbar ──────────────────────────────────────────────────────────── */
+.navbar {
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+[data-bs-theme="light"] .navbar {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+}
+
+[data-bs-theme="dark"] .navbar {
+  background-color: rgba(17, 24, 39, 0.94) !important;
+}
+
+.navbar-brand {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.nav-link {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  border-radius: var(--bs-border-radius-sm);
+  padding: 0.4rem 0.75rem !important;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--brand-primary) !important;
+}
+
+.nav-link.active {
+  color: var(--brand-primary) !important;
+  background-color: var(--brand-primary-subtle);
+}
+
+/* ─── 9. Tables (Craft Floor Tabular Data) ────────────────────────────────── */
+.table {
+  --bs-table-hover-bg: var(--bs-tertiary-bg);
+  font-size: 0.9375rem;
+}
+
+.table thead th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--bs-border-color);
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-secondary-color);
+}
+
+/* Tabular numerals for structured columns */
+.table td,
+.table th,
+.text-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── 10. Badges ─────────────────────────────────────────────────────────── */
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border-radius: var(--bs-border-radius-sm);
+  padding: 0.35em 0.65em;
+}
+
+/* ─── 11. Select2 Integration & Dark Mode ─────────────────────────────────── */
+.select2-container--bootstrap-5 .select2-selection {
+  border-radius: var(--bs-border-radius);
+  border-color: var(--bs-border-color);
+}
+
+.select2-container--bootstrap-5.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.select2-container--open .select2-selection {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color);
+}
+
 [data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection {
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
@@ -65,7 +315,7 @@ body {
 }
 
 [data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
-  background-color: var(--bs-primary);
+  background-color: var(--brand-primary);
   color: #fff;
 }
 
@@ -74,16 +324,37 @@ body {
   color: var(--bs-body-color);
 }
 
-/* ─── Encabezados de tabla: contraste invertido según el tema ──────────────── */
-.table thead {
-  --bs-table-bg: #212529;
-  --bs-table-color: #ffffff;
-  --bs-table-border-color: #373b3e;
+/* ─── 12. Browser Surfaces (Craft Floor) ─────────────────────────────────── */
+::selection {
+  background-color: rgba(29, 78, 216, 0.2);
+  color: var(--bs-body-color);
 }
 
-[data-bs-theme="dark"] .table thead {
-  --bs-table-bg: #f8f9fa;
-  --bs-table-color: #212529;
-  --bs-table-border-color: #dee2e6;
+[data-bs-theme="dark"] ::selection {
+  background-color: rgba(59, 130, 246, 0.35);
+  color: #ffffff;
 }
-
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bs-body-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bs-secondary-bg);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bs-tertiary-color);
+}
+
+/* ─── 13. Helpers & Utilities ────────────────────────────────────────────── */
+.min-vh-25 {
+  min-height: 25vh;
+}
