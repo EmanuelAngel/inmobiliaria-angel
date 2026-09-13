@@ -740,10 +740,20 @@ h1, h2, h3, h4, h5, h6,
   color: var(--bs-secondary-color);
 }
 
+/* Comprehensive OpenType Tabular Figures across all numerical data */
 .table td,
 .table th,
-.text-tabular {
+.text-tabular,
+.tabular-nums,
+.badge,
+dl dd,
+dl dt,
+.pagination .page-link,
+input[type="number"],
+input[type="date"],
+input[type="time"] {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 /* Highlight row in tables */
