@@ -1,6 +1,7 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    Inmobiliaria Angel - Luxury Minimalist & Warm Administrative Design System
    Architecture: Pure Native CSS Variables Overriding Complete Bootstrap 5 Matrix
+   Style: Architectural Sharp Edges (Bordes Rectos), Warm Stone & Deep Charcoal
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* ─── 1. Brand Tokens & Light Theme (:root) ────────────────────────────────── */
@@ -78,12 +79,13 @@
   --bs-body-font-size: 0.9375rem;
   --bs-body-line-height: 1.6;
 
-  /* ── 1.5 Geometry & Radii (Refined, Minimal, Crisp) ─────────────────────── */
-  --bs-border-radius-sm: 0.25rem;  /* 4px */
-  --bs-border-radius: 0.375rem;     /* 6px */
-  --bs-border-radius-lg: 0.5rem;     /* 8px */
-  --bs-border-radius-xl: 0.75rem;    /* 12px */
-  --bs-border-radius-2xl: 1rem;
+  /* ── 1.5 Geometry (Bordes Rectos / Strict Zero Radius) ─────────────────── */
+  --bs-border-radius-sm: 0;
+  --bs-border-radius: 0;
+  --bs-border-radius-lg: 0;
+  --bs-border-radius-xl: 0;
+  --bs-border-radius-2xl: 0;
+  --bs-border-radius-pill: 0;
 
   /* ── 1.6 Shadows (Whisper-Soft Luxury Depth) ────────────────────────────── */
   --bs-box-shadow-sm: 0 1px 2px 0 rgba(28, 25, 23, 0.04);
@@ -92,7 +94,7 @@
 
   /* ── 1.7 Cards & Navbar Tokens ─────────────────────────────────────────── */
   --bs-card-border-color: var(--bs-border-color);
-  --bs-card-border-radius: var(--bs-border-radius-lg);
+  --bs-card-border-radius: 0;
   --bs-card-box-shadow: var(--bs-box-shadow-sm);
   --bs-card-bg: #ffffff;
   --bs-card-cap-bg: transparent;
@@ -180,6 +182,13 @@
   --bs-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.55), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
   --bs-box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.65), 0 4px 6px -4px rgba(0, 0, 0, 0.45);
 
+  --bs-border-radius-sm: 0;
+  --bs-border-radius: 0;
+  --bs-border-radius-lg: 0;
+  --bs-border-radius-xl: 0;
+  --bs-border-radius-2xl: 0;
+  --bs-border-radius-pill: 0;
+
   --bs-card-bg: #181715;
   --bs-card-border-color: var(--bs-border-color);
 
@@ -192,7 +201,31 @@
   --app-brand-icon: #f59e0b;
 }
 
-/* ─── 3. Global & Base Settings ──────────────────────────────────────────── */
+/* ─── 3. Strict Sharp Geometry (Bordes Rectos Universales) ───────────────── */
+.btn,
+.btn-sm,
+.btn-lg,
+.form-control,
+.form-select,
+.input-group-text,
+.card,
+.card-header,
+.card-footer,
+.alert,
+.badge,
+.dropdown-menu,
+.dropdown-item,
+.nav-link,
+.modal-content,
+.pagination .page-link,
+.select2-container--bootstrap-5 .select2-selection,
+.select2-dropdown,
+.select2-container--bootstrap-5 .select2-dropdown,
+[class*="rounded"] {
+  border-radius: 0 !important;
+}
+
+/* ─── 4. Global & Base Settings ──────────────────────────────────────────── */
 html {
   font-size: 14px;
   position: relative;
@@ -213,7 +246,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── 4. Typography ──────────────────────────────────────────────────────── */
+/* ─── 5. Typography & Headings Contrast Resolution ───────────────────────── */
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   letter-spacing: -0.025em;
@@ -221,7 +254,28 @@ h1, h2, h3, h4, h5, h6,
   color: var(--bs-emphasis-color);
 }
 
-/* ─── 5. Navbar (Quiet Luxury Architectural Header) ──────────────────────── */
+/* High contrast inheritance for light/dark text overrides */
+.text-white,
+.text-white h1,
+.text-white h2,
+.text-white h3,
+.text-white h4,
+.text-white h5,
+.text-white h6 {
+  color: #ffffff !important;
+}
+
+.text-dark,
+.text-dark h1,
+.text-dark h2,
+.text-dark h3,
+.text-dark h4,
+.text-dark h5,
+.text-dark h6 {
+  color: #1c1917 !important;
+}
+
+/* ─── 6. Navbar (Quiet Luxury Architectural Header) ──────────────────────── */
 .app-navbar {
   background-color: var(--app-nav-bg) !important;
   border-bottom: 1px solid var(--app-nav-border) !important;
@@ -246,7 +300,6 @@ h1, h2, h3, h4, h5, h6,
   color: var(--app-nav-link) !important;
   font-weight: 500;
   letter-spacing: -0.01em;
-  border-radius: var(--bs-border-radius-sm);
   padding: 0.4rem 0.75rem !important;
   margin-right: 0.2rem;
   transition: all 0.15s ease-in-out;
@@ -263,20 +316,100 @@ h1, h2, h3, h4, h5, h6,
   font-weight: 600;
 }
 
-/* ─── 6. Buttons (Complete Semantic Set) ─────────────────────────────────── */
+/* ─── 7. Card Headers: Complete Contrast & Dark/Light Fix ────────────────── */
+.card-header {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--bs-card-border-color);
+  font-weight: 600;
+}
+
+/* Ensure headings inside card-headers always inherit the header's text color */
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-header h4,
+.card-header h5,
+.card-header h6 {
+  color: inherit !important;
+}
+
+/* Card Header Primary: Dark Charcoal background with crisp white text */
+.card-header.bg-primary {
+  background-color: #1c1917 !important;
+  color: #ffffff !important;
+  border-bottom-color: #1c1917;
+}
+
+.card-header.bg-primary * {
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .card-header.bg-primary {
+  background-color: #292524 !important;
+  color: #f5f5f4 !important;
+  border-bottom-color: #44403c;
+}
+
+[data-bs-theme="dark"] .card-header.bg-primary * {
+  color: #f5f5f4 !important;
+}
+
+/* Card Header Danger: Stone Crimson with crisp white text */
+.card-header.bg-danger {
+  background-color: var(--bs-danger) !important;
+  color: #ffffff !important;
+  border-bottom-color: var(--bs-danger);
+}
+
+.card-header.bg-danger * {
+  color: #ffffff !important;
+}
+
+/* Card Header Warning: Warm Ochre with high-contrast text */
+.card-header.bg-warning {
+  background-color: var(--bs-warning-bg-subtle) !important;
+  color: var(--bs-warning-text-emphasis) !important;
+  border-bottom: 1px solid var(--bs-warning-border-subtle);
+}
+
+.card-header.bg-warning * {
+  color: var(--bs-warning-text-emphasis) !important;
+}
+
+/* Card Header Info: Mineral Steel Blue with crisp white text */
+.card-header.bg-info {
+  background-color: var(--bs-info) !important;
+  color: #ffffff !important;
+  border-bottom-color: var(--bs-info);
+}
+
+.card-header.bg-info * {
+  color: #ffffff !important;
+}
+
+/* Card Header Success: Forest Olive with crisp white text */
+.card-header.bg-success {
+  background-color: var(--bs-success) !important;
+  color: #ffffff !important;
+  border-bottom-color: var(--bs-success);
+}
+
+.card-header.bg-success * {
+  color: #ffffff !important;
+}
+
+/* ─── 8. Buttons (Complete Semantic Set with Sharp Geometry) ─────────────── */
 .btn {
-  border-radius: var(--bs-border-radius);
   font-weight: 500;
   font-size: 0.9375rem;
   letter-spacing: -0.01em;
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.95rem;
   transition: all 0.15s ease-in-out;
 }
 
 .btn-sm {
   font-size: 0.8125rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--bs-border-radius-sm);
+  padding: 0.25rem 0.65rem;
 }
 
 /* Primary Button */
@@ -418,22 +551,20 @@ h1, h2, h3, h4, h5, h6,
 
 .btn:focus-visible,
 .btn:focus {
-  box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color);
+  box-shadow: 0 0 0 0.15rem var(--bs-focus-ring-color);
 }
 
-/* ─── 7. Alerts (Harmonized Subdued Tones) ───────────────────────────────── */
+/* ─── 9. Alerts (Harmonized Subdued Tones) ───────────────────────────────── */
 .alert {
-  border-radius: var(--bs-border-radius);
   border-width: 1px;
   padding: 0.85rem 1.15rem;
   font-size: 0.9375rem;
   letter-spacing: -0.01em;
 }
 
-/* ─── 8. Form Controls & Inputs ──────────────────────────────────────────── */
+/* ─── 10. Form Controls & Inputs ─────────────────────────────────────────── */
 .form-control,
 .form-select {
-  border-radius: var(--bs-border-radius);
   border-color: var(--bs-border-color);
   font-size: 0.9375rem;
   padding: 0.5rem 0.75rem;
@@ -459,16 +590,15 @@ h1, h2, h3, h4, h5, h6,
   text-align: start;
 }
 
-/* ─── 9. Cards & Structural Containers ───────────────────────────────────── */
+/* ─── 11. Cards & Structural Containers ──────────────────────────────────── */
 .card {
-  border-radius: var(--bs-card-border-radius);
   border: 1px solid var(--bs-card-border-color);
   background-color: var(--bs-card-bg);
   box-shadow: var(--bs-card-box-shadow);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-/* ─── 10. Tables (Administrative Clarity & Tabular Numerals) ─────────────── */
+/* ─── 12. Tables (Administrative Clarity & Tabular Numerals) ─────────────── */
 .table {
   --bs-table-hover-bg: var(--bs-tertiary-bg);
   font-size: 0.9375rem;
@@ -498,12 +628,11 @@ h1, h2, h3, h4, h5, h6,
   --bs-table-color: var(--bs-warning-text-emphasis);
 }
 
-/* ─── 11. Badges (Modern Soft Pastels with Border) ────────────────────────── */
+/* ─── 13. Badges (Sharp Modern Soft Pastels with Border) ─────────────────── */
 .badge {
   font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.02em;
-  border-radius: var(--bs-border-radius-sm);
   padding: 0.35em 0.65em;
 }
 
@@ -543,9 +672,8 @@ h1, h2, h3, h4, h5, h6,
   border: 1px solid var(--bs-info-border-subtle);
 }
 
-/* ─── 12. Select2 Integration & Dark Mode ─────────────────────────────────── */
+/* ─── 14. Select2 Integration & Dark Mode ─────────────────────────────────── */
 .select2-container--bootstrap-5 .select2-selection {
-  border-radius: var(--bs-border-radius);
   border-color: var(--bs-border-color);
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
@@ -594,7 +722,7 @@ h1, h2, h3, h4, h5, h6,
   color: var(--bs-body-color);
 }
 
-/* ─── 13. Browser Surfaces (Craft Floor) ─────────────────────────────────── */
+/* ─── 15. Browser Surfaces (Craft Floor) ─────────────────────────────────── */
 ::selection {
   background-color: rgba(28, 25, 23, 0.15);
   color: var(--bs-body-color);
@@ -607,8 +735,8 @@ h1, h2, h3, h4, h5, h6,
 
 /* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -617,14 +745,13 @@ h1, h2, h3, h4, h5, h6,
 
 ::-webkit-scrollbar-thumb {
   background: var(--bs-secondary-border-subtle);
-  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--bs-secondary-color);
 }
 
-/* ─── 14. Helpers & Utilities ────────────────────────────────────────────── */
+/* ─── 16. Helpers & Utilities ────────────────────────────────────────────── */
 .min-vh-25 {
   min-height: 25vh;
 }
