@@ -339,7 +339,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom-color: #1c1917;
 }
 
-.card-header.bg-primary * {
+.card-header.bg-primary h1,
+.card-header.bg-primary h2,
+.card-header.bg-primary h3,
+.card-header.bg-primary h4,
+.card-header.bg-primary h5,
+.card-header.bg-primary h6,
+.card-header.bg-primary p,
+.card-header.bg-primary a {
   color: #ffffff !important;
 }
 
@@ -349,7 +356,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom-color: #383532;
 }
 
-[data-bs-theme="dark"] .card-header.bg-primary * {
+[data-bs-theme="dark"] .card-header.bg-primary h1,
+[data-bs-theme="dark"] .card-header.bg-primary h2,
+[data-bs-theme="dark"] .card-header.bg-primary h3,
+[data-bs-theme="dark"] .card-header.bg-primary h4,
+[data-bs-theme="dark"] .card-header.bg-primary h5,
+[data-bs-theme="dark"] .card-header.bg-primary h6,
+[data-bs-theme="dark"] .card-header.bg-primary p,
+[data-bs-theme="dark"] .card-header.bg-primary a {
   color: #f5f5f4 !important;
 }
 
@@ -360,7 +374,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom-color: var(--bs-danger);
 }
 
-.card-header.bg-danger * {
+.card-header.bg-danger h1,
+.card-header.bg-danger h2,
+.card-header.bg-danger h3,
+.card-header.bg-danger h4,
+.card-header.bg-danger h5,
+.card-header.bg-danger h6,
+.card-header.bg-danger p,
+.card-header.bg-danger a {
   color: #ffffff !important;
 }
 
@@ -370,7 +391,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom: 1px solid #452121;
 }
 
-[data-bs-theme="dark"] .card-header.bg-danger * {
+[data-bs-theme="dark"] .card-header.bg-danger h1,
+[data-bs-theme="dark"] .card-header.bg-danger h2,
+[data-bs-theme="dark"] .card-header.bg-danger h3,
+[data-bs-theme="dark"] .card-header.bg-danger h4,
+[data-bs-theme="dark"] .card-header.bg-danger h5,
+[data-bs-theme="dark"] .card-header.bg-danger h6,
+[data-bs-theme="dark"] .card-header.bg-danger p,
+[data-bs-theme="dark"] .card-header.bg-danger a {
   color: #fca5a5 !important;
 }
 
@@ -381,7 +409,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom: 1px solid var(--bs-warning-border-subtle);
 }
 
-.card-header.bg-warning * {
+.card-header.bg-warning h1,
+.card-header.bg-warning h2,
+.card-header.bg-warning h3,
+.card-header.bg-warning h4,
+.card-header.bg-warning h5,
+.card-header.bg-warning h6,
+.card-header.bg-warning p,
+.card-header.bg-warning a {
   color: var(--bs-warning-text-emphasis) !important;
 }
 
@@ -391,7 +426,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom: 1px solid #4a3416;
 }
 
-[data-bs-theme="dark"] .card-header.bg-warning * {
+[data-bs-theme="dark"] .card-header.bg-warning h1,
+[data-bs-theme="dark"] .card-header.bg-warning h2,
+[data-bs-theme="dark"] .card-header.bg-warning h3,
+[data-bs-theme="dark"] .card-header.bg-warning h4,
+[data-bs-theme="dark"] .card-header.bg-warning h5,
+[data-bs-theme="dark"] .card-header.bg-warning h6,
+[data-bs-theme="dark"] .card-header.bg-warning p,
+[data-bs-theme="dark"] .card-header.bg-warning a {
   color: #fde68a !important;
 }
 
@@ -402,7 +444,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom-color: var(--bs-info);
 }
 
-.card-header.bg-info * {
+.card-header.bg-info h1,
+.card-header.bg-info h2,
+.card-header.bg-info h3,
+.card-header.bg-info h4,
+.card-header.bg-info h5,
+.card-header.bg-info h6,
+.card-header.bg-info p,
+.card-header.bg-info a {
   color: #ffffff !important;
 }
 
@@ -412,7 +461,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom: 1px solid #223847;
 }
 
-[data-bs-theme="dark"] .card-header.bg-info * {
+[data-bs-theme="dark"] .card-header.bg-info h1,
+[data-bs-theme="dark"] .card-header.bg-info h2,
+[data-bs-theme="dark"] .card-header.bg-info h3,
+[data-bs-theme="dark"] .card-header.bg-info h4,
+[data-bs-theme="dark"] .card-header.bg-info h5,
+[data-bs-theme="dark"] .card-header.bg-info h6,
+[data-bs-theme="dark"] .card-header.bg-info p,
+[data-bs-theme="dark"] .card-header.bg-info a {
   color: #bae6fd !important;
 }
 
@@ -423,7 +479,14 @@ h1, h2, h3, h4, h5, h6,
   border-bottom-color: var(--bs-success);
 }
 
-.card-header.bg-success * {
+.card-header.bg-success h1,
+.card-header.bg-success h2,
+.card-header.bg-success h3,
+.card-header.bg-success h4,
+.card-header.bg-success h5,
+.card-header.bg-success h6,
+.card-header.bg-success p,
+.card-header.bg-success a {
   color: #ffffff !important;
 }
 
@@ -689,84 +752,54 @@ h1, h2, h3, h4, h5, h6,
   --bs-table-color: var(--bs-warning-text-emphasis);
 }
 
-/* ─── 13. Badges: Solid High-Contrast (Badge Normal) ─────────────────────── */
-/* Solid backgrounds ensure badges stand out clearly over white cards, tables, and colored headers */
+/* ─── 13. Badges: Modern Soft Pastels with Crisp Borders (Bordes Rectos) ─── */
 .badge {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.02em;
   padding: 0.35em 0.65em;
-  border: none !important;
-  text-transform: none;
+  border-radius: 0 !important;
 }
 
 .badge.bg-primary {
-  background-color: #1c1917 !important;
-  color: #ffffff !important;
-}
-
-[data-bs-theme="dark"] .badge.bg-primary {
-  background-color: #d6d3d1 !important;
-  color: #1c1917 !important;
+  background-color: var(--bs-primary-bg-subtle) !important;
+  color: var(--bs-primary-text-emphasis) !important;
+  border: 1px solid var(--bs-primary-border-subtle) !important;
 }
 
 .badge.bg-secondary {
-  background-color: #57534e !important;
-  color: #ffffff !important;
-}
-
-[data-bs-theme="dark"] .badge.bg-secondary {
-  background-color: #383532 !important;
-  color: #d6d3d1 !important;
+  background-color: var(--bs-secondary-bg-subtle) !important;
+  color: var(--bs-secondary-text-emphasis) !important;
+  border: 1px solid var(--bs-secondary-border-subtle) !important;
 }
 
 .badge.bg-success {
-  background-color: #166534 !important;
-  color: #ffffff !important;
-}
-
-[data-bs-theme="dark"] .badge.bg-success {
-  background-color: #244231 !important;
-  color: #86efac !important;
-  border: 1px solid #356349 !important;
+  background-color: var(--bs-success-bg-subtle) !important;
+  color: var(--bs-success-text-emphasis) !important;
+  border: 1px solid var(--bs-success-border-subtle) !important;
 }
 
 .badge.bg-danger {
-  background-color: #991b1b !important;
-  color: #ffffff !important;
-}
-
-[data-bs-theme="dark"] .badge.bg-danger {
-  background-color: #452121 !important;
-  color: #fca5a5 !important;
-  border: 1px solid #6b3131 !important;
+  background-color: var(--bs-danger-bg-subtle) !important;
+  color: var(--bs-danger-text-emphasis) !important;
+  border: 1px solid var(--bs-danger-border-subtle) !important;
 }
 
 .badge.bg-warning {
-  background-color: #b45309 !important;
-  color: #ffffff !important;
-}
-
-[data-bs-theme="dark"] .badge.bg-warning {
-  background-color: #4a3416 !important;
-  color: #fde68a !important;
-  border: 1px solid #735122 !important;
+  background-color: var(--bs-warning-bg-subtle) !important;
+  color: var(--bs-warning-text-emphasis) !important;
+  border: 1px solid var(--bs-warning-border-subtle) !important;
 }
 
 .badge.bg-info {
-  background-color: #2b506e !important;
-  color: #ffffff !important;
+  background-color: var(--bs-info-bg-subtle) !important;
+  color: var(--bs-info-text-emphasis) !important;
+  border: 1px solid var(--bs-info-border-subtle) !important;
 }
 
-[data-bs-theme="dark"] .badge.bg-info {
-  background-color: #223847 !important;
-  color: #bae6fd !important;
-  border: 1px solid #36576d !important;
-}
-
-/* Badges inside card headers: slight shadow to separate cleanly from header background */
+/* Badges inside card headers: preserve crisp soft rendering */
 .card-header .badge {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 /* ─── 14. Select2 Integration & Dark Mode ─────────────────────────────────── */
