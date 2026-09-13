@@ -100,6 +100,40 @@
                     </div>
                 </div>
 
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                        <h5 class="text-primary mb-0"><i class="bi bi-images"></i> Galería de Fotos</h5>
+                        <a asp-action="Galeria" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-gear"></i> Administrar Galería
+                        </a>
+                    </div>
+                    @{
+                        var galeria = ViewBag.Galeria as IList<inmobiliaria_lab2.Models.ImagenInmueble>;
+                    }
+                    @if (galeria != null && galeria.Any())
+                    {
+                        <div class="row g-2 row-cols-2 row-cols-md-4">
+                            @foreach (var img in galeria)
+                            {
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm border-0">
+                                        <a href="@img.Url" target="_blank" title="Ver imagen en tamaño completo">
+                                            <img src="@img.Url" alt="Foto de @Model.Direccion" class="card-img-top rounded object-fit-cover" style="height: 140px;" onerror="this.src='/img/placeholder.png';" />
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-light border text-muted d-flex align-items-center gap-2 mb-0">
+                            <i class="bi bi-info-circle fs-5"></i>
+                            <span>Este inmueble no posee imágenes adicionales en su galería. Puede agregarlas desde <strong>Administrar Galería</strong>.</span>
+                        </div>
+                    }
+                </div>
+
                 @if (Model.Latitud.HasValue && Model.Longitud.HasValue)
                 {
                     <div class="mt-4">
@@ -110,7 +144,10 @@
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
-                <div>
+                <div class="d-flex gap-2">
+                    <a asp-action="Galeria" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                        <i class="bi bi-images"></i> Galería
+                    </a>
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
                     @if (Model.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
                     {

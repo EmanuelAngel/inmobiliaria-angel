@@ -13,7 +13,7 @@
             </div>
             <div class="card-body">
 
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                     <div class="row mb-3">
@@ -88,10 +88,10 @@
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label asp-for="ImagenPortada" class="form-label"></label>
-                            <input asp-for="ImagenPortada" class="form-control" placeholder="Ej: /img/inmuebles/casa.jpg o URL" />
+                            <label for="archivoPortada" class="form-label fw-semibold">Imagen de Portada</label>
+                            <input type="file" name="archivoPortada" id="archivoPortada" accept=".jpg,.jpeg,.png,.webp,.gif" class="form-control" />
                             <span asp-validation-for="ImagenPortada" class="text-danger"></span>
-                            <div class="form-text">Ruta o URL relativa de la imagen de portada.</div>
+                            <div class="form-text">Formatos permitidos: JPG, PNG, WEBP, GIF. Máximo 5 MB.</div>
                         </div>
                         <div class="col-md-6">
                             <label asp-for="Estado" class="form-label fw-semibold"></label>

@@ -99,6 +99,18 @@ CREATE TABLE IF NOT EXISTS RESERVA (
 ) ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------------------------------
+-- 6. TABLA: IMAGEN_INMUEBLE
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS IMAGEN_INMUEBLE (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    inmueble_id INT NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_imagen_inmueble FOREIGN KEY (inmueble_id) REFERENCES INMUEBLE (id),
+    INDEX idx_imagen_inmueble_id (inmueble_id)
+) ENGINE = InnoDB;
+
+
 -- =============================================================================
 -- DATOS SEMILLA / PRUEBA INICIALES
 -- =============================================================================
@@ -259,3 +271,15 @@ VALUES
         30000.00,
         'Finalizada'
     );
+
+
+-- -----------------------------------------------------------------------------
+-- 6. DATOS: IMAGEN_INMUEBLE (Galería)
+-- -----------------------------------------------------------------------------
+INSERT INTO
+    IMAGEN_INMUEBLE (inmueble_id, url)
+VALUES
+    (1, '/img/inmuebles/casa-illia-1.jpg'),
+    (1, '/img/inmuebles/casa-illia-2.jpg'),
+    (2, '/img/inmuebles/depto-sanmartin-1.jpg'),
+    (3, '/img/inmuebles/cabana-potrero-1.jpg');

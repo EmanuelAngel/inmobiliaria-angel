@@ -1,9 +1,13 @@
 using inmobiliaria_lab2.Repositories;
+using inmobiliaria_lab2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Inyección de dependencias de servicios
+builder.Services.AddScoped<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
 
 // Inyección de dependencias de repositorios
 builder.Services.AddScoped<IRepositorioPropietario, RepositorioPropietario>();
@@ -11,6 +15,7 @@ builder.Services.AddScoped<IRepositorioInquilino, RepositorioInquilino>();
 builder.Services.AddScoped<IRepositorioTipoInmueble, RepositorioTipoInmueble>();
 builder.Services.AddScoped<IRepositorioInmueble, RepositorioInmueble>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
+builder.Services.AddScoped<IRepositorioImagenInmueble, RepositorioImagenInmueble>();
 
 var app = builder.Build();
 
@@ -28,12 +33,12 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseStaticFiles();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
