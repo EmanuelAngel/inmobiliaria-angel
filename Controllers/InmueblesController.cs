@@ -85,7 +85,7 @@ public class InmueblesController(
     {
         string? rutaPortadaGuardada = null;
 
-        if (archivoPortada != null && archivoPortada.Length > 0)
+        if (archivoPortada != null)
         {
             try
             {
@@ -158,7 +158,7 @@ public class InmueblesController(
         {
             inmueble.ImagenPortada = null;
         }
-        else if (archivoPortada != null && archivoPortada.Length > 0)
+        else if (archivoPortada != null)
         {
             try
             {
@@ -245,7 +245,6 @@ public class InmueblesController(
 
         foreach (var archivo in imagenes)
         {
-            if (archivo.Length == 0) continue;
             try
             {
                 var url = await _almacenadorArchivos.GuardarArchivoAsync(archivo, "inmuebles/galeria");
