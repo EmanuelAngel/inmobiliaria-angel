@@ -43,15 +43,13 @@ public class RepositorioImagenInmueble(IConfiguration configuration) : Repositor
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
             SELECT
-                img.id,
-                img.inmueble_id,
-                img.url,
-                i.direccion AS inmueble_direccion
+                id,
+                inmueble_id,
+                url
             FROM
-                IMAGEN_INMUEBLE img
-                INNER JOIN INMUEBLE i ON img.inmueble_id = i.id
+                IMAGEN_INMUEBLE
             WHERE
-                img.id = @id;
+                id = @id;
         """;
 
         using var comando = new MySqlCommand(query, conexion);
@@ -61,7 +59,7 @@ public class RepositorioImagenInmueble(IConfiguration configuration) : Repositor
         using var reader = comando.ExecuteReader();
         if (reader.Read())
         {
-            return MapearConJoins(reader);
+            return MapearBase(reader);
         }
 
         return null;
@@ -120,16 +118,5 @@ public class RepositorioImagenInmueble(IConfiguration configuration) : Repositor
             InmuebleId = reader.GetInt32(reader.GetOrdinal("inmueble_id")),
             Url = reader.GetString(reader.GetOrdinal("url"))
         };
-    }
-
-    private static ImagenInmueble MapearConJoins(MySqlDataReader reader)
-    {
-        var imagen = MapearBase(reader);
-        imagen.Inmueble = new Inmueble
-        {
-            Id = imagen.InmuebleId,
-            Direccion = reader.GetString(reader.GetOrdinal("inmueble_direccion"))
-        };
-        return imagen;
     }
 }
