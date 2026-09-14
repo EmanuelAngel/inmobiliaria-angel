@@ -758,8 +758,31 @@ input[type="time"] {
 
 /* Highlight row in tables */
 .table-warning {
-  --bs-table-bg: var(--bs-warning-bg-subtle);
   --bs-table-color: var(--bs-warning-text-emphasis);
+  --bs-table-bg: var(--bs-warning-bg-subtle);
+  --bs-table-border-color: var(--bs-warning-border-subtle);
+  --bs-table-striped-bg: #fef3c7;
+  --bs-table-striped-color: var(--bs-warning-text-emphasis);
+  --bs-table-active-bg: #fde68a;
+  --bs-table-active-color: var(--bs-warning-text-emphasis);
+  --bs-table-hover-bg: #fde68a;
+  --bs-table-hover-color: var(--bs-warning-text-emphasis);
+  color: var(--bs-table-color);
+  border-color: var(--bs-table-border-color);
+}
+
+[data-bs-theme="dark"] .table-warning {
+  --bs-table-color: #fde68a;
+  --bs-table-bg: #322614;
+  --bs-table-border-color: #523c1c;
+  --bs-table-striped-bg: #382c18;
+  --bs-table-striped-color: #fde68a;
+  --bs-table-active-bg: #44351e;
+  --bs-table-active-color: #fef08a;
+  --bs-table-hover-bg: #44351e;
+  --bs-table-hover-color: #fef08a;
+  color: var(--bs-table-color);
+  border-color: var(--bs-table-border-color);
 }
 
 /* ─── 13. Badges: Modern Soft Pastels with Crisp Borders (Bordes Rectos) ─── */
