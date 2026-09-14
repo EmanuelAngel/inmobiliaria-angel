@@ -480,3 +480,11 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# AI Agent tooling dependencies
+.agents/
+
+# User runtime uploads (keep folder structure via .gitkeep)
+wwwroot/uploads/**
+!wwwroot/uploads/**/
+!wwwroot/uploads/**/.gitkeep
