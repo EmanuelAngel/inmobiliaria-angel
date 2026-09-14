@@ -29,10 +29,10 @@
         @{
             var ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
         }
-        <nav class="navbar navbar-expand-md bg-body-tertiary border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-md bg-body border-bottom mb-4 app-navbar">
             <div class="container-fluid">
                 <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-buildings-fill text-primary"></i> Inmobiliaria Angel
+                    <i class="bi bi-buildings-fill brand-icon"></i> Inmobiliaria Angel
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                         aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
