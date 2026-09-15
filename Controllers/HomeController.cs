@@ -16,6 +16,13 @@ public class HomeController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult Restringido()
+    {
+        Response.StatusCode = 403;
+        return View();
+    }
+
     [Route("Home/NotFound")]
     public IActionResult NotFoundPage()
     {
