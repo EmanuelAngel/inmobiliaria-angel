@@ -93,7 +93,6 @@ CREATE TABLE IF NOT EXISTS USUARIO (
 ) ENGINE = InnoDB;
 
 
-
 -- -----------------------------------------------------------------------------
 -- 6. TABLA: RESERVA
 -- -----------------------------------------------------------------------------
@@ -131,14 +130,24 @@ CREATE TABLE IF NOT EXISTS IMAGEN_INMUEBLE (
 -- =============================================================================
 -- DATOS SEMILLA / PRUEBA INICIALES
 -- =============================================================================
+-- Credenciales iniciales de prueba para la entrega final:
+-- Administrador: admin@inmobiliaria.test / Canelones666
+-- Empleado:      empleado@inmobiliaria.test / Milanguche$$$
 INSERT INTO
-    USUARIO (nombre, apellido, email, password_hash, avatar, rol)
+    USUARIO (
+        nombre,
+        apellido,
+        email,
+        password_hash,
+        avatar,
+        rol
+    )
 VALUES
     (
         'Administrador',
         'Inicial',
         'admin@inmobiliaria.test',
-        'AQAAAAIAAYagAAAAEFY5N5CodQvJKHTGAMcikWdAjcX6GqYcnhbcxPZYbCMmgVTJBx3D2uu+eL1NDYbL3Q==',
+        'AQAAAAIAAYagAAAAEH50qbl0w853Wbb5EeGdhF9GwAL0Gjh/F23ZIh1Ty8VHwWXOLQCnnswyGd4485or8Q==',
         NULL,
         'Administrador'
     ),
@@ -146,11 +155,10 @@ VALUES
         'Empleado',
         'Inicial',
         'empleado@inmobiliaria.test',
-        'AQAAAAIAAYagAAAAEGma97ATd8S25S5dACy/A4LCzKSrAeF42nKXjad2Wp//MqcMafJSChynDZ9E1Wy5Vg==',
+        'AQAAAAIAAYagAAAAEKE2i9A0YGLlpYClj3gW/FQ5pEHTz/8X5jtBRkQAHl9d+KuXc1PdmJD6+RNVTG4m+w==',
         NULL,
         'Empleado'
     );
-
 
 
 INSERT INTO
