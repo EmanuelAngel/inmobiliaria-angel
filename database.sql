@@ -228,11 +228,91 @@ VALUES
         1
     ),
     (
+        'Patricia Noemí',
+        'Castro',
+        '23456789',
+        'patricia.castro@email.com',
+        '2664789123',
+        1
+    ),
+    (
+        'Hernán Edgardo',
+        'Domínguez',
+        '25678901',
+        'hernan.dominguez@email.com',
+        '2664890234',
+        1
+    ),
+    (
+        'Silvia Beatriz',
+        'Vega',
+        '21345678',
+        'silvia.vega@email.com',
+        '2664234567',
+        1
+    ),
+    (
+        'Fernando Gabriel',
+        'Ortiz',
+        '28901234',
+        'fernando.ortiz@email.com',
+        '2664345678',
+        1
+    ),
+    (
+        'Natalia Soledad',
+        'Lucero',
+        '30123456',
+        'natalia.lucero@email.com',
+        '2664456789',
+        1
+    ),
+    (
+        'Jorge Alberto',
+        'Quiroga',
+        '17890123',
+        'jorge.quiroga@email.com',
+        '2664567890',
+        1
+    ),
+    (
+        'Valeria Inés',
+        'Giménez',
+        '29012345',
+        'valeria.gimenez@email.com',
+        '2664678901',
+        1
+    ),
+    (
+        'Marcelo Alejandro',
+        'Romero',
+        '26789012',
+        'marcelo.romero@email.com',
+        '2664789012',
+        1
+    ),
+    (
+        'Laura Cristina',
+        'Ponce',
+        '31234567',
+        'laura.ponce@email.com',
+        '2664890123',
+        1
+    ),
+    (
         'Osvaldo Darío',
         'Torres',
         '16222333',
         'osvaldo.torres@email.com',
         '2664222333',
+        0
+    ),
+    (
+        'Diego Armando',
+        'Silva',
+        '19012345',
+        'diego.silva@email.com',
+        '2664901234',
         0
     );
 
@@ -276,10 +356,80 @@ VALUES
         1
     ),
     (
+        '37111222',
+        'Camila Florencia Moyano',
+        'camila.moyano@email.com',
+        '2664112233',
+        1
+    ),
+    (
+        '39222333',
+        'Facundo Nicolás Cabrera',
+        'facundo.cabrera@email.com',
+        '2664223344',
+        1
+    ),
+    (
+        '41333444',
+        'Julieta Belén Navarro',
+        'julieta.navarro@email.com',
+        '2664334455',
+        1
+    ),
+    (
+        '34555666',
+        'Gonzalo Damián Sosa',
+        'gonzalo.sosa@email.com',
+        '2664445566',
+        1
+    ),
+    (
+        '43666777',
+        'Micaela Ayelén Figueroa',
+        'micaela.figueroa@email.com',
+        '2664556677',
+        1
+    ),
+    (
+        '32777888',
+        'Rodrigo Emanuel Díaz',
+        'rodrigo.diaz@email.com',
+        '2664667788',
+        1
+    ),
+    (
+        '44888999',
+        'Agustina Rocío Suárez',
+        'agustina.suarez@email.com',
+        '2664778899',
+        1
+    ),
+    (
+        '35999001',
+        'Tomás Agustín Luna',
+        'tomas.luna@email.com',
+        '2664889900',
+        1
+    ),
+    (
+        '41000111',
+        'Romina Daiana Blanco',
+        'romina.blanco@email.com',
+        '2664990011',
+        1
+    ),
+    (
         '33222111',
         'Federico Ruiz',
         'federico.ruiz@email.com',
         '2664222111',
+        0
+    ),
+    (
+        '31444555',
+        'Matías Ezequiel Peralta',
+        'matias.peralta@email.com',
+        '2664001122',
         0
     );
 
