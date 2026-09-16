@@ -15,9 +15,12 @@
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
                 <i class="bi bi-pencil"></i> Editar
             </a>
-            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
-                <i class="bi bi-x-circle"></i> Cancelar Reserva
-            </a>
+            @if (User.IsInRole("Administrador"))
+            {
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                    <i class="bi bi-x-circle"></i> Cancelar Reserva
+                </a>
+            }
         }
     </div>
 </div>
@@ -131,5 +134,89 @@
             </div>
         </div>
     </div>
+
+    @* Auditoría — visible solo para Administrador *@
+    @if (User.IsInRole("Administrador"))
+    {
+        var usuarioCreacion = ViewBag.UsuarioCreacion as inmobiliaria_lab2.Models.Usuario;
+        var usuarioTerminacion = ViewBag.UsuarioTerminacion as inmobiliaria_lab2.Models.Usuario;
+
+        <div class="col-12">
+            <div class="card shadow-sm border-secondary">
+                <div class="card-header fw-semibold bg-body-tertiary d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-lock text-primary"></i> Información de Auditoría
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="text-uppercase text-muted small fw-semibold mb-2">Creado por</div>
+                            @if (usuarioCreacion != null)
+                            {
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (!string.IsNullOrEmpty(usuarioCreacion.Avatar))
+                                    {
+                                        <img src="@usuarioCreacion.Avatar" alt="@usuarioCreacion.NombreCompleto" class="rounded-circle border object-fit-cover" width="36" height="36" />
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-person-circle fs-3 text-secondary"></i>
+                                    }
+                                    <div>
+                                        <a asp-controller="Usuarios" asp-action="Detalles" asp-route-id="@usuarioCreacion.Id" class="fw-semibold text-decoration-none">
+                                            @usuarioCreacion.NombreCompleto
+                                        </a>
+                                        <div class="small text-muted">
+                                            @usuarioCreacion.Email &bull; <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">@usuarioCreacion.Rol</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (Model?.UsuarioCreacionId.HasValue == true)
+                            {
+                                <span class="text-muted">Usuario ID #@Model.UsuarioCreacionId.Value</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">No registrado</span>
+                            }
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="text-uppercase text-muted small fw-semibold mb-2">Finalizado / Cancelado por</div>
+                            @if (usuarioTerminacion != null)
+                            {
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (!string.IsNullOrEmpty(usuarioTerminacion.Avatar))
+                                    {
+                                        <img src="@usuarioTerminacion.Avatar" alt="@usuarioTerminacion.NombreCompleto" class="rounded-circle border object-fit-cover" width="36" height="36" />
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-person-circle fs-3 text-secondary"></i>
+                                    }
+                                    <div>
+                                        <a asp-controller="Usuarios" asp-action="Detalles" asp-route-id="@usuarioTerminacion.Id" class="fw-semibold text-decoration-none">
+                                            @usuarioTerminacion.NombreCompleto
+                                        </a>
+                                        <div class="small text-muted">
+                                            @usuarioTerminacion.Email &bull; <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">@usuarioTerminacion.Rol</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (Model?.UsuarioTerminacionId.HasValue == true)
+                            {
+                                <span class="text-muted">Usuario ID #@Model.UsuarioTerminacionId.Value</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">No aplica (reserva activa)</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 
 </div>

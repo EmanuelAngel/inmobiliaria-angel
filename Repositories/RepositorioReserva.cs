@@ -203,6 +203,7 @@ public class RepositorioReserva(IConfiguration configuration) : RepositorioBase(
                 RESERVA (
                     inquilino_id,
                     inmueble_id,
+                    usuario_creacion_id,
                     fecha_desde,
                     fecha_hasta,
                     monto_por_dia,
@@ -212,6 +213,7 @@ public class RepositorioReserva(IConfiguration configuration) : RepositorioBase(
                 (
                     @inquilino_id,
                     @inmueble_id,
+                    @usuario_creacion_id,
                     @fecha_desde,
                     @fecha_hasta,
                     @monto_por_dia,
@@ -225,6 +227,7 @@ public class RepositorioReserva(IConfiguration configuration) : RepositorioBase(
         using var comando = new MySqlCommand(query, conexion);
         comando.Parameters.AddWithValue("@inquilino_id", reserva.InquilinoId);
         comando.Parameters.AddWithValue("@inmueble_id", reserva.InmuebleId);
+        comando.Parameters.AddWithValue("@usuario_creacion_id", (object?)reserva.UsuarioCreacionId ?? DBNull.Value);
         comando.Parameters.AddWithValue("@fecha_desde", reserva.FechaDesde.ToDateTime(TimeOnly.MinValue));
         comando.Parameters.AddWithValue("@fecha_hasta", reserva.FechaHasta.ToDateTime(TimeOnly.MinValue));
         comando.Parameters.AddWithValue("@monto_por_dia", reserva.MontoPorDia);
@@ -269,13 +272,16 @@ public class RepositorioReserva(IConfiguration configuration) : RepositorioBase(
         return comando.ExecuteNonQuery();
     }
 
-    public int Baja(int id)
+    public int Baja(int id) => Baja(id, null);
+
+    public int Baja(int id, int? usuarioTerminacionId)
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
             UPDATE RESERVA
             SET
-                estado = @estado
+                estado = @estado,
+                usuario_terminacion_id = @usuario_terminacion_id
             WHERE
                 id = @id;
         """;
@@ -283,10 +289,13 @@ public class RepositorioReserva(IConfiguration configuration) : RepositorioBase(
         using var comando = new MySqlCommand(query, conexion);
         comando.Parameters.AddWithValue("@id", id);
         comando.Parameters.AddWithValue("@estado", EstadoReserva.Cancelada.ToString());
+        comando.Parameters.AddWithValue("@usuario_terminacion_id", (object?)usuarioTerminacionId ?? DBNull.Value);
 
         conexion.Open();
         return comando.ExecuteNonQuery();
     }
+
+    public int Cancelar(int id, int? usuarioTerminacionId = null) => Baja(id, usuarioTerminacionId);
 
     public bool VerificarDisponibilidad(int inmuebleId, DateOnly desde, DateOnly hasta, int? excluirReservaId = null)
     {

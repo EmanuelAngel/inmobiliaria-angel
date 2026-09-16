@@ -78,7 +78,23 @@ CREATE TABLE IF NOT EXISTS INMUEBLE (
 
 
 -- -----------------------------------------------------------------------------
--- 5. TABLA: RESERVA
+-- 5. TABLA: USUARIO
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS USUARIO (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    avatar VARCHAR(255) NULL,
+    rol VARCHAR(20) NOT NULL,
+    activo TINYINT(1) NOT NULL DEFAULT 1,
+    CONSTRAINT chk_usuario_rol CHECK (rol IN ('Administrador', 'Empleado'))
+) ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------------------------------
+-- 6. TABLA: RESERVA
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS RESERVA (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -100,7 +116,7 @@ CREATE TABLE IF NOT EXISTS RESERVA (
 
 
 -- -----------------------------------------------------------------------------
--- 6. TABLA: IMAGEN_INMUEBLE
+-- 7. TABLA: IMAGEN_INMUEBLE
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS IMAGEN_INMUEBLE (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -114,6 +130,37 @@ CREATE TABLE IF NOT EXISTS IMAGEN_INMUEBLE (
 -- =============================================================================
 -- DATOS SEMILLA / PRUEBA INICIALES
 -- =============================================================================
+-- Credenciales iniciales de prueba para la entrega final:
+-- Administrador: admin@inmobiliaria.test / Canelones666
+-- Empleado:      empleado@inmobiliaria.test / Milanguche$$$
+INSERT INTO
+    USUARIO (
+        nombre,
+        apellido,
+        email,
+        password_hash,
+        avatar,
+        rol
+    )
+VALUES
+    (
+        'Administrador',
+        'Inicial',
+        'admin@inmobiliaria.test',
+        'AQAAAAIAAYagAAAAEH50qbl0w853Wbb5EeGdhF9GwAL0Gjh/F23ZIh1Ty8VHwWXOLQCnnswyGd4485or8Q==',
+        NULL,
+        'Administrador'
+    ),
+    (
+        'Empleado',
+        'Inicial',
+        'empleado@inmobiliaria.test',
+        'AQAAAAIAAYagAAAAEKE2i9A0YGLlpYClj3gW/FQ5pEHTz/8X5jtBRkQAHl9d+KuXc1PdmJD6+RNVTG4m+w==',
+        NULL,
+        'Empleado'
+    );
+
+
 INSERT INTO
     PROPIETARIO (nombre, apellido, dni, email, telefono)
 VALUES

@@ -70,6 +70,15 @@
                                 <i class="bi bi-tags"></i> Tipos de Inmueble
                             </a>
                         </li>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(ctrl == "Usuarios" ? "active fw-semibold" : "")"
+                                   asp-area="" asp-controller="Usuarios" asp-action="Index">
+                                    <i class="bi bi-people-fill"></i> Usuarios
+                                </a>
+                            </li>
+                        }
                     </ul>
                     <div class="d-flex align-items-center gap-2">
                         <div class="dropdown">
@@ -96,6 +105,57 @@
                                 </li>
                             </ul>
                         </div>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            var nombreCompleto = User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value;
+                            var nombreAMostrar = !string.IsNullOrWhiteSpace(nombreCompleto) ? nombreCompleto : (User.Identity?.Name ?? "Usuario");
+                            var avatarUrl = User.FindFirst("Avatar")?.Value;
+                            var esAdmin = User.IsInRole("Administrador");
+                            var badgeClass = esAdmin ? "bg-danger" : "bg-secondary";
+                            var rolTexto = esAdmin ? "Administrador" : "Empleado";
+
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2 py-1 px-2"
+                                        type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @if (!string.IsNullOrEmpty(avatarUrl))
+                                    {
+                                        <img src="@avatarUrl" alt="@nombreAMostrar" class="rounded-circle object-fit-cover" width="28" height="28" />
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-person-circle fs-5"></i>
+                                    }
+                                    <span class="d-none d-lg-inline fw-semibold">@nombreAMostrar</span>
+                                    <span class="badge @badgeClass ms-1">@rolTexto</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenuDropdown">
+                                    <li class="px-3 py-2 border-bottom d-lg-none">
+                                        <div class="fw-bold">@nombreAMostrar</div>
+                                        <small class="text-muted">@User.Identity?.Name</small>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" asp-controller="Usuarios" asp-action="Perfil">
+                                            <i class="bi bi-person-gear"></i> Mi Perfil
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form asp-controller="Usuarios" asp-action="Logout" method="post" class="m-0 p-0">
+                                            <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2">
+                                                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a asp-controller="Usuarios" asp-action="Login" class="btn btn-primary d-flex align-items-center gap-1">
+                                <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                            </a>
+                        }
                     </div>
                 </div>
             </div>

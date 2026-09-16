@@ -17,4 +17,6 @@ public interface IRepositorioReserva : IRepositorio<Reserva>
     IList<Reserva> ObtenerPorInmueble(int inmuebleId);
     IList<Reserva> ObtenerLista(string? estado, int nroDePagina = 1, int tamDePagina = 10);
     int ObtenerCantidad(string? estado = null);
+    int Baja(int id, int? usuarioTerminacionId);
+    int Cancelar(int id, int? usuarioTerminacionId = null);
 }

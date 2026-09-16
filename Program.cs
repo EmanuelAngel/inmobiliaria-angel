@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using inmobiliaria_lab2.Repositories;
 using inmobiliaria_lab2.Services;
 
@@ -5,6 +6,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Configuración de autenticación por cookies
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Usuarios/Login";
+        options.LogoutPath = "/Usuarios/Logout";
+        options.AccessDeniedPath = "/Home/Restringido";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+    });
 
 // Inyección de dependencias de servicios
 builder.Services.AddScoped<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
@@ -16,6 +30,8 @@ builder.Services.AddScoped<IRepositorioTipoInmueble, RepositorioTipoInmueble>();
 builder.Services.AddScoped<IRepositorioInmueble, RepositorioInmueble>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioImagenInmueble, RepositorioImagenInmueble>();
+builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
+
 
 var app = builder.Build();
 
@@ -32,6 +48,7 @@ app.UseStaticFiles();
 app.UseStatusCodePagesWithReExecute("/Home/NotFound");
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
