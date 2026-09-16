@@ -10,12 +10,14 @@ namespace inmobiliaria_lab2.Controllers;
 public class ReservasController(
     IRepositorioReserva repositorioReserva,
     IRepositorioInquilino repositorioInquilino,
-    IRepositorioInmueble repositorioInmueble
+    IRepositorioInmueble repositorioInmueble,
+    IRepositorioUsuario repositorioUsuario
 ) : Controller
 {
     private readonly IRepositorioReserva _repositorioReserva = repositorioReserva;
     private readonly IRepositorioInquilino _repositorioInquilino = repositorioInquilino;
     private readonly IRepositorioInmueble _repositorioInmueble = repositorioInmueble;
+    private readonly IRepositorioUsuario _repositorioUsuario = repositorioUsuario;
 
     // GET: Reservas
     public IActionResult Index(int pagina = 1, int tamDePagina = 10, string? estado = null)
@@ -55,6 +57,18 @@ public class ReservasController(
         var reserva = _repositorioReserva.ObtenerPorId(id);
         if (reserva == null)
             return NotFound();
+
+        if (User.IsInRole("Administrador"))
+        {
+            if (reserva.UsuarioCreacionId.HasValue)
+            {
+                ViewBag.UsuarioCreacion = _repositorioUsuario.ObtenerPorId(reserva.UsuarioCreacionId.Value, soloActivos: false);
+            }
+            if (reserva.UsuarioTerminacionId.HasValue)
+            {
+                ViewBag.UsuarioTerminacion = _repositorioUsuario.ObtenerPorId(reserva.UsuarioTerminacionId.Value, soloActivos: false);
+            }
+        }
 
         return View(reserva);
     }

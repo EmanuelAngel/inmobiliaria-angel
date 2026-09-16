@@ -74,17 +74,20 @@
                 <a asp-action="Index" class="btn btn-secondary">
                     <i class="bi bi-arrow-left me-1"></i> Volver al listado
                 </a>
-                <div class="d-flex gap-2">
-                    <a asp-action="Editar" asp-route-id="@Model.Id" class="btn btn-warning">
-                        <i class="bi bi-pencil me-1"></i> Editar
-                    </a>
-                    @if (!esUsuarioActual)
-                    {
-                        <a asp-action="Eliminar" asp-route-id="@Model.Id" class="btn btn-danger">
-                            <i class="bi bi-trash me-1"></i> Eliminar
+                @if (Model.Activo)
+                {
+                    <div class="d-flex gap-2">
+                        <a asp-action="Editar" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="bi bi-pencil me-1"></i> Editar
                         </a>
-                    }
-                </div>
+                        @if (!esUsuarioActual)
+                        {
+                            <a asp-action="Eliminar" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i> Eliminar
+                            </a>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>

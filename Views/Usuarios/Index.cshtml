@@ -15,6 +15,24 @@
     </a>
 </div>
 
+@{
+    var estadoFiltro = (ViewBag.Estado as string)?.ToLower() ?? "activos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div class="btn-group btn-group-sm" role="group" aria-label="Filtro de estado">
+        <a asp-action="Index" asp-route-estado="activos" class="btn @(estadoFiltro == "activos" ? "btn-primary" : "btn-outline-secondary")">
+            Activos
+        </a>
+        <a asp-action="Index" asp-route-estado="inactivos" class="btn @(estadoFiltro == "inactivos" ? "btn-primary" : "btn-outline-secondary")">
+            Inactivos
+        </a>
+        <a asp-action="Index" asp-route-estado="todos" class="btn @(estadoFiltro == "todos" ? "btn-primary" : "btn-outline-secondary")">
+            Todos
+        </a>
+    </div>
+</div>
+
 <div class="card shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -78,23 +96,32 @@
                                 </td>
                                 <td class="text-end text-nowrap">
                                     <div class="d-inline-flex gap-1 align-items-center">
-                                        <a asp-action="Detalles" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white" data-bs-toggle="tooltip" title="Ver detalles">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        @if (esUsuarioActual)
+                                        @if (item.Activo)
                                         {
-                                            <button class="btn btn-sm btn-outline-secondary disabled" title="No puedes eliminar tu propia cuenta" disabled>
-                                                <i class="bi bi-trash"></i>
-                                            </button>
+                                            <a asp-action="Detalles" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white" data-bs-toggle="tooltip" title="Ver detalles">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            @if (esUsuarioActual)
+                                            {
+                                                <button class="btn btn-sm btn-outline-secondary disabled" title="No puedes eliminar tu propia cuenta" disabled>
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="Eliminar" asp-route-id="@item.Id" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            }
                                         }
                                         else
                                         {
-                                            <a asp-action="Eliminar" asp-route-id="@item.Id" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Eliminar">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
+                                            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalReactivarUsuario" data-id="@item.Id" data-nombre="@item.NombreCompleto" title="Reactivar usuario">
+                                                <i class="bi bi-arrow-counterclockwise"></i> Reactivar
+                                            </button>
                                         }
                                     </div>
                                 </td>
@@ -115,3 +142,56 @@
     </div>
     <partial name="_Paginador" model="ViewBag.Paginacion as PaginacionViewModel" />
 </div>
+
+<!-- Modal de Confirmación de Reactivación Bootstrap -->
+<div class="modal fade" id="modalReactivarUsuario" tabindex="-1" aria-labelledby="modalReactivarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalReactivarUsuarioLabel">
+                    <i class="bi bi-arrow-counterclockwise text-success me-2"></i>Confirmar reactivación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">¿Confirma que desea reactivar al usuario <strong id="modalUsuarioNombre"></strong>?</p>
+                <small class="text-muted d-block">La cuenta volverá a figurar en los listados activos y el usuario podrá iniciar sesión nuevamente en el sistema.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form asp-action="Activar" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="modalUsuarioId" value="" />
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle me-1"></i>Reactivar usuario
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalReactivar = document.getElementById('modalReactivarUsuario');
+            if (modalReactivar) {
+                modalReactivar.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+                    const nombre = button.getAttribute('data-nombre');
+
+                    const inputId = document.getElementById('modalUsuarioId');
+                    const spanNombre = document.getElementById('modalUsuarioNombre');
+
+                    if (inputId) {
+                        inputId.value = id || '';
+                    }
+                    if (spanNombre) {
+                        spanNombre.textContent = nombre || 'seleccionado';
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -6,12 +6,22 @@ namespace inmobiliaria_lab2.Repositories;
 public class RepositorioUsuario(IConfiguration configuration) : RepositorioBase(configuration), IRepositorioUsuario
 {
     public IList<Usuario> ObtenerLista(int nroDePagina = 1, int tamDePagina = 12)
+        => ObtenerLista(null, nroDePagina, tamDePagina);
+
+    public IList<Usuario> ObtenerLista(string? estado, int nroDePagina = 1, int tamDePagina = 12)
     {
         var lista = new List<Usuario>();
         var offset = (Math.Max(1, nroDePagina) - 1) * tamDePagina;
 
         using var conexion = new MySqlConnection(ConnectionString);
-        const string query = """
+
+        var whereClause = string.Equals(estado, "inactivos", StringComparison.OrdinalIgnoreCase)
+            ? "WHERE activo = 0"
+            : string.Equals(estado, "todos", StringComparison.OrdinalIgnoreCase)
+                ? ""
+                : "WHERE activo = 1";
+
+        var query = $"""
             SELECT
                 id,
                 nombre,
@@ -23,8 +33,7 @@ public class RepositorioUsuario(IConfiguration configuration) : RepositorioBase(
                 activo
             FROM
                 USUARIO
-            WHERE
-                activo = 1
+            {whereClause}
             ORDER BY
                 apellido,
                 nombre
@@ -97,24 +106,43 @@ public class RepositorioUsuario(IConfiguration configuration) : RepositorioBase(
     }
 
     public Usuario? ObtenerPorId(int id)
+        => ObtenerPorId(id, true);
+
+    public Usuario? ObtenerPorId(int id, bool soloActivos)
     {
         using var conexion = new MySqlConnection(ConnectionString);
-        const string query = """
-            SELECT
-                id,
-                nombre,
-                apellido,
-                email,
-                password_hash,
-                avatar,
-                rol,
-                activo
-            FROM
-                USUARIO
-            WHERE
-                id = @id
-                AND activo = 1;
-        """;
+        var query = soloActivos
+            ? """
+                SELECT
+                    id,
+                    nombre,
+                    apellido,
+                    email,
+                    password_hash,
+                    avatar,
+                    rol,
+                    activo
+                FROM
+                    USUARIO
+                WHERE
+                    id = @id
+                    AND activo = 1;
+            """
+            : """
+                SELECT
+                    id,
+                    nombre,
+                    apellido,
+                    email,
+                    password_hash,
+                    avatar,
+                    rol,
+                    activo
+                FROM
+                    USUARIO
+                WHERE
+                    id = @id;
+            """;
 
         using var comando = new MySqlCommand(query, conexion);
         comando.Parameters.AddWithValue("@id", id);
@@ -126,24 +154,43 @@ public class RepositorioUsuario(IConfiguration configuration) : RepositorioBase(
     }
 
     public Usuario? ObtenerPorEmail(string email)
+        => ObtenerPorEmail(email, true);
+
+    public Usuario? ObtenerPorEmail(string email, bool soloActivos = true)
     {
         using var conexion = new MySqlConnection(ConnectionString);
-        const string query = """
-            SELECT
-                id,
-                nombre,
-                apellido,
-                email,
-                password_hash,
-                avatar,
-                rol,
-                activo
-            FROM
-                USUARIO
-            WHERE
-                email = @email
-                AND activo = 1;
-        """;
+        var query = soloActivos
+            ? """
+                SELECT
+                    id,
+                    nombre,
+                    apellido,
+                    email,
+                    password_hash,
+                    avatar,
+                    rol,
+                    activo
+                FROM
+                    USUARIO
+                WHERE
+                    email = @email
+                    AND activo = 1;
+            """
+            : """
+                SELECT
+                    id,
+                    nombre,
+                    apellido,
+                    email,
+                    password_hash,
+                    avatar,
+                    rol,
+                    activo
+                FROM
+                    USUARIO
+                WHERE
+                    email = @email;
+            """;
 
         using var comando = new MySqlCommand(query, conexion);
         comando.Parameters.AddWithValue("@email", email.Trim());
@@ -295,16 +342,44 @@ public class RepositorioUsuario(IConfiguration configuration) : RepositorioBase(
         return comando.ExecuteNonQuery();
     }
 
-    public int ObtenerCantidad()
+    public int Activar(int id)
     {
         using var conexion = new MySqlConnection(ConnectionString);
         const string query = """
+            UPDATE
+                USUARIO
+            SET
+                activo = 1
+            WHERE
+                id = @id;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@id", id);
+
+        conexion.Open();
+        return comando.ExecuteNonQuery();
+    }
+
+    public int ObtenerCantidad()
+        => ObtenerCantidad(null);
+
+    public int ObtenerCantidad(string? estado)
+    {
+        using var conexion = new MySqlConnection(ConnectionString);
+
+        var whereClause = string.Equals(estado, "inactivos", StringComparison.OrdinalIgnoreCase)
+            ? "WHERE activo = 0"
+            : string.Equals(estado, "todos", StringComparison.OrdinalIgnoreCase)
+                ? ""
+                : "WHERE activo = 1";
+
+        var query = $"""
             SELECT
                 COUNT(id)
             FROM
                 USUARIO
-            WHERE
-                activo = 1;
+            {whereClause};
         """;
 
         using var comando = new MySqlCommand(query, conexion);

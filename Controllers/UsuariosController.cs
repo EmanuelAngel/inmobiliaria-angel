@@ -101,13 +101,13 @@ public class UsuariosController(
 
     [Authorize(Roles = "Administrador")]
     [HttpGet]
-    public IActionResult Index(int pagina = 1, int tamDePagina = 10)
+    public IActionResult Index(int pagina = 1, int tamDePagina = 10, string? estado = null)
     {
         pagina = Math.Max(1, pagina);
         tamDePagina = Math.Clamp(tamDePagina, 1, 50);
 
-        var lista = _repoUsuario.ObtenerLista(pagina, tamDePagina);
-        var total = _repoUsuario.ObtenerCantidad();
+        var lista = _repoUsuario.ObtenerLista(estado, pagina, tamDePagina);
+        var total = _repoUsuario.ObtenerCantidad(estado);
 
         var model = lista.Select(u => new UsuarioListadoViewModel
         {
@@ -119,6 +119,12 @@ public class UsuariosController(
             Activo = u.Activo
         }).ToList();
 
+        var valoresRuta = new Dictionary<string, string>();
+        if (!string.IsNullOrEmpty(estado))
+        {
+            valoresRuta["estado"] = estado;
+        }
+
         ViewBag.Paginacion = new PaginacionViewModel
         {
             PaginaActual = pagina,
@@ -126,8 +132,10 @@ public class UsuariosController(
             TotalPaginas = (int)Math.Ceiling((double)total / tamDePagina),
             TotalRegistros = total,
             Controlador = "Usuarios",
-            Accion = "Index"
+            Accion = "Index",
+            ValoresRuta = valoresRuta
         };
+        ViewBag.Estado = estado;
 
         return View(model);
     }
@@ -136,7 +144,7 @@ public class UsuariosController(
     [HttpGet]
     public IActionResult Detalles(int id)
     {
-        var usuario = _repoUsuario.ObtenerPorId(id);
+        var usuario = _repoUsuario.ObtenerPorId(id, soloActivos: false);
         if (usuario == null)
         {
             return NotFound();
@@ -173,10 +181,17 @@ public class UsuariosController(
             return View(model);
         }
 
-        var existente = _repoUsuario.ObtenerPorEmail(model.Email);
+        var existente = _repoUsuario.ObtenerPorEmail(model.Email, soloActivos: false);
         if (existente != null)
         {
-            ModelState.AddModelError(nameof(model.Email), "El correo electrónico ya se encuentra registrado.");
+            if (existente.Activo)
+            {
+                ModelState.AddModelError(nameof(model.Email), "El correo electrónico ya se encuentra registrado por un usuario activo.");
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(model.Email), "El correo electrónico pertenece a un usuario inactivo. Puede reactivarlo desde el listado de usuarios.");
+            }
             return View(model);
         }
 
@@ -259,10 +274,11 @@ public class UsuariosController(
 
         if (!string.Equals(usuario.Email, model.Email.Trim(), StringComparison.OrdinalIgnoreCase))
         {
-            var existente = _repoUsuario.ObtenerPorEmail(model.Email);
+            var existente = _repoUsuario.ObtenerPorEmail(model.Email, soloActivos: false);
             if (existente != null && existente.Id != id)
             {
-                ModelState.AddModelError(nameof(model.Email), "El correo electrónico ya se encuentra registrado por otro usuario.");
+                var estadoMsg = existente.Activo ? "un usuario activo" : "un usuario inactivo";
+                ModelState.AddModelError(nameof(model.Email), $"El correo electrónico ya se encuentra registrado por {estadoMsg}.");
                 model.AvatarActual = usuario.Avatar;
                 return View(model);
             }
@@ -379,6 +395,24 @@ public class UsuariosController(
 
         TempData["Mensaje"] = "Usuario eliminado correctamente.";
         return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Roles = "Administrador")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Activar(int id)
+    {
+        var usuario = _repoUsuario.ObtenerPorId(id, soloActivos: false);
+        if (usuario == null)
+        {
+            return NotFound();
+        }
+
+        _repoUsuario.Activar(id);
+        _logger.LogInformation("Usuario ID {Id} reactivado correctamente.", id);
+
+        TempData["Mensaje"] = "Usuario reactivado correctamente.";
+        return RedirectToAction(nameof(Index), new { estado = "inactivos" });
     }
 
     #endregion
