@@ -84,4 +84,30 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     })();
+
+    // Alternar visibilidad de contraseña (botón ojo)
+    document.addEventListener('click', function (e) {
+        const toggleBtn = e.target.closest('[data-password-toggle]');
+        if (!toggleBtn) return;
+
+        e.preventDefault();
+        const inputGroup = toggleBtn.closest('.input-group');
+        const targetSelector = toggleBtn.getAttribute('data-target');
+        const input = targetSelector
+            ? document.querySelector(targetSelector)
+            : (inputGroup ? inputGroup.querySelector('input') : null);
+
+        if (!input) return;
+
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+
+        const icon = toggleBtn.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('bi-eye', !isPassword);
+            icon.classList.toggle('bi-eye-slash', isPassword);
+        }
+
+        toggleBtn.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    });
 });

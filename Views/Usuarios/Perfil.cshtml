@@ -117,6 +117,9 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
                                     <input asp-for="ClaveActual" type="password" class="form-control" placeholder="Ingrese su contraseña actual para confirmar" autocomplete="current-password" />
+                                    <button class="btn btn-outline-secondary" type="button" data-password-toggle aria-label="Mostrar contraseña">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
                                 </div>
                                 <span asp-validation-for="ClaveActual" class="text-danger small"></span>
                             </div>
@@ -127,6 +130,9 @@
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-key"></i></span>
                                         <input asp-for="NuevaClave" type="password" class="form-control" placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
+                                        <button class="btn btn-outline-secondary" type="button" data-password-toggle aria-label="Mostrar contraseña">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
                                     </div>
                                     <span asp-validation-for="NuevaClave" class="text-danger small"></span>
                                 </div>
@@ -135,6 +141,9 @@
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
                                         <input asp-for="ConfirmarClave" type="password" class="form-control" placeholder="Repita la nueva contraseña" autocomplete="new-password" />
+                                        <button class="btn btn-outline-secondary" type="button" data-password-toggle aria-label="Mostrar contraseña">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
                                     </div>
                                     <span asp-validation-for="ConfirmarClave" class="text-danger small"></span>
                                 </div>

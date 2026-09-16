@@ -43,6 +43,9 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-key"></i></span>
                                 <input asp-for="Password" type="password" class="form-control" placeholder="Mínimo 8 caracteres" />
+                                <button class="btn btn-outline-secondary" type="button" data-password-toggle aria-label="Mostrar contraseña">
+                                    <i class="bi bi-eye"></i>
+                                </button>
                             </div>
                             <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
