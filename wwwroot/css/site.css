@@ -918,3 +918,19 @@ input[type="time"] {
 .min-vh-25 {
   min-height: 25vh;
 }
+
+/* ─── 17. Notyf Toast Customization ──────────────────────────────────────── */
+.notyf {
+  font-family: inherit;
+}
+
+.notyf__toast {
+  border-radius: var(--border-radius-card, 0.375rem);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.08);
+}
+
+.notyf__message {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  font-weight: 500;
+}

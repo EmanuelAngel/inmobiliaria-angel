@@ -1,3 +1,50 @@
+// Instancia global de Notyf configurada con la paleta arquitectónica del proyecto
+window.notyf = typeof Notyf !== 'undefined' ? new Notyf({
+    duration: 4000,
+    position: { x: 'right', y: 'bottom' },
+    dismissible: true,
+    types: [
+        {
+            type: 'success',
+            background: '#166534',
+            icon: {
+                className: 'bi bi-check-circle-fill',
+                tagName: 'i',
+                color: '#ffffff'
+            }
+        },
+        {
+            type: 'error',
+            background: '#991b1b',
+            duration: 0,
+            dismissible: true,
+            icon: {
+                className: 'bi bi-exclamation-triangle-fill',
+                tagName: 'i',
+                color: '#ffffff'
+            }
+        },
+        {
+            type: 'warning',
+            background: '#b45309',
+            icon: {
+                className: 'bi bi-exclamation-circle-fill',
+                tagName: 'i',
+                color: '#ffffff'
+            }
+        },
+        {
+            type: 'info',
+            background: '#2b506e',
+            icon: {
+                className: 'bi bi-info-circle-fill',
+                tagName: 'i',
+                color: '#ffffff'
+            }
+        }
+    ]
+}) : null;
+
 document.addEventListener("DOMContentLoaded", function () {
     // Tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');

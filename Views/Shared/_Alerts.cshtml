@@ -5,34 +5,27 @@
     var warning = TempData["Warning"] ?? ViewBag.Warning;
 }
 
-@if (mensaje != null)
+@if (mensaje != null || error != null || warning != null || info != null)
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i>@mensaje
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-}
-
-@if (error != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>@error
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-}
-
-@if (warning != null)
-{
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-circle-fill me-2"></i>@warning
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-}
-
-@if (info != null)
-{
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <i class="bi bi-info-circle-fill me-2"></i>@info
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!window.notyf) return;
+            @if (mensaje != null)
+            {
+                <text>window.notyf.success(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(mensaje.ToString())));</text>
+            }
+            @if (error != null)
+            {
+                <text>window.notyf.error(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(error.ToString())));</text>
+            }
+            @if (warning != null)
+            {
+                <text>window.notyf.open({ type: 'warning', message: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(warning.ToString())) });</text>
+            }
+            @if (info != null)
+            {
+                <text>window.notyf.open({ type: 'info', message: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(info.ToString())) });</text>
+            }
+        });
+    </script>
 }
