@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using inmobiliaria_lab2.Models;
 using inmobiliaria_lab2.Repositories;
@@ -5,6 +6,7 @@ using inmobiliaria_lab2.Services;
 
 namespace inmobiliaria_lab2.Controllers;
 
+[Authorize]
 public class InmueblesController(
     IRepositorioInmueble repositorioInmueble,
     IRepositorioPropietario repositorioPropietario,
@@ -316,6 +318,7 @@ public class InmueblesController(
     }
 
     // GET: Inmuebles/CambiarEstado/5?estado=Suspendido
+    [Authorize(Roles = "Administrador")]
     public IActionResult CambiarEstado(int id, string? estado = null)
     {
         var inmueble = _repositorioInmueble.ObtenerPorId(id);
@@ -342,6 +345,7 @@ public class InmueblesController(
     }
 
     // POST: Inmuebles/CambiarEstado
+    [Authorize(Roles = "Administrador")]
     [HttpPost, ActionName("CambiarEstado")]
     [ValidateAntiForgeryToken]
     public IActionResult CambiarEstadoConfirmado(int id, string estado)

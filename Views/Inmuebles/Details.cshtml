@@ -149,13 +149,16 @@
                         <i class="bi bi-images"></i> Galería
                     </a>
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-                    @if (Model.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
+                    @if (User.IsInRole("Administrador"))
                     {
-                        <a asp-action="CambiarEstado" asp-route-id="@Model.Id" asp-route-estado="Suspendido" class="btn btn-secondary">Suspender</a>
-                    }
-                    else
-                    {
-                        <a asp-action="CambiarEstado" asp-route-id="@Model.Id" asp-route-estado="Disponible" class="btn btn-success">Habilitar</a>
+                        @if (Model.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
+                        {
+                            <a asp-action="CambiarEstado" asp-route-id="@Model.Id" asp-route-estado="Suspendido" class="btn btn-secondary">Suspender</a>
+                        }
+                        else
+                        {
+                            <a asp-action="CambiarEstado" asp-route-id="@Model.Id" asp-route-estado="Disponible" class="btn btn-success">Habilitar</a>
+                        }
                     }
                 </div>
             </div>

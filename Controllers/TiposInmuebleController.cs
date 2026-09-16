@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using inmobiliaria_lab2.Models;
 using inmobiliaria_lab2.Repositories;
 
 namespace inmobiliaria_lab2.Controllers;
 
+[Authorize]
 public class TiposInmuebleController(IRepositorioTipoInmueble repositorio) : Controller
 {
     private readonly IRepositorioTipoInmueble _repositorio = repositorio;
@@ -125,6 +127,7 @@ public class TiposInmuebleController(IRepositorioTipoInmueble repositorio) : Con
     }
 
     // GET: TiposInmueble/Delete/5
+    [Authorize(Roles = "Administrador")]
     public IActionResult Delete(int id)
     {
         var tipoInmueble = _repositorio.ObtenerPorId(id);
@@ -137,6 +140,7 @@ public class TiposInmuebleController(IRepositorioTipoInmueble repositorio) : Con
     }
 
     // POST: TiposInmueble/Delete/5
+    [Authorize(Roles = "Administrador")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(int id)

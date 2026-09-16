@@ -98,17 +98,20 @@
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         
-                                        @if (item.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
+                                        @if (User.IsInRole("Administrador"))
                                         {
-                                            <a asp-action="CambiarEstado" asp-route-id="@item.Id" asp-route-estado="Suspendido" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" data-bs-title="Suspender oferta">
-                                                <i class="bi bi-pause-circle"></i>
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <a asp-action="CambiarEstado" asp-route-id="@item.Id" asp-route-estado="Disponible" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-title="Habilitar oferta">
-                                                <i class="bi bi-check-circle"></i>
-                                            </a>
+                                            @if (item.Estado == inmobiliaria_lab2.Models.EstadoInmueble.Disponible)
+                                            {
+                                                <a asp-action="CambiarEstado" asp-route-id="@item.Id" asp-route-estado="Suspendido" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" data-bs-title="Suspender oferta">
+                                                    <i class="bi bi-pause-circle"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="CambiarEstado" asp-route-id="@item.Id" asp-route-estado="Disponible" class="btn btn-sm btn-success" data-bs-toggle="tooltip" data-bs-title="Habilitar oferta">
+                                                    <i class="bi bi-check-circle"></i>
+                                                </a>
+                                            }
                                         }
                                     </div>
                                 </td>

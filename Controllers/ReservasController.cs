@@ -1,9 +1,12 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using inmobiliaria_lab2.Models;
 using inmobiliaria_lab2.Repositories;
 
 namespace inmobiliaria_lab2.Controllers;
 
+[Authorize]
 public class ReservasController(
     IRepositorioReserva repositorioReserva,
     IRepositorioInquilino repositorioInquilino,
@@ -67,6 +70,8 @@ public class ReservasController(
     [ValidateAntiForgeryToken]
     public IActionResult Create(Reserva reserva)
     {
+        reserva.UsuarioCreacionId = int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : null;
+
         if (!ModelState.IsValid)
         {
             RepoblarNavegacion(reserva);
@@ -143,6 +148,7 @@ public class ReservasController(
     }
 
     // GET: Reservas/Delete/5
+    [Authorize(Roles = "Administrador")]
     public IActionResult Delete(int id)
     {
         var reserva = _repositorioReserva.ObtenerPorId(id);
@@ -153,11 +159,13 @@ public class ReservasController(
     }
 
     // POST: Reservas/Delete/5
+    [Authorize(Roles = "Administrador")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(int id)
     {
-        _repositorioReserva.Baja(id);
+        var usuarioId = int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : (int?)null;
+        _repositorioReserva.Baja(id, usuarioId);
         TempData["Mensaje"] = "Reserva cancelada exitosamente.";
         return RedirectToAction(nameof(Index));
     }

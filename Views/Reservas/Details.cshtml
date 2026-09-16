@@ -15,9 +15,12 @@
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
                 <i class="bi bi-pencil"></i> Editar
             </a>
-            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
-                <i class="bi bi-x-circle"></i> Cancelar Reserva
-            </a>
+            @if (User.IsInRole("Administrador"))
+            {
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                    <i class="bi bi-x-circle"></i> Cancelar Reserva
+                </a>
+            }
         }
     </div>
 </div>
@@ -131,5 +134,29 @@
             </div>
         </div>
     </div>
+
+    @* Auditoría — visible solo para Administrador *@
+    @if (User.IsInRole("Administrador"))
+    {
+        <div class="col-12">
+            <div class="card shadow-sm border-secondary">
+                <div class="card-header fw-semibold bg-light">
+                    <i class="bi bi-shield-lock me-1"></i> Información de Auditoría
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Usuario Creador (ID)</dt>
+                        <dd class="col-sm-9">@(Model?.UsuarioCreacionId.HasValue == true ? Model.UsuarioCreacionId.Value.ToString() : "No registrado")</dd>
+
+                        @if (Model?.UsuarioTerminacionId.HasValue == true)
+                        {
+                            <dt class="col-sm-3">Usuario Terminación (ID)</dt>
+                            <dd class="col-sm-9">@Model.UsuarioTerminacionId.Value</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+    }
 
 </div>
