@@ -130,9 +130,11 @@ CREATE TABLE IF NOT EXISTS IMAGEN_INMUEBLE (
 -- =============================================================================
 -- DATOS SEMILLA / PRUEBA INICIALES
 -- =============================================================================
--- Credenciales iniciales de prueba para la entrega final:
--- Administrador: admin@inmobiliaria.test / Canelones666
--- Empleado:      empleado@inmobiliaria.test / Milanguche$$$
+-- Credenciales de prueba:
+-- Admin 1:    admin@inmobiliaria.test / Canelones666
+-- Admin 2:    carlos.admin@inmobiliaria.test / Canelones666
+-- Empleado 1: empleado@inmobiliaria.test / Milanguche$$$
+-- Empleada 2: sofia.empleada@inmobiliaria.test / Milanguche$$$
 INSERT INTO
     USUARIO (
         nombre,
@@ -140,73 +142,145 @@ INSERT INTO
         email,
         password_hash,
         avatar,
-        rol
+        rol,
+        activo
     )
 VALUES
     (
-        'Administrador',
-        'Inicial',
+        'Lucía',
+        'Méndez',
         'admin@inmobiliaria.test',
         'AQAAAAIAAYagAAAAEH50qbl0w853Wbb5EeGdhF9GwAL0Gjh/F23ZIh1Ty8VHwWXOLQCnnswyGd4485or8Q==',
-        NULL,
-        'Administrador'
+        '/img/usuarios/user-admin-1.webp',
+        'Administrador',
+        1
     ),
     (
-        'Empleado',
-        'Inicial',
+        'Esteban',
+        'Pérez',
         'empleado@inmobiliaria.test',
         'AQAAAAIAAYagAAAAEKE2i9A0YGLlpYClj3gW/FQ5pEHTz/8X5jtBRkQAHl9d+KuXc1PdmJD6+RNVTG4m+w==',
-        NULL,
-        'Empleado'
+        '/img/usuarios/user-employee-1.webp',
+        'Empleado',
+        1
+    ),
+    (
+        'Carlos',
+        'Vargas',
+        'carlos.admin@inmobiliaria.test',
+        'AQAAAAIAAYagAAAAEH50qbl0w853Wbb5EeGdhF9GwAL0Gjh/F23ZIh1Ty8VHwWXOLQCnnswyGd4485or8Q==',
+        '/img/usuarios/user-admin-2.png',
+        'Administrador',
+        1
+    ),
+    (
+        'Sofía',
+        'Martínez',
+        'sofia.empleada@inmobiliaria.test',
+        'AQAAAAIAAYagAAAAEKE2i9A0YGLlpYClj3gW/FQ5pEHTz/8X5jtBRkQAHl9d+KuXc1PdmJD6+RNVTG4m+w==',
+        '/img/usuarios/user-employee-2.jpg',
+        'Empleado',
+        1
     );
 
 
 INSERT INTO
-    PROPIETARIO (nombre, apellido, dni, email, telefono)
+    PROPIETARIO (nombre, apellido, dni, email, telefono, activo)
 VALUES
     (
         'Juan Carlos',
         'Pérez',
         '20111222',
         'juan.perez@email.com',
-        '2664111222'
+        '2664111222',
+        1
     ),
     (
         'María Elena',
         'Gómez',
         '27333444',
         'maria.gomez@email.com',
-        '2664333444'
+        '2664333444',
+        1
     ),
     (
         'Roberto',
         'Fernández',
         '18555666',
         'roberto.fernandez@email.com',
-        '2664555666'
+        '2664555666',
+        1
+    ),
+    (
+        'Claudia Marcela',
+        'Morales',
+        '24888999',
+        'claudia.morales@email.com',
+        '2664888999',
+        1
+    ),
+    (
+        'Gustavo Adolfo',
+        'Rivas',
+        '22444111',
+        'gustavo.rivas@email.com',
+        '2664444111',
+        1
+    ),
+    (
+        'Osvaldo Darío',
+        'Torres',
+        '16222333',
+        'osvaldo.torres@email.com',
+        '2664222333',
+        0
     );
 
 
 INSERT INTO
-    INQUILINO (dni, nombre_completo, email, telefono)
+    INQUILINO (dni, nombre_completo, email, telefono, activo)
 VALUES
     (
         '35444555',
         'Martín Gómez',
         'martin.gomez@email.com',
-        '2664555666'
+        '2664555666',
+        1
     ),
     (
         '38777888',
         'Ana Rossi',
         'ana.rossi@email.com',
-        '2664777888'
+        '2664777888',
+        1
     ),
     (
         '40123987',
         'Lucas Benítez',
         'lucas.benitez@email.com',
-        '2664123987'
+        '2664123987',
+        1
+    ),
+    (
+        '42333111',
+        'Valentina Solís',
+        'valentina.solis@email.com',
+        '2664333111',
+        1
+    ),
+    (
+        '36999000',
+        'Marcos Del Valle',
+        'marcos.delvalle@email.com',
+        '2664999000',
+        1
+    ),
+    (
+        '33222111',
+        'Federico Ruiz',
+        'federico.ruiz@email.com',
+        '2664222111',
+        0
     );
 
 
@@ -237,86 +311,98 @@ VALUES
     (
         1,
         1,
-        'Av. Illia 456',
+        'Av. Illia 456, San Luis',
         4,
         45000.00,
         20.00,
         -33.29800000,
         -66.33500000,
-        '/img/inmuebles/casa-illia.jpg',
+        '/img/inmuebles/1.JPG',
         'Disponible'
     ),
     (
         1,
         2,
-        'San Martín 1234, 3° B',
+        'San Martín 1234, 3° B, San Luis',
         2,
-        30000.00,
+        32000.00,
         30.00,
         -33.30100000,
         -66.33800000,
-        '/img/inmuebles/depto-sanmartin.jpg',
+        '/img/inmuebles/2.JPG',
         'Disponible'
     ),
     (
         2,
         4,
-        'Ruta 1 Km 5, Potrero de los Funes',
+        'Circuito Los Funes Km 8, Potrero de los Funes',
         6,
-        75000.00,
+        85000.00,
         25.00,
         -33.22500000,
         -66.23000000,
-        '/img/inmuebles/cabana-potrero.jpg',
+        '/img/inmuebles/base-outdoor-1.webp',
         'Disponible'
     ),
     (
         3,
         3,
-        'Pringles 789',
-        2,
-        25000.00,
+        'Pringles 789, PB A, San Luis',
+        1,
+        26000.00,
         20.00,
         -33.30000000,
         -66.33200000,
-        '/img/inmuebles/mono-pringles.jpg',
+        '/img/inmuebles/3.webp',
         'Suspendido'
-    );
-
-
-INSERT INTO
-    RESERVA (
-        inquilino_id,
-        inmueble_id,
-        fecha_desde,
-        fecha_hasta,
-        monto_por_dia,
-        estado
-    )
-VALUES
+    ),
     (
         1,
         1,
-        '2026-09-10',
-        '2026-09-15',
-        45000.00,
-        'Activa'
+        'Los Eucaliptos 142, Juana Koslay',
+        5,
+        60000.00,
+        20.00,
+        -33.27500000,
+        -66.26000000,
+        '/img/inmuebles/5.jpg',
+        'Disponible'
+    ),
+    (
+        4,
+        5,
+        'Av. del Sol 850, Villa de Merlo',
+        3,
+        55000.00,
+        20.00,
+        -32.34200000,
+        -65.01300000,
+        '/img/inmuebles/6.jpg',
+        'Disponible'
+    ),
+    (
+        5,
+        4,
+        'Costanera Norte 310, El Volcán',
+        4,
+        70000.00,
+        25.00,
+        -33.24800000,
+        -66.17500000,
+        '/img/inmuebles/base-outdoor-2.jpg',
+        'Disponible'
     ),
     (
         2,
-        3,
-        '2026-09-20',
-        '2026-09-25',
-        75000.00,
-        'Activa'
-    ),
-    (
-        3,
         2,
-        '2026-08-01',
-        '2026-08-07',
-        30000.00,
-        'Finalizada'
+        'Av. Serrana Mza 12 Casa 4, La Punta',
+        2,
+        29000.00,
+        20.00,
+        -33.18300000,
+        -66.31200000,
+        '/img/inmuebles/7.jpg',
+        'Suspendido'
     );
 
 
@@ -326,7 +412,90 @@ VALUES
 INSERT INTO
     IMAGEN_INMUEBLE (inmueble_id, url)
 VALUES
-    (1, '/img/inmuebles/casa-illia-1.jpg'),
-    (1, '/img/inmuebles/casa-illia-2.jpg'),
-    (2, '/img/inmuebles/depto-sanmartin-1.jpg'),
-    (3, '/img/inmuebles/cabana-potrero-1.jpg');
+    (1, '/img/inmuebles/8.jpg'),
+    (1, '/img/inmuebles/9.jpg'),
+    (2, '/img/inmuebles/10.webp'),
+    (2, '/img/inmuebles/base-1.jpg'),
+    (3, '/img/inmuebles/base-outdoor-3.jpg'),
+    (3, '/img/inmuebles/base-outdoor-4.jpg'),
+    (4, '/img/inmuebles/11.webp'),
+    (5, '/img/inmuebles/12.webp'),
+    (5, '/img/inmuebles/base-2.jpg'),
+    (6, '/img/inmuebles/4.webp'),
+    (6, '/img/inmuebles/13.webp'),
+    (7, '/img/inmuebles/14.jpg'),
+    (7, '/img/inmuebles/15.webp'),
+    (8, '/img/inmuebles/16.jpeg');
+
+
+-- -----------------------------------------------------------------------------
+-- 7. DATOS: RESERVA
+-- -----------------------------------------------------------------------------
+INSERT INTO
+    RESERVA (
+        inquilino_id,
+        inmueble_id,
+        usuario_creacion_id,
+        usuario_terminacion_id,
+        fecha_desde,
+        fecha_hasta,
+        fecha_fin_anticipado,
+        monto_por_dia,
+        estado
+    )
+VALUES
+    (
+        1,
+        1,
+        2,
+        NULL,
+        '2026-09-14',
+        '2026-09-24',
+        NULL,
+        45000.00,
+        'Activa'
+    ),
+    (
+        2,
+        3,
+        4,
+        NULL,
+        '2026-09-08',
+        '2026-09-18',
+        NULL,
+        85000.00,
+        'Activa'
+    ),
+    (
+        3,
+        2,
+        2,
+        NULL,
+        '2026-10-01',
+        '2026-10-10',
+        NULL,
+        32000.00,
+        'Activa'
+    ),
+    (
+        4,
+        5,
+        1,
+        NULL,
+        '2026-08-01',
+        '2026-08-10',
+        NULL,
+        60000.00,
+        'Finalizada'
+    ),
+    (
+        5,
+        6,
+        2,
+        1,
+        '2026-08-15',
+        '2026-08-25',
+        '2026-08-20',
+        55000.00,
+        'Cancelada'
+    );
