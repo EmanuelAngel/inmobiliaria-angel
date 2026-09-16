@@ -22,7 +22,7 @@ Sistema de informatización para la gestión de alquileres temporarios de propie
 
 ### 1. Base de Datos
 
-El script [database.sql](database.sql) crea automáticamente la base de datos `inmobiliaria_dev`, las tablas `PROPIETARIO`, `INQUILINO`, `TIPO_INMUEBLE`, `INMUEBLE` y `RESERVA`, e inserta datos semilla de prueba.
+El script [database.sql](database.sql) crea automáticamente la base de datos `inmobiliaria_dev`, las tablas `PROPIETARIO`, `INQUILINO`, `TIPO_INMUEBLE`, `INMUEBLE`, `IMAGEN_INMUEBLE`, `USUARIO` y `RESERVA`, e inserta datos semilla de prueba.
 
 #### Vía Terminal (CLI)
 Ejecutar desde la raíz del proyecto:
@@ -84,6 +84,16 @@ Desde la terminal en la raíz del proyecto:
    - **HTTP:** [http://localhost:5093](http://localhost:5093)
    - **HTTPS:** [https://localhost:7047](https://localhost:7047)
 
+---
+
+### 4. Credenciales de Acceso (Semilla)
+
+El sistema implementa autenticación basada en cookies y control de acceso por roles. Al inicializar la base de datos se configuran dos cuentas de prueba:
+
+| Rol | Correo Electrónico | Contraseña | Alcance de Permisos |
+|---|---|---|---|
+| **Administrador** | `admin@inmobiliaria.test` | `Canelones666` | Acceso integral, ABM de usuarios, bajas lógicas y visualización de auditoría |
+| **Empleado** | `empleado@inmobiliaria.test` | `Milanguche$$$` | Gestión operativa (inmuebles, reservas, clientes) y autogestión de perfil |
 
 ---
 
@@ -132,6 +142,23 @@ erDiagram
         varchar estado
     }
 
+    IMAGEN_INMUEBLE {
+        int id PK
+        int inmueble_id FK
+        varchar url
+    }
+
+    USUARIO {
+        int id PK
+        varchar email
+        varchar password_hash
+        varchar nombre
+        varchar apellido
+        varchar avatar
+        varchar rol
+        tinyint activo
+    }
+
     RESERVA {
         int id PK
         int inquilino_id FK
@@ -147,6 +174,9 @@ erDiagram
 
     PROPIETARIO ||--o{ INMUEBLE : "tiene"
     TIPO_INMUEBLE ||--o{ INMUEBLE : "clasifica"
+    INMUEBLE ||--o{ IMAGEN_INMUEBLE : "tiene"
     INQUILINO ||--o{ RESERVA : "realiza"
     INMUEBLE ||--o{ RESERVA : "tiene"
+    USUARIO ||--o{ RESERVA : "crea"
+    USUARIO ||--o{ RESERVA : "termina"
 ```
