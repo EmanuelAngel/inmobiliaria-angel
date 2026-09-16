@@ -1,12 +1,21 @@
 {
     "flow-icons.folders.associations": {
-        "Properties": "setting",
+        "Properties": "config",
         "captura-de-requisitos": "features",
         "entregas-y-revisiones": "target",
         "tareas": "tasks",
-        "analisis": "idea"
+        "analisis": "idea",
+        "Inmuebles": "windows",
+        "Propietarios": "keys",
+        "Reservas": "event",
+        "Usuarios": "user",
+        "TiposInmueble": "type",
+        "Inquilinos": "base"
+    },
+    "flow-icons.folders.replacements": {
+        "Controllers": "api"
     },
     "flow-icons.files.associations": {
-        "AGENTS.md": "prompt"
+        "AGENTS.md": "claude"
     }
 }
