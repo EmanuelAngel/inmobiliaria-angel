@@ -488,3 +488,7 @@ $RECYCLE.BIN/
 wwwroot/uploads/**
 !wwwroot/uploads/**/
 !wwwroot/uploads/**/.gitkeep
+
+# ATL / Agent Teams Lite
+.atl/
+
