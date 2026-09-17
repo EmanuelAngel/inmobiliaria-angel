@@ -10,7 +10,8 @@
         "Reservas": "event",
         "Usuarios": "user",
         "TiposInmueble": "type",
-        "Inquilinos": "base"
+        "Inquilinos": "base",
+        "Pagos": "directive"
     },
     "flow-icons.folders.replacements": {
         "Controllers": "api"
