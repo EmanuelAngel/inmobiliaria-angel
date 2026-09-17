@@ -77,8 +77,18 @@
                                            data-bs-toggle="tooltip" data-bs-title="Ver detalles">
                                             <i class="bi bi-eye"></i>
                                         </a>
+                                        <a asp-controller="Pagos" asp-action="Index" asp-route-reservaId="@item.Id"
+                                           class="btn btn-sm btn-outline-primary"
+                                           data-bs-toggle="tooltip" data-bs-title="Ver pagos">
+                                            <i class="bi bi-cash-stack"></i>
+                                        </a>
                                         @if (item.Estado == inmobiliaria_lab2.Models.EstadoReserva.Activa)
                                         {
+                                            <a asp-action="FinalizarAnticipada" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-warning"
+                                               data-bs-toggle="tooltip" data-bs-title="Finalizar anticipadamente">
+                                                <i class="bi bi-calendar-x"></i>
+                                            </a>
                                             <a asp-action="Edit" asp-route-id="@item.Id"
                                                class="btn btn-sm btn-warning"
                                                data-bs-toggle="tooltip" data-bs-title="Editar">

@@ -184,6 +184,139 @@ public class ReservasController(
         return RedirectToAction(nameof(Index));
     }
 
+    // GET: Reservas/FinalizarAnticipada/5
+    public IActionResult FinalizarAnticipada(int id)
+    {
+        var reserva = _repositorioReserva.ObtenerPorId(id);
+        if (reserva == null)
+            return NotFound();
+
+        if (reserva.Estado != EstadoReserva.Activa)
+        {
+            TempData["Error"] = "Solo se pueden finalizar anticipadamente reservas activas.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var hoy = DateOnly.FromDateTime(DateTime.Today);
+        var fechaFinAnticipado = hoy;
+        if (fechaFinAnticipado < reserva.FechaDesde)
+            fechaFinAnticipado = reserva.FechaDesde;
+        else if (fechaFinAnticipado >= reserva.FechaHasta)
+            fechaFinAnticipado = reserva.FechaHasta > reserva.FechaDesde ? reserva.FechaHasta.AddDays(-1) : reserva.FechaDesde;
+
+        var model = new ReservaFinalizarViewModel
+        {
+            ReservaId = reserva.Id,
+            Reserva = reserva,
+            FechaHastaOriginal = reserva.FechaHasta,
+            FechaFinAnticipado = fechaFinAnticipado,
+            ConceptoPago = "Multa por cancelación anticipada"
+        };
+
+        CalcularLiquidacion(reserva, model);
+
+        return View(model);
+    }
+
+    // POST: Reservas/FinalizarAnticipada/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult FinalizarAnticipada(int id, ReservaFinalizarViewModel model)
+    {
+        if (id != model.ReservaId)
+            return BadRequest();
+
+        var reserva = _repositorioReserva.ObtenerPorId(id);
+        if (reserva == null)
+            return NotFound();
+
+        if (reserva.Estado != EstadoReserva.Activa)
+        {
+            TempData["Error"] = "Solo se pueden finalizar anticipadamente reservas activas.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        if (model.FechaFinAnticipado < reserva.FechaDesde)
+        {
+            ModelState.AddModelError(nameof(model.FechaFinAnticipado),
+                "La fecha efectiva de terminación no puede ser anterior a la fecha de inicio de la reserva.");
+        }
+
+        if (model.FechaFinAnticipado >= reserva.FechaHasta)
+        {
+            ModelState.AddModelError(nameof(model.FechaFinAnticipado),
+                "La fecha efectiva de terminación debe ser anterior a la fecha de finalización original.");
+        }
+
+        CalcularLiquidacion(reserva, model);
+
+        if (!ModelState.IsValid)
+        {
+            model.Reserva = reserva;
+            return View(model);
+        }
+
+        var usuarioId = int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : 0;
+        if (usuarioId <= 0)
+        {
+            ModelState.AddModelError(string.Empty, "No se pudo identificar al usuario autenticado para registrar la operación.");
+            model.Reserva = reserva;
+            return View(model);
+        }
+
+        var pagoMulta = new Pago
+        {
+            ReservaId = id,
+            Concepto = string.IsNullOrWhiteSpace(model.ConceptoPago)
+                ? "Multa por cancelación anticipada"
+                : model.ConceptoPago.Trim(),
+            Fecha = DateOnly.FromDateTime(DateTime.Today),
+            Importe = model.MontoMulta,
+            Estado = EstadoPago.Activo,
+            UsuarioCreacionId = usuarioId
+        };
+
+        try
+        {
+            _repositorioReserva.FinalizarConMulta(id, model.FechaFinAnticipado, usuarioId, pagoMulta);
+            TempData["Mensaje"] = $"Reserva #{id} finalizada anticipadamente. Se registró el cobro de la multa por {model.MontoMulta:C}.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, "Error al procesar la finalización anticipada: " + ex.Message);
+            model.Reserva = reserva;
+            return View(model);
+        }
+    }
+
+    private static void CalcularLiquidacion(Reserva reserva, ReservaFinalizarViewModel model)
+    {
+        model.ReservaId = reserva.Id;
+        model.Reserva = reserva;
+        model.FechaHastaOriginal = reserva.FechaHasta;
+
+        var diasTotales = reserva.FechaHasta.DayNumber - reserva.FechaDesde.DayNumber;
+        if (diasTotales <= 0)
+            diasTotales = 1;
+
+        var diasTranscurridos = Math.Clamp(model.FechaFinAnticipado.DayNumber - reserva.FechaDesde.DayNumber, 0, diasTotales);
+        var diasRestantes = Math.Max(0, reserva.FechaHasta.DayNumber - model.FechaFinAnticipado.DayNumber);
+
+        var porcentajeTranscurrido = Math.Round((decimal)diasTranscurridos / diasTotales * 100m, 2);
+        var porcentajeMulta = porcentajeTranscurrido < 50m ? 50m : 25m;
+        var baseEconomica = diasRestantes * reserva.MontoPorDia;
+        var montoMulta = Math.Round(baseEconomica * (porcentajeMulta / 100m), 2);
+
+        model.DiasTotales = diasTotales;
+        model.DiasTranscurridos = diasTranscurridos;
+        model.DiasRestantes = diasRestantes;
+        model.PorcentajeTranscurrido = porcentajeTranscurrido;
+        model.PorcentajeMulta = porcentajeMulta;
+        model.BaseEconomica = baseEconomica;
+        model.MontoMulta = montoMulta;
+    }
+
     /// <summary>
     /// Repuebla las navigation properties del modelo para que los select2
     /// puedan mostrar el valor pre-seleccionado al volver a renderizar el formulario.

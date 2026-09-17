@@ -1,0 +1,324 @@
+@model inmobiliaria_lab2.Models.ReservaFinalizarViewModel
+
+@{
+    ViewData["Title"] = $"Finalizar Reserva Anticipadamente #{Model.ReservaId}";
+    var reserva = Model.Reserva;
+    var fechaDesdeStr = reserva?.FechaDesde.ToString("yyyy-MM-dd") ?? "";
+    var fechaHastaOriginalStr = Model.FechaHastaOriginal.ToString("yyyy-MM-dd");
+    var montoPorDia = reserva?.MontoPorDia ?? 0m;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h2 class="mb-1">@ViewData["Title"]</h2>
+                <span class="text-muted">Liquidación y cobro de penalización por terminación anticipada</span>
+            </div>
+            <a asp-action="Details" asp-route-id="@Model.ReservaId" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Volver a Detalles
+            </a>
+        </div>
+
+        @* Advertencia de política *@
+        <div class="alert alert-warning d-flex align-items-start gap-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-3 text-warning flex-shrink-0"></i>
+            <div>
+                <h5 class="alert-heading mb-1">Régimen de Cancelación Anticipada (CU-R05)</h5>
+                <p class="mb-0 small">
+                    Al confirmar esta operación, la reserva pasará a estado <strong>Finalizada</strong> registrando la fecha efectiva de terminación.
+                    De acuerdo con el reglamento, se generará de manera obligatoria e inmediata un <strong>Pago</strong> por el concepto de multa calculada sobre los días no gozados.
+                </p>
+            </div>
+        </div>
+
+        @* Resumen de la reserva *@
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-body-tertiary fw-semibold">
+                <i class="bi bi-calendar-check me-1 text-primary"></i> Datos de la Reserva #@Model.ReservaId
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="small text-muted">Inquilino</div>
+                        <div class="fw-semibold">@(reserva?.Inquilino?.NombreCompleto ?? "-")</div>
+                        <div class="small text-muted">DNI: @(reserva?.Inquilino?.Dni ?? "-")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="small text-muted">Inmueble</div>
+                        <div class="fw-semibold">@(reserva?.Inmueble?.Direccion ?? "-")</div>
+                        <div class="small text-muted">@(reserva?.Inmueble?.Tipo?.Descripcion ?? "") &bull; Cupo: @(reserva?.Inmueble?.Cupo ?? 0) personas</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="small text-muted">Período Contratado Original</div>
+                        <div class="fw-semibold">
+                            @(reserva?.FechaDesde.ToString("dd/MM/yyyy") ?? "-") al @Model.FechaHastaOriginal.ToString("dd/MM/yyyy")
+                        </div>
+                        <div class="small text-muted">Duración original: @Model.DiasTotales días</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="small text-muted">Tarifa Diaria y Total</div>
+                        <div class="fw-semibold">@montoPorDia.ToString("C") / día</div>
+                        <div class="small text-muted">Total contrato: @((montoPorDia * Model.DiasTotales).ToString("C"))</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Formulario de liquidación *@
+        <div class="card shadow-sm mb-4 border-warning">
+            <div class="card-header bg-warning-subtle text-warning-emphasis fw-semibold">
+                <i class="bi bi-calculator me-1"></i> Liquidación de Multa y Cobro
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="FinalizarAnticipada" asp-route-id="@Model.ReservaId" method="post" id="formFinalizarAnticipada">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="ReservaId" />
+                    <input type="hidden" asp-for="FechaHastaOriginal" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    @* Fecha efectiva *@
+                    <div class="mb-4">
+                        <label asp-for="FechaFinAnticipado" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            <input asp-for="FechaFinAnticipado"
+                                   type="date"
+                                   class="form-control form-control-lg"
+                                   id="inputFechaFinAnticipado"
+                                   min="@(reserva?.FechaDesde.ToString("yyyy-MM-dd"))"
+                                   max="@(Model.FechaHastaOriginal.AddDays(-1).ToString("yyyy-MM-dd"))"
+                                   required />
+                        </div>
+                        <span asp-validation-for="FechaFinAnticipado" class="text-danger small"></span>
+                        <div class="form-text">
+                            Seleccione la fecha en la que se desocupa el inmueble. Debe encontrarse entre el inicio (@(reserva?.FechaDesde.ToString("dd/MM/yyyy"))) y el día previo al fin original (@(Model.FechaHastaOriginal.AddDays(-1).ToString("dd/MM/yyyy"))).
+                        </div>
+                    </div>
+
+                    @* Desglose del cálculo *@
+                    <div class="card bg-body-tertiary border-0 mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold text-uppercase small text-muted mb-3">
+                                Desglose Explicativo del Cálculo
+                            </h6>
+                            <ul class="list-group list-group-flush rounded">
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2">
+                                    <span><i class="bi bi-calendar-range me-2 text-muted"></i> Días totales contratados:</span>
+                                    <span class="fw-semibold" id="lblDiasTotales">@Model.DiasTotales días</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2">
+                                    <span><i class="bi bi-hourglass-split me-2 text-muted"></i> Días transcurridos hasta la terminación:</span>
+                                    <span class="fw-semibold">
+                                        <span id="lblDiasTranscurridos">@Model.DiasTranscurridos</span> días
+                                        <span class="text-muted small ms-1">(<span id="lblPorcentajeTranscurrido">@Model.PorcentajeTranscurrido.ToString("N1")</span>% del plazo)</span>
+                                    </span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2">
+                                    <span><i class="bi bi-calendar-x me-2 text-muted"></i> Días restantes no gozados:</span>
+                                    <span class="fw-semibold" id="lblDiasRestantes">@Model.DiasRestantes días</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2">
+                                    <span><i class="bi bi-cash me-2 text-muted"></i> Base económica (Días restantes × Tarifa diaria):</span>
+                                    <span class="fw-semibold" id="lblBaseEconomica">@Model.BaseEconomica.ToString("C")</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2">
+                                    <div>
+                                        <i class="bi bi-percent me-2 text-muted"></i> Criterio de penalización:
+                                        <div class="small text-muted" id="lblExplicacionRegla">
+                                            @(Model.PorcentajeTranscurrido < 50m
+                                                ? "Al transcurrir menos del 50% del tiempo pactado, la multa es del 50% del saldo restante."
+                                                : "Al transcurrir el 50% o más del tiempo pactado, la multa es del 25% del saldo restante.")
+                                        </div>
+                                    </div>
+                                    <span class="badge @(Model.PorcentajeMulta == 50m ? "bg-warning text-dark" : "bg-info text-dark") fs-6" id="badgePorcentajeMulta">
+                                        @Model.PorcentajeMulta.ToString("N0")%
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <hr class="my-3" />
+
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <div>
+                                    <div class="text-uppercase fw-bold text-danger small">Monto Total de Multa a Cobrar:</div>
+                                    <small class="text-muted">Se registrará como cobro obligatorio en el acto</small>
+                                </div>
+                                <div class="display-6 fw-bold text-danger text-end" id="lblMontoMulta">
+                                    @Model.MontoMulta.ToString("C")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Concepto del Pago *@
+                    <div class="mb-4">
+                        <label asp-for="ConceptoPago" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-pencil-square"></i></span>
+                            <input asp-for="ConceptoPago" class="form-control" placeholder="Multa por cancelación anticipada" required />
+                        </div>
+                        <span asp-validation-for="ConceptoPago" class="text-danger small"></span>
+                        <div class="form-text">
+                            Concepto que figurará en el recibo de pago y en el listado de transacciones.
+                        </div>
+                    </div>
+
+                    @* Botones de Acción *@
+                    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                        <a asp-action="Details" asp-route-id="@Model.ReservaId" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Cancelar
+                        </a>
+                        <button type="button" class="btn btn-danger btn-lg px-4" data-bs-toggle="modal" data-bs-target="#modalConfirmar">
+                            <i class="bi bi-check-circle me-1"></i> Finalizar y Cobrar Multa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Modal de confirmación *@
+<div class="modal fade" id="modalConfirmar" tabindex="-1" aria-labelledby="modalConfirmarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalConfirmarLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmar Finalización Anticipada
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea finalizar anticipadamente la <strong>Reserva #@Model.ReservaId</strong>?</p>
+                <div class="card bg-body-tertiary border-0 mb-3">
+                    <div class="card-body py-2">
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Inquilino:</span>
+                            <span class="fw-semibold">@(reserva?.Inquilino?.NombreCompleto ?? "-")</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Fecha de terminación:</span>
+                            <span class="fw-semibold" id="modalFechaFin">@Model.FechaFinAnticipado.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted">Multa liquidada:</span>
+                            <span class="fw-bold text-danger" id="modalMontoMulta">@Model.MontoMulta.ToString("C")</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-danger py-2 small mb-0">
+                    <i class="bi bi-info-circle me-1"></i> Esta acción finalizará la reserva en forma definitiva y registrará un nuevo pago activo por el monto de la multa.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Regresar</button>
+                <button type="submit" form="formFinalizarAnticipada" class="btn btn-danger">
+                    <i class="bi bi-check-circle me-1"></i> Confirmar y Procesar Cobro
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputFecha = document.getElementById("inputFechaFinAnticipado");
+            const fechaDesdeStr = "@fechaDesdeStr";
+            const fechaHastaStr = "@fechaHastaOriginalStr";
+            const montoPorDia = @montoPorDia.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+            if (!inputFecha || !fechaDesdeStr || !fechaHastaStr) return;
+
+            function parseIsoDate(str) {
+                const parts = str.split("-");
+                if (parts.length !== 3) return null;
+                return new Date(Date.UTC(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10)));
+            }
+
+            const fechaDesde = parseIsoDate(fechaDesdeStr);
+            const fechaHasta = parseIsoDate(fechaHastaStr);
+            const msPorDia = 1000 * 60 * 60 * 24;
+
+            const diasTotales = Math.max(1, Math.round((fechaHasta - fechaDesde) / msPorDia));
+
+            const currencyFormatter = new Intl.NumberFormat('es-AR', {
+                style: 'currency',
+                currency: 'ARS',
+                minimumFractionDigits: 2
+            });
+
+            function recalcular() {
+                const val = inputFecha.value;
+                if (!val) return;
+
+                const fechaFin = parseIsoDate(val);
+                if (!fechaFin) return;
+
+                let diasTranscurridos = Math.round((fechaFin - fechaDesde) / msPorDia);
+                if (diasTranscurridos < 0) diasTranscurridos = 0;
+                if (diasTranscurridos > diasTotales) diasTranscurridos = diasTotales;
+
+                let diasRestantes = Math.round((fechaHasta - fechaFin) / msPorDia);
+                if (diasRestantes < 0) diasRestantes = 0;
+
+                const porcentajeTranscurrido = diasTotales > 0
+                    ? Math.round((diasTranscurridos / diasTotales) * 1000) / 10
+                    : 0;
+
+                const porcentajeMulta = porcentajeTranscurrido < 50 ? 50 : 25;
+                const baseEconomica = diasRestantes * montoPorDia;
+                const montoMulta = baseEconomica * (porcentajeMulta / 100);
+
+                // Actualizar DOM
+                const lblDiasTranscurridos = document.getElementById("lblDiasTranscurridos");
+                const lblPorcentajeTranscurrido = document.getElementById("lblPorcentajeTranscurrido");
+                const lblDiasRestantes = document.getElementById("lblDiasRestantes");
+                const lblBaseEconomica = document.getElementById("lblBaseEconomica");
+                const badgePorcentajeMulta = document.getElementById("badgePorcentajeMulta");
+                const lblExplicacionRegla = document.getElementById("lblExplicacionRegla");
+                const lblMontoMulta = document.getElementById("lblMontoMulta");
+                const modalFechaFin = document.getElementById("modalFechaFin");
+                const modalMontoMulta = document.getElementById("modalMontoMulta");
+
+                if (lblDiasTranscurridos) lblDiasTranscurridos.textContent = diasTranscurridos;
+                if (lblPorcentajeTranscurrido) lblPorcentajeTranscurrido.textContent = porcentajeTranscurrido.toFixed(1);
+                if (lblDiasRestantes) lblDiasRestantes.textContent = diasRestantes;
+                if (lblBaseEconomica) lblBaseEconomica.textContent = currencyFormatter.format(baseEconomica);
+
+                if (badgePorcentajeMulta) {
+                    badgePorcentajeMulta.textContent = porcentajeMulta + "%";
+                    if (porcentajeMulta === 50) {
+                        badgePorcentajeMulta.className = "badge bg-warning text-dark fs-6";
+                    } else {
+                        badgePorcentajeMulta.className = "badge bg-info text-dark fs-6";
+                    }
+                }
+
+                if (lblExplicacionRegla) {
+                    lblExplicacionRegla.textContent = porcentajeTranscurrido < 50
+                        ? "Al transcurrir menos del 50% del tiempo pactado, la multa es del 50% del saldo restante."
+                        : "Al transcurrir el 50% o más del tiempo pactado, la multa es del 25% del saldo restante.";
+                }
+
+                const formattedMulta = currencyFormatter.format(montoMulta);
+                if (lblMontoMulta) lblMontoMulta.textContent = formattedMulta;
+                if (modalMontoMulta) modalMontoMulta.textContent = formattedMulta;
+
+                if (modalFechaFin) {
+                    const parts = val.split("-");
+                    if (parts.length === 3) {
+                        modalFechaFin.textContent = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                    }
+                }
+            }
+
+            inputFecha.addEventListener("change", recalcular);
+            inputFecha.addEventListener("input", recalcular);
+        });
+    </script>
+}

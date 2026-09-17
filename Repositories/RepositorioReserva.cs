@@ -297,6 +297,86 @@ public class RepositorioReserva(IConfiguration configuration) : RepositorioBase(
 
     public int Cancelar(int id, int? usuarioTerminacionId = null) => Baja(id, usuarioTerminacionId);
 
+    public int FinalizarConMulta(int reservaId, DateOnly fechaFinAnticipado, int usuarioTerminacionId, Pago pagoMulta)
+    {
+        using var conexion = new MySqlConnection(ConnectionString);
+        conexion.Open();
+        using var transaccion = conexion.BeginTransaction();
+
+        try
+        {
+            const string queryPago = """
+                INSERT INTO
+                    PAGO (
+                        reserva_id,
+                        usuario_creacion_id,
+                        usuario_anulacion_id,
+                        concepto,
+                        fecha,
+                        importe,
+                        estado
+                    )
+                VALUES
+                    (
+                        @reserva_id,
+                        @usuario_creacion_id,
+                        @usuario_anulacion_id,
+                        @concepto,
+                        @fecha,
+                        @importe,
+                        @estado
+                    );
+
+                SELECT
+                    LAST_INSERT_ID();
+            """;
+
+            using var cmdPago = new MySqlCommand(queryPago, conexion, transaccion);
+            cmdPago.Parameters.AddWithValue("@reserva_id", reservaId);
+            cmdPago.Parameters.AddWithValue("@usuario_creacion_id", usuarioTerminacionId);
+            cmdPago.Parameters.AddWithValue("@usuario_anulacion_id", DBNull.Value);
+            cmdPago.Parameters.AddWithValue("@concepto", pagoMulta.Concepto);
+            cmdPago.Parameters.AddWithValue("@fecha", pagoMulta.Fecha.ToDateTime(TimeOnly.MinValue));
+            cmdPago.Parameters.AddWithValue("@importe", pagoMulta.Importe);
+            cmdPago.Parameters.AddWithValue("@estado", EstadoPago.Activo.ToString());
+
+            var nuevoPagoId = Convert.ToInt32(cmdPago.ExecuteScalar());
+            pagoMulta.Id = nuevoPagoId;
+
+            const string queryReserva = """
+                UPDATE RESERVA
+                SET
+                    estado = @estado,
+                    fecha_fin_anticipado = @fecha_fin_anticipado,
+                    usuario_terminacion_id = @usuario_terminacion_id
+                WHERE
+                    id = @id
+                    AND estado = @estado_actual;
+            """;
+
+            using var cmdReserva = new MySqlCommand(queryReserva, conexion, transaccion);
+            cmdReserva.Parameters.AddWithValue("@id", reservaId);
+            cmdReserva.Parameters.AddWithValue("@estado", EstadoReserva.Finalizada.ToString());
+            cmdReserva.Parameters.AddWithValue("@fecha_fin_anticipado", fechaFinAnticipado.ToDateTime(TimeOnly.MinValue));
+            cmdReserva.Parameters.AddWithValue("@usuario_terminacion_id", usuarioTerminacionId);
+            cmdReserva.Parameters.AddWithValue("@estado_actual", EstadoReserva.Activa.ToString());
+
+            var filasAfectadas = cmdReserva.ExecuteNonQuery();
+            if (filasAfectadas == 0)
+            {
+                throw new InvalidOperationException("La reserva no se encuentra activa o ya fue finalizada/cancelada.");
+            }
+
+            transaccion.Commit();
+            return filasAfectadas;
+        }
+        catch
+        {
+            transaccion.Rollback();
+            throw;
+        }
+    }
+
     public bool VerificarDisponibilidad(int inmuebleId, DateOnly desde, DateOnly hasta, int? excluirReservaId = null)
     {
         using var conexion = new MySqlConnection(ConnectionString);

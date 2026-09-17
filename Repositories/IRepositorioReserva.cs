@@ -19,4 +19,5 @@ public interface IRepositorioReserva : IRepositorio<Reserva>
     int ObtenerCantidad(string? estado = null);
     int Baja(int id, int? usuarioTerminacionId);
     int Cancelar(int id, int? usuarioTerminacionId = null);
+    int FinalizarConMulta(int reservaId, DateOnly fechaFinAnticipado, int usuarioTerminacionId, Pago pagoMulta);
 }
