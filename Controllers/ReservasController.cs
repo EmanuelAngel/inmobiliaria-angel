@@ -290,6 +290,112 @@ public class ReservasController(
         }
     }
 
+    // GET: Reservas/Extender/5
+    public IActionResult Extender(int id)
+    {
+        var reserva = _repositorioReserva.ObtenerPorId(id);
+        if (reserva == null)
+            return NotFound();
+
+        if (reserva.Estado != EstadoReserva.Activa)
+        {
+            TempData["Error"] = "Solo se pueden extender reservas activas.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var model = new ReservaExtenderViewModel
+        {
+            ReservaOriginalId = reserva.Id,
+            ReservaOriginal = reserva,
+            InmuebleId = reserva.InmuebleId,
+            InquilinoId = reserva.InquilinoId,
+            FechaDesde = reserva.FechaHasta,
+            FechaHasta = reserva.FechaHasta.AddDays(1),
+            MontoPorDia = reserva.MontoPorDia
+        };
+
+        return View(model);
+    }
+
+    // POST: Reservas/Extender/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Extender(int id, ReservaExtenderViewModel model)
+    {
+        if (id != model.ReservaOriginalId && id != model.ReservaId)
+            return BadRequest();
+
+        var original = _repositorioReserva.ObtenerPorId(id);
+        if (original == null)
+            return NotFound();
+
+        if (original.Estado != EstadoReserva.Activa)
+        {
+            TempData["Error"] = "Solo se pueden extender reservas activas.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        // Forzar inviolabilidad de datos base tomados de la reserva original
+        model.FechaDesde = original.FechaHasta;
+        model.InmuebleId = original.InmuebleId;
+        model.InquilinoId = original.InquilinoId;
+        model.ReservaOriginal = original;
+
+        if (model.FechaHasta <= model.FechaDesde)
+        {
+            ModelState.AddModelError(nameof(model.FechaHasta),
+                "La fecha de finalización debe ser posterior a la fecha de inicio.");
+        }
+
+        if (model.MontoPorDia <= 0m)
+        {
+            ModelState.AddModelError(nameof(model.MontoPorDia),
+                "El monto por día debe ser mayor a 0.");
+        }
+
+        if (ModelState.IsValid)
+        {
+            if (!_repositorioReserva.VerificarDisponibilidad(original.InmuebleId, model.FechaDesde, model.FechaHasta))
+            {
+                ModelState.AddModelError(nameof(model.FechaHasta),
+                    "El inmueble ya tiene una reserva activa en ese período. Elija otras fechas.");
+            }
+        }
+
+        if (!ModelState.IsValid)
+        {
+            model.ReservaOriginal = original;
+            return View(model);
+        }
+
+        // TODO: Habría que refactorizar en algún momento el cómo se obtienen los valores de los claims
+        var usuarioId = int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : (int?)null;
+
+        var nuevaReserva = new Reserva
+        {
+            InquilinoId = original.InquilinoId,
+            InmuebleId = original.InmuebleId,
+            FechaDesde = model.FechaDesde,
+            FechaHasta = model.FechaHasta,
+            MontoPorDia = model.MontoPorDia,
+            Estado = EstadoReserva.Activa,
+            UsuarioCreacionId = usuarioId
+        };
+
+        try
+        {
+            var nuevoId = _repositorioReserva.Alta(nuevaReserva);
+            TempData["Mensaje"] = $"Reserva extendida exitosamente con el código #{nuevoId}.";
+            return RedirectToAction(nameof(Details), new { id = nuevoId });
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, "Error al registrar la extensión de la reserva: " + ex.Message);
+            model.ReservaOriginal = original;
+            return View(model);
+        }
+    }
+
     private static void CalcularLiquidacion(Reserva reserva, ReservaFinalizarViewModel model)
     {
         model.ReservaId = reserva.Id;
