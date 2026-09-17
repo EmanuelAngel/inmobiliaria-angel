@@ -127,6 +127,28 @@ CREATE TABLE IF NOT EXISTS IMAGEN_INMUEBLE (
 ) ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------------------------------
+-- 8. TABLA: PAGO
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS PAGO (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reserva_id INT NOT NULL,
+    usuario_creacion_id INT NOT NULL,
+    usuario_anulacion_id INT NULL,
+    concepto VARCHAR(255) NOT NULL,
+    fecha DATE NOT NULL,
+    importe DECIMAL(10, 2) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'Activo',
+    CONSTRAINT chk_pago_importe CHECK (importe > 0),
+    CONSTRAINT chk_pago_estado CHECK (estado IN ('Activo', 'Anulado')),
+    CONSTRAINT fk_pago_reserva FOREIGN KEY (reserva_id) REFERENCES RESERVA (id),
+    CONSTRAINT fk_pago_usuario_creacion FOREIGN KEY (usuario_creacion_id) REFERENCES USUARIO (id),
+    CONSTRAINT fk_pago_usuario_anulacion FOREIGN KEY (usuario_anulacion_id) REFERENCES USUARIO (id),
+    INDEX idx_pago_reserva_id (reserva_id),
+    INDEX idx_pago_estado (estado)
+) ENGINE = InnoDB;
+
+
 -- =============================================================================
 -- DATOS SEMILLA / PRUEBA INICIALES
 -- =============================================================================
@@ -648,4 +670,83 @@ VALUES
         '2026-08-20',
         55000.00,
         'Cancelada'
+    );
+
+
+-- -----------------------------------------------------------------------------
+-- 8. DATOS: PAGO
+-- -----------------------------------------------------------------------------
+INSERT INTO
+    PAGO (
+        reserva_id,
+        usuario_creacion_id,
+        usuario_anulacion_id,
+        concepto,
+        fecha,
+        importe,
+        estado
+    )
+VALUES
+    (
+        1,
+        2,
+        NULL,
+        'Seña inicial de reserva (30%)',
+        '2026-09-10',
+        135000.00,
+        'Activo'
+    ),
+    (
+        1,
+        2,
+        NULL,
+        'Primer pago parcial en efectivo',
+        '2026-09-14',
+        100000.00,
+        'Activo'
+    ),
+    (
+        2,
+        4,
+        NULL,
+        'Seña de alquiler por transferencia bancaria',
+        '2026-09-05',
+        200000.00,
+        'Activo'
+    ),
+    (
+        2,
+        4,
+        1,
+        'Transferencia duplicada registrada por error',
+        '2026-09-06',
+        50000.00,
+        'Anulado'
+    ),
+    (
+        4,
+        1,
+        NULL,
+        'Pago total de estancia',
+        '2026-08-01',
+        540000.00,
+        'Activo'
+    ),
+    (
+        5,
+        2,
+        NULL,
+        'Seña de reserva',
+        '2026-08-10',
+        150000.00,
+        'Activo'
+    ),
+    (
+        5,
+        1,
+        NULL,
+        'Multa por cancelación anticipada',
+        '2026-08-20',
+        68750.00,
+        'Activo'
     );
