@@ -7,20 +7,6 @@
     int? idResaltado = ViewBag.Id != null ? Convert.ToInt32(ViewBag.Id) : null;
 }
 
-@if (ViewBag.Mensaje != null)
-{
-    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> @ViewBag.Mensaje
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-}
-@if (ViewBag.Error != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Error
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-}
 
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
