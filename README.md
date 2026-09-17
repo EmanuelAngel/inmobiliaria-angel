@@ -22,7 +22,7 @@ Sistema de informatización para la gestión de alquileres temporarios de propie
 
 ### 1. Base de Datos
 
-El script [database.sql](database.sql) crea automáticamente la base de datos `inmobiliaria_dev`, las tablas `PROPIETARIO`, `INQUILINO`, `TIPO_INMUEBLE`, `INMUEBLE`, `IMAGEN_INMUEBLE`, `USUARIO` y `RESERVA`, e inserta datos semilla de prueba.
+El script [database.sql](database.sql) crea automáticamente la base de datos `inmobiliaria_dev`, las tablas `PROPIETARIO`, `INQUILINO`, `TIPO_INMUEBLE`, `INMUEBLE`, `IMAGEN_INMUEBLE`, `USUARIO`, `RESERVA` y `PAGO`, e inserta datos semilla de prueba.
 
 #### Vía Terminal (CLI)
 Ejecutar desde la raíz del proyecto:
@@ -172,11 +172,25 @@ erDiagram
         varchar estado
     }
 
+    PAGO {
+        int id PK
+        int reserva_id FK
+        int usuario_creacion_id FK
+        int usuario_anulacion_id FK
+        varchar concepto
+        date fecha
+        decimal importe
+        varchar estado
+    }
+
     PROPIETARIO ||--o{ INMUEBLE : "tiene"
     TIPO_INMUEBLE ||--o{ INMUEBLE : "clasifica"
     INMUEBLE ||--o{ IMAGEN_INMUEBLE : "tiene"
     INQUILINO ||--o{ RESERVA : "realiza"
     INMUEBLE ||--o{ RESERVA : "tiene"
+    RESERVA ||--o{ PAGO : "tiene"
     USUARIO ||--o{ RESERVA : "crea"
     USUARIO ||--o{ RESERVA : "termina"
+    USUARIO ||--o{ PAGO : "crea"
+    USUARIO ||--o{ PAGO : "anula"
 ```
