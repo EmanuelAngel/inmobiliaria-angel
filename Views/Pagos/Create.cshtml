@@ -1,0 +1,119 @@
+@model inmobiliaria_lab2.Models.Pago
+
+@{
+    ViewData["Title"] = "Registrar Nuevo Pago";
+    var reserva = ViewBag.Reserva as inmobiliaria_lab2.Models.Reserva;
+    var reservasActivas = ViewBag.ReservasActivas as IEnumerable<inmobiliaria_lab2.Models.Reserva>;
+    decimal? saldoPendiente = ViewBag.SaldoPendiente != null ? Convert.ToDecimal(ViewBag.SaldoPendiente) : null;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <h2 class="mb-3">@ViewData["Title"]</h2>
+
+        @if (reserva != null)
+        {
+            <div class="card mb-4 bg-body-tertiary border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                        <span class="badge bg-primary fs-6">Reserva #@reserva.Id</span>
+                        @if (saldoPendiente.HasValue)
+                        {
+                            <span class="badge bg-warning-subtle text-warning-emphasis fs-6 border">
+                                Saldo Pendiente: @saldoPendiente.Value.ToString("C")
+                            </span>
+                        }
+                    </div>
+                    <p class="mb-1"><strong>Inmueble:</strong> @(reserva.Inmueble?.Direccion ?? "-")</p>
+                    <p class="mb-1"><strong>Inquilino:</strong> @(reserva.Inquilino?.NombreCompleto ?? "-") (DNI: @(reserva.Inquilino?.Dni ?? "-"))</p>
+                    <p class="mb-0 text-muted small">
+                        Período contratado: @reserva.FechaDesde.ToString("dd/MM/yyyy") al @reserva.FechaHasta.ToString("dd/MM/yyyy") &bull; Total Contrato: @reserva.MontoTotal.ToString("C")
+                    </p>
+                </div>
+            </div>
+        }
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    @if (reserva != null)
+                    {
+                        <input type="hidden" asp-for="ReservaId" />
+                    }
+                    else
+                    {
+                        <div class="mb-3">
+                            <label asp-for="ReservaId" class="form-label fw-semibold"></label>
+                            <select asp-for="ReservaId" class="form-select" required>
+                                <option value="">-- Seleccione una reserva activa --</option>
+                                @if (reservasActivas != null)
+                                {
+                                    foreach (var r in reservasActivas)
+                                    {
+                                        <option value="@r.Id">
+                                            Reserva #@r.Id - @(r.Inmueble?.Direccion ?? "Inmueble") (@(r.Inquilino?.NombreCompleto ?? "Inquilino")) - Hasta @r.FechaHasta.ToString("dd/MM/yyyy")
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="ReservaId" class="text-danger small"></span>
+                        </div>
+                    }
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Fecha" class="form-label fw-semibold"></label>
+                            <input asp-for="Fecha" class="form-control" type="date" />
+                            <span asp-validation-for="Fecha" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Importe" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Importe" class="form-control text-end fw-semibold" step="0.01" min="0.01" />
+                            </div>
+                            <span asp-validation-for="Importe" class="text-danger small"></span>
+                            @if (saldoPendiente.HasValue)
+                            {
+                                <small class="text-muted d-block mt-1">
+                                    Tope máximo admitido: @saldoPendiente.Value.ToString("C")
+                                </small>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Concepto" class="form-label fw-semibold"></label>
+                        <input asp-for="Concepto" class="form-control" placeholder="Ej: Seña 30%, Pago parcial en efectivo, etc." />
+                        <span asp-validation-for="Concepto" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        @if (reserva != null)
+                        {
+                            <a asp-action="Index" asp-route-reservaId="@reserva.Id" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        }
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-circle"></i> Registrar Pago
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

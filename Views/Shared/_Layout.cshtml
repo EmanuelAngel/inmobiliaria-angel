@@ -66,6 +66,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link @(ctrl == "Pagos" ? "active fw-semibold" : "")"
+                               asp-area="" asp-controller="Pagos" asp-action="Index">
+                                <i class="bi bi-cash-stack"></i> Pagos
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link @(ctrl == "TiposInmueble" ? "active fw-semibold" : "")"
                                asp-area="" asp-controller="TiposInmueble" asp-action="Index">
                                 <i class="bi bi-tags"></i> Tipos de Inmueble

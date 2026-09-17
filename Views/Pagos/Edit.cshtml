@@ -1,0 +1,67 @@
+@model inmobiliaria_lab2.Models.PagoEditViewModel
+
+@{
+    ViewData["Title"] = $"Editar Concepto de Pago #{Model.Id}";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <h2 class="mb-3">@ViewData["Title"]</h2>
+
+        <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+            <div>
+                <strong>Regla de negocio contable:</strong> El importe y la fecha del pago son inmutables por trazabilidad financiera. Solo se permite rectificar el <strong>concepto</strong>.
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ReservaId" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Reserva e Inquilino</label>
+                        <div class="form-control bg-body-tertiary">
+                            Reserva #@Model.ReservaId &bull; @(Model.InquilinoNombre ?? "Inquilino") (@(Model.InmuebleDireccion ?? "Inmueble"))
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Fecha" class="form-label text-muted small mb-1"></label>
+                            <input class="form-control bg-body-tertiary" value="@Model.Fecha.ToString("dd/MM/yyyy")" disabled />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Importe" class="form-label text-muted small mb-1"></label>
+                            <input class="form-control bg-body-tertiary text-end fw-semibold" value="@Model.Importe.ToString("C")" disabled />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Concepto" class="form-label fw-semibold"></label>
+                        <input asp-for="Concepto" class="form-control" autofocus required />
+                        <span asp-validation-for="Concepto" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" asp-route-reservaId="@Model.ReservaId" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning px-4">
+                            <i class="bi bi-check-circle"></i> Guardar Concepto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
