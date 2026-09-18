@@ -478,6 +478,126 @@ public class RepositorioReserva(IConfiguration configuration) : RepositorioBase(
         return lista;
     }
 
+    public IList<Reserva> ObtenerVigentes()
+    {
+        var lista = new List<Reserva>();
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                r.id,
+                r.inquilino_id,
+                r.inmueble_id,
+                r.usuario_creacion_id,
+                r.usuario_terminacion_id,
+                r.fecha_desde,
+                r.fecha_hasta,
+                r.fecha_fin_anticipado,
+                r.monto_por_dia,
+                r.estado,
+                iq.nombre_completo,
+                iq.dni,
+                iq.email,
+                iq.telefono,
+                iq.activo AS inquilino_activo,
+                im.direccion,
+                im.propietario_id,
+                im.tipo_id,
+                im.cupo,
+                im.precio_por_dia AS inmueble_precio_por_dia,
+                im.porcentaje_senia,
+                im.latitud,
+                im.longitud,
+                im.imagen_portada,
+                im.estado AS inmueble_estado,
+                t.descripcion AS tipo_descripcion,
+                t.activo AS tipo_activo
+            FROM
+                RESERVA r
+                INNER JOIN INQUILINO iq ON r.inquilino_id = iq.id
+                INNER JOIN INMUEBLE im ON r.inmueble_id = im.id
+                INNER JOIN TIPO_INMUEBLE t ON im.tipo_id = t.id
+            WHERE
+                r.estado = @estado
+                AND CURDATE() BETWEEN r.fecha_desde AND COALESCE(r.fecha_fin_anticipado, r.fecha_hasta)
+            ORDER BY
+                COALESCE(r.fecha_fin_anticipado, r.fecha_hasta) ASC,
+                r.fecha_desde ASC;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@estado", EstadoReserva.Activa.ToString());
+
+        conexion.Open();
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(MapearConJoins(reader));
+        }
+
+        return lista;
+    }
+
+    public IList<Reserva> ObtenerProximasAFinalizar(int dias = 30)
+    {
+        var lista = new List<Reserva>();
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                r.id,
+                r.inquilino_id,
+                r.inmueble_id,
+                r.usuario_creacion_id,
+                r.usuario_terminacion_id,
+                r.fecha_desde,
+                r.fecha_hasta,
+                r.fecha_fin_anticipado,
+                r.monto_por_dia,
+                r.estado,
+                iq.nombre_completo,
+                iq.dni,
+                iq.email,
+                iq.telefono,
+                iq.activo AS inquilino_activo,
+                im.direccion,
+                im.propietario_id,
+                im.tipo_id,
+                im.cupo,
+                im.precio_por_dia AS inmueble_precio_por_dia,
+                im.porcentaje_senia,
+                im.latitud,
+                im.longitud,
+                im.imagen_portada,
+                im.estado AS inmueble_estado,
+                t.descripcion AS tipo_descripcion,
+                t.activo AS tipo_activo
+            FROM
+                RESERVA r
+                INNER JOIN INQUILINO iq ON r.inquilino_id = iq.id
+                INNER JOIN INMUEBLE im ON r.inmueble_id = im.id
+                INNER JOIN TIPO_INMUEBLE t ON im.tipo_id = t.id
+            WHERE
+                r.estado = @estado
+                AND COALESCE(r.fecha_fin_anticipado, r.fecha_hasta) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL @dias DAY)
+            ORDER BY
+                COALESCE(r.fecha_fin_anticipado, r.fecha_hasta) ASC;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@estado", EstadoReserva.Activa.ToString());
+        comando.Parameters.AddWithValue("@dias", Math.Max(1, dias));
+
+        conexion.Open();
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(MapearConJoins(reader));
+        }
+
+        return lista;
+    }
+
     // ── Mappers ───────────────────────────────────────────────────────────────
 
     private static Reserva MapearBase(MySqlDataReader reader)

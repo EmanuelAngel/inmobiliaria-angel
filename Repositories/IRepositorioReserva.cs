@@ -20,4 +20,6 @@ public interface IRepositorioReserva : IRepositorio<Reserva>
     int Baja(int id, int? usuarioTerminacionId);
     int Cancelar(int id, int? usuarioTerminacionId = null);
     int FinalizarConMulta(int reservaId, DateOnly fechaFinAnticipado, int usuarioTerminacionId, Pago pagoMulta);
+    IList<Reserva> ObtenerVigentes();
+    IList<Reserva> ObtenerProximasAFinalizar(int dias = 30);
 }

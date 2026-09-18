@@ -54,11 +54,23 @@ public class InformesController(
         return View(model);
     }
 
-    // GET: Informes/MonitoreoReservas (Próximo - Fase 3)
-    public IActionResult MonitoreoReservas()
+    // GET: Informes/MonitoreoReservas
+    public IActionResult MonitoreoReservas(string tab = "vigentes", int dias = 30)
     {
-        TempData["Mensaje"] = "El módulo de Monitoreo de Reservas estará disponible próximamente.";
-        return RedirectToAction(nameof(Index));
+        var diasClamped = Math.Clamp(dias, 1, 365);
+        var tabNormalizada = string.Equals(tab?.Trim(), "por-vencer", StringComparison.OrdinalIgnoreCase)
+            ? "por-vencer"
+            : "vigentes";
+
+        var viewModel = new MonitoreoReservasViewModel
+        {
+            TabActiva = tabNormalizada,
+            DiasVencimiento = diasClamped,
+            ReservasVigentes = _repositorioReserva.ObtenerVigentes(),
+            ReservasPorVencer = _repositorioReserva.ObtenerProximasAFinalizar(diasClamped)
+        };
+
+        return View(viewModel);
     }
 
     // GET: Informes/RendimientoInmuebles (Próximo - Fase 4)
