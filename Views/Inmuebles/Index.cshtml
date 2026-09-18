@@ -4,12 +4,23 @@
     ViewData["Title"] = "Listado de Inmuebles";
     string? estadoFiltro = ViewBag.EstadoFiltro;
     int? idResaltado = ViewBag.Id != null ? Convert.ToInt32(ViewBag.Id) : null;
+    var propietarioFiltro = ViewBag.PropietarioFiltro as inmobiliaria_lab2.Models.Propietario;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-    <h2>@ViewData["Title"]</h2>
+    <div>
+        <h2 class="mb-0">@ViewData["Title"]</h2>
+        @if (propietarioFiltro != null)
+        {
+            <small class="text-muted">Propiedades de @propietarioFiltro.NombreCompleto</small>
+        }
+    </div>
     <div class="d-flex gap-2">
         <form method="get" asp-action="Index" class="d-flex align-items-center gap-2">
+            @if (ViewBag.PropietarioIdFiltro != null)
+            {
+                <input type="hidden" name="propietarioId" value="@ViewBag.PropietarioIdFiltro" />
+            }
             <label for="estado" class="form-label mb-0 text-nowrap fw-semibold">Estado:</label>
             <select id="estado" name="estado" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="" selected="@(string.IsNullOrEmpty(estadoFiltro))">Todos</option>
@@ -22,6 +33,19 @@
         </a>
     </div>
 </div>
+
+@if (propietarioFiltro != null)
+{
+    <div class="alert alert-info d-flex align-items-center justify-content-between mb-3 py-2">
+        <div>
+            <i class="bi bi-person-badge-fill me-2"></i>
+            Filtrando por propietario: <strong>@propietarioFiltro.NombreCompleto</strong> (DNI: @propietarioFiltro.Dni)
+        </div>
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-x-circle me-1"></i> Quitar filtro
+        </a>
+    </div>
+}
 
 <div class="card shadow-sm">
     <div class="card-body p-0">

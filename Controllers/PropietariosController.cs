@@ -6,9 +6,10 @@ using inmobiliaria_lab2.Repositories;
 namespace inmobiliaria_lab2.Controllers;
 
 [Authorize]
-public class PropietariosController(IRepositorioPropietario repositorio) : Controller
+public class PropietariosController(IRepositorioPropietario repositorio, IRepositorioInmueble repositorioInmueble) : Controller
 {
     private readonly IRepositorioPropietario _repositorio = repositorio;
+    private readonly IRepositorioInmueble _repositorioInmueble = repositorioInmueble;
 
     // GET: Propietarios
     public IActionResult Index(int pagina = 1, int tamDePagina = 10)
@@ -49,6 +50,7 @@ public class PropietariosController(IRepositorioPropietario repositorio) : Contr
             return NotFound();
         }
 
+        ViewBag.Inmuebles = _repositorioInmueble.ObtenerPorPropietario(id);
         return View(propietario);
     }
 

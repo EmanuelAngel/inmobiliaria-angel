@@ -58,18 +58,24 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         return lista;
     }
 
-    public IList<Inmueble> ObtenerPorDisponibilidad(string? estado, int nroDePagina = 1, int tamDePagina = 12)
+    public IList<Inmueble> ObtenerPorDisponibilidad(string? estado, int? propietarioId = null, int nroDePagina = 1, int tamDePagina = 12)
     {
-        if (string.IsNullOrWhiteSpace(estado))
-        {
-            return ObtenerLista(nroDePagina, tamDePagina);
-        }
-
         var lista = new List<Inmueble>();
         var offset = (Math.Max(1, nroDePagina) - 1) * tamDePagina;
 
-        using var conexion = new MySqlConnection(ConnectionString);
-        const string query = """
+        var condiciones = new List<string>();
+        if (!string.IsNullOrWhiteSpace(estado))
+        {
+            condiciones.Add("i.estado = @estado");
+        }
+        if (propietarioId.HasValue)
+        {
+            condiciones.Add("i.propietario_id = @propietarioId");
+        }
+
+        var whereClause = condiciones.Count > 0 ? "WHERE " + string.Join(" AND ", condiciones) : "";
+
+        var query = $"""
             SELECT
                 i.id,
                 i.propietario_id,
@@ -94,8 +100,7 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
                 INMUEBLE i
                 INNER JOIN PROPIETARIO p ON i.propietario_id = p.id
                 INNER JOIN TIPO_INMUEBLE t ON i.tipo_id = t.id
-            WHERE
-                i.estado = @estado
+            {whereClause}
             ORDER BY
                 i.id DESC
             LIMIT
@@ -104,8 +109,16 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
                 @offset;
         """;
 
+        using var conexion = new MySqlConnection(ConnectionString);
         using var comando = new MySqlCommand(query, conexion);
-        comando.Parameters.AddWithValue("@estado", estado);
+        if (!string.IsNullOrWhiteSpace(estado))
+        {
+            comando.Parameters.AddWithValue("@estado", estado);
+        }
+        if (propietarioId.HasValue)
+        {
+            comando.Parameters.AddWithValue("@propietarioId", propietarioId.Value);
+        }
         comando.Parameters.AddWithValue("@limite", tamDePagina);
         comando.Parameters.AddWithValue("@offset", offset);
 
@@ -339,29 +352,30 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         return ObtenerCantidad(null);
     }
 
-    public int ObtenerCantidad(string? estado = null)
+    public int ObtenerCantidad(string? estado = null, int? propietarioId = null)
     {
         using var conexion = new MySqlConnection(ConnectionString);
-        var query = string.IsNullOrWhiteSpace(estado)
-            ? """
-                SELECT
-                    COUNT(id)
-                FROM
-                    INMUEBLE;
-            """
-            : """
-                SELECT
-                    COUNT(id)
-                FROM
-                    INMUEBLE
-                WHERE
-                    estado = @estado;
-            """;
+        var condiciones = new List<string>();
+        if (!string.IsNullOrWhiteSpace(estado))
+        {
+            condiciones.Add("estado = @estado");
+        }
+        if (propietarioId.HasValue)
+        {
+            condiciones.Add("propietario_id = @propietarioId");
+        }
+
+        var whereClause = condiciones.Count > 0 ? "WHERE " + string.Join(" AND ", condiciones) : "";
+        var query = $"SELECT COUNT(id) FROM INMUEBLE {whereClause};";
 
         using var comando = new MySqlCommand(query, conexion);
         if (!string.IsNullOrWhiteSpace(estado))
         {
             comando.Parameters.AddWithValue("@estado", estado);
+        }
+        if (propietarioId.HasValue)
+        {
+            comando.Parameters.AddWithValue("@propietarioId", propietarioId.Value);
         }
 
         conexion.Open();

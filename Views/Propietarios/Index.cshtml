@@ -44,6 +44,9 @@
                                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white" data-bs-toggle="tooltip" data-bs-title="Ver detalles">
                                             <i class="bi bi-eye"></i>
                                         </a>
+                                        <a asp-controller="Inmuebles" asp-action="Index" asp-route-propietarioId="@item.Id" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Ver inmuebles">
+                                            <i class="bi bi-building"></i>
+                                        </a>
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" data-bs-title="Editar">
                                             <i class="bi bi-pencil"></i>
                                         </a>

@@ -6,7 +6,7 @@ public interface IRepositorioInmueble : IRepositorio<Inmueble>
 {
     IList<Inmueble> Buscar(string q, int limite = 20);
     IList<Inmueble> ObtenerPorPropietario(int propietarioId);
-    IList<Inmueble> ObtenerPorDisponibilidad(string? estado, int nroDePagina = 1, int tamDePagina = 12);
-    int ObtenerCantidad(string? estado = null);
+    IList<Inmueble> ObtenerPorDisponibilidad(string? estado, int? propietarioId = null, int nroDePagina = 1, int tamDePagina = 12);
+    int ObtenerCantidad(string? estado = null, int? propietarioId = null);
     int CambiarEstado(int id, string nuevoEstado);
 }

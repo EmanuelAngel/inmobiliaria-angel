@@ -22,13 +22,13 @@ public class InmueblesController(
     private readonly IAlmacenadorArchivos _almacenadorArchivos = almacenadorArchivos;
 
     // GET: Inmuebles
-    public IActionResult Index(int pagina = 1, int tamDePagina = 10, string? estado = null)
+    public IActionResult Index(int pagina = 1, int tamDePagina = 10, string? estado = null, int? propietarioId = null)
     {
         pagina = Math.Max(1, pagina);
         tamDePagina = Math.Clamp(tamDePagina, 1, 50);
 
-        var lista = _repositorioInmueble.ObtenerPorDisponibilidad(estado, pagina, tamDePagina);
-        var total = _repositorioInmueble.ObtenerCantidad(estado);
+        var lista = _repositorioInmueble.ObtenerPorDisponibilidad(estado, propietarioId, pagina, tamDePagina);
+        var total = _repositorioInmueble.ObtenerCantidad(estado, propietarioId);
 
         // La paginación se construye aquí y no en la vista para mantener la vista "tonta":
         // los filtros activos (estado, etc.) se incluyen en ValoresRuta para que al paginar
@@ -36,6 +36,8 @@ public class InmueblesController(
         var valoresRuta = new Dictionary<string, string>();
         if (!string.IsNullOrEmpty(estado))
             valoresRuta["estado"] = estado;
+        if (propietarioId.HasValue)
+            valoresRuta["propietarioId"] = propietarioId.Value.ToString();
 
         ViewBag.Paginacion = new PaginacionViewModel
         {
@@ -46,6 +48,11 @@ public class InmueblesController(
             ValoresRuta = valoresRuta
         };
         ViewBag.EstadoFiltro = estado;
+        ViewBag.PropietarioIdFiltro = propietarioId;
+        if (propietarioId.HasValue)
+        {
+            ViewBag.PropietarioFiltro = _repositorioPropietario.ObtenerPorId(propietarioId.Value);
+        }
         ViewBag.Id = TempData["Id"];
 
         if (TempData.ContainsKey("Mensaje"))
