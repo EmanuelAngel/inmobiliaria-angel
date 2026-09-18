@@ -497,6 +497,189 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         return lista;
     }
 
+    public IList<InmuebleRankingItem> ObtenerMasReservados(int dias = 365, int limite = 10)
+    {
+        var lista = new List<InmuebleRankingItem>();
+        var diasValidados = Math.Max(1, dias);
+        var limiteValidado = Math.Clamp(limite, 1, 100);
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                i.id,
+                i.propietario_id,
+                i.tipo_id,
+                i.direccion,
+                i.cupo,
+                i.precio_por_dia,
+                i.porcentaje_senia,
+                i.latitud,
+                i.longitud,
+                i.imagen_portada,
+                i.estado,
+                p.nombre AS propietario_nombre,
+                p.apellido AS propietario_apellido,
+                p.dni AS propietario_dni,
+                p.email AS propietario_email,
+                p.telefono AS propietario_telefono,
+                p.activo AS propietario_activo,
+                t.descripcion AS tipo_descripcion,
+                t.activo AS tipo_activo,
+                COUNT(r.id) AS total_reservas
+            FROM
+                INMUEBLE i
+                INNER JOIN PROPIETARIO p ON i.propietario_id = p.id
+                INNER JOIN TIPO_INMUEBLE t ON i.tipo_id = t.id
+                INNER JOIN RESERVA r ON r.inmueble_id = i.id
+            WHERE
+                r.estado != @estadoCancelada
+                AND r.fecha_desde >= DATE_SUB(CURDATE(), INTERVAL @dias DAY)
+            GROUP BY
+                i.id,
+                i.propietario_id,
+                i.tipo_id,
+                i.direccion,
+                i.cupo,
+                i.precio_por_dia,
+                i.porcentaje_senia,
+                i.latitud,
+                i.longitud,
+                i.imagen_portada,
+                i.estado,
+                p.nombre,
+                p.apellido,
+                p.dni,
+                p.email,
+                p.telefono,
+                p.activo,
+                t.descripcion,
+                t.activo
+            ORDER BY
+                total_reservas DESC,
+                i.id DESC
+            LIMIT
+                @limite;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@dias", diasValidados);
+        comando.Parameters.AddWithValue("@limite", limiteValidado);
+        comando.Parameters.AddWithValue("@estadoCancelada", EstadoReserva.Cancelada.ToString());
+
+        conexion.Open();
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            var inmueble = MapearConJoins(reader);
+            var totalReservas = Convert.ToInt32(reader["total_reservas"]);
+            lista.Add(new InmuebleRankingItem
+            {
+                Inmueble = inmueble,
+                TotalReservas = totalReservas
+            });
+        }
+
+        return lista;
+    }
+
+    public IList<InmuebleSinReservaItem> ObtenerSinReservas(int dias = 30)
+    {
+        var lista = new List<InmuebleSinReservaItem>();
+        var diasValidados = Math.Max(1, dias);
+        var hoy = DateOnly.FromDateTime(DateTime.Today);
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                i.id,
+                i.propietario_id,
+                i.tipo_id,
+                i.direccion,
+                i.cupo,
+                i.precio_por_dia,
+                i.porcentaje_senia,
+                i.latitud,
+                i.longitud,
+                i.imagen_portada,
+                i.estado,
+                p.nombre AS propietario_nombre,
+                p.apellido AS propietario_apellido,
+                p.dni AS propietario_dni,
+                p.email AS propietario_email,
+                p.telefono AS propietario_telefono,
+                p.activo AS propietario_activo,
+                t.descripcion AS tipo_descripcion,
+                t.activo AS tipo_activo,
+                MAX(r.fecha_hasta) AS ultima_reserva
+            FROM
+                INMUEBLE i
+                INNER JOIN PROPIETARIO p ON i.propietario_id = p.id
+                INNER JOIN TIPO_INMUEBLE t ON i.tipo_id = t.id
+                LEFT JOIN RESERVA r ON r.inmueble_id = i.id AND r.estado != @estadoCancelada
+            WHERE
+                i.estado = @estadoDisponible
+                AND i.id NOT IN (
+                    SELECT r_sub.inmueble_id
+                    FROM RESERVA r_sub
+                    WHERE r_sub.estado != @estadoCancelada
+                      AND r_sub.fecha_hasta >= DATE_SUB(CURDATE(), INTERVAL @dias DAY)
+                )
+            GROUP BY
+                i.id,
+                i.propietario_id,
+                i.tipo_id,
+                i.direccion,
+                i.cupo,
+                i.precio_por_dia,
+                i.porcentaje_senia,
+                i.latitud,
+                i.longitud,
+                i.imagen_portada,
+                i.estado,
+                p.nombre,
+                p.apellido,
+                p.dni,
+                p.email,
+                p.telefono,
+                p.activo,
+                t.descripcion,
+                t.activo
+            ORDER BY
+                ultima_reserva ASC,
+                i.id DESC;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@dias", diasValidados);
+        comando.Parameters.AddWithValue("@estadoDisponible", EstadoInmueble.Disponible.ToString());
+        comando.Parameters.AddWithValue("@estadoCancelada", EstadoReserva.Cancelada.ToString());
+
+        conexion.Open();
+        using var reader = comando.ExecuteReader();
+        var ordinalUltimaReserva = reader.GetOrdinal("ultima_reserva");
+
+        while (reader.Read())
+        {
+            var inmueble = MapearConJoins(reader);
+            DateOnly? ultimaReserva = reader.IsDBNull(ordinalUltimaReserva)
+                ? null
+                : DateOnly.FromDateTime(reader.GetDateTime(ordinalUltimaReserva));
+
+            int? diasSinReserva = ultimaReserva.HasValue
+                ? Math.Max(0, hoy.DayNumber - ultimaReserva.Value.DayNumber)
+                : null;
+
+            lista.Add(new InmuebleSinReservaItem
+            {
+                Inmueble = inmueble,
+                UltimaReserva = ultimaReserva,
+                DiasSinReserva = diasSinReserva
+            });
+        }
+
+        return lista;
+    }
+
     private static Inmueble MapearBase(MySqlDataReader reader)
     {
         var estadoRaw = reader.GetString(reader.GetOrdinal("estado"));

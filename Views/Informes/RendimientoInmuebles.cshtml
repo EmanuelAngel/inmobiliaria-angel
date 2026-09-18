@@ -1,0 +1,316 @@
+@model inmobiliaria_lab2.Models.RendimientoInmueblesViewModel
+
+@{
+    ViewData["Title"] = "Rendimiento de Inmuebles";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a asp-action="Index">Informes</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Rendimiento de Inmuebles</li>
+            </ol>
+        </nav>
+        <h2 class="mb-0"><i class="bi bi-graph-up-arrow text-warning me-2"></i>@ViewData["Title"]</h2>
+        <p class="text-secondary mb-0">Estadísticas de ocupación: propiedades con mayor demanda y detección de inmuebles sin actividad reciente.</p>
+    </div>
+    <div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Volver al Hub
+        </a>
+    </div>
+</div>
+
+<!-- Navegación por pestañas (Nav-tabs) -->
+<ul class="nav nav-tabs mb-4" id="rendimientoTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link @(Model.TabActiva == "mas-reservados" ? "active fw-semibold" : "")"
+           asp-action="RendimientoInmuebles"
+           asp-route-tab="mas-reservados"
+           asp-route-diasInactividad="@Model.DiasInactividad">
+            <i class="bi bi-trophy me-2 text-warning"></i>Más Reservados (Últimos 365 días)
+            <span class="badge bg-primary rounded-pill ms-2">@Model.MasReservados.Count</span>
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link @(Model.TabActiva == "sin-reservas" ? "active fw-semibold" : "")"
+           asp-action="RendimientoInmuebles"
+           asp-route-tab="sin-reservas"
+           asp-route-diasInactividad="@Model.DiasInactividad">
+            <i class="bi bi-calendar-x me-2 text-danger"></i>Sin Reservas en los Últimos @Model.DiasInactividad Días
+            <span class="badge bg-warning text-dark rounded-pill ms-2">@Model.SinReservas.Count</span>
+        </a>
+    </li>
+</ul>
+
+@if (Model.TabActiva == "sin-reservas")
+{
+    <!-- Selector y filtros de días de inactividad -->
+    <div class="card shadow-sm mb-4 border-0 bg-body-tertiary">
+        <div class="card-body py-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="fw-semibold text-secondary me-1">
+                        <i class="bi bi-funnel me-1"></i> Período de inactividad:
+                    </span>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Filtro rápido de días">
+                        <a asp-action="RendimientoInmuebles" asp-route-tab="sin-reservas" asp-route-diasInactividad="30"
+                           class="btn @(Model.DiasInactividad == 30 ? "btn-warning text-dark fw-bold" : "btn-outline-secondary")">
+                            30 días
+                        </a>
+                        <a asp-action="RendimientoInmuebles" asp-route-tab="sin-reservas" asp-route-diasInactividad="60"
+                           class="btn @(Model.DiasInactividad == 60 ? "btn-warning text-dark fw-bold" : "btn-outline-secondary")">
+                            60 días
+                        </a>
+                        <a asp-action="RendimientoInmuebles" asp-route-tab="sin-reservas" asp-route-diasInactividad="90"
+                           class="btn @(Model.DiasInactividad == 90 ? "btn-warning text-dark fw-bold" : "btn-outline-secondary")">
+                            90 días
+                        </a>
+                        <a asp-action="RendimientoInmuebles" asp-route-tab="sin-reservas" asp-route-diasInactividad="180"
+                           class="btn @(Model.DiasInactividad == 180 ? "btn-warning text-dark fw-bold" : "btn-outline-secondary")">
+                            180 días
+                        </a>
+                    </div>
+                </div>
+
+                <form method="get" asp-action="RendimientoInmuebles" class="d-flex align-items-center gap-2">
+                    <input type="hidden" name="tab" value="sin-reservas" />
+                    <div class="input-group input-group-sm" style="width: 170px;">
+                        <input type="number" name="diasInactividad" min="1" max="365" class="form-control"
+                               value="@Model.DiasInactividad" placeholder="Días" required />
+                        <span class="input-group-text">días</span>
+                        <button type="submit" class="btn btn-outline-secondary" title="Aplicar filtro personalizado">
+                            <i class="bi bi-arrow-right-short"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.SinReservas.Any())
+    {
+        <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+            <div>
+                No se registraron propiedades inactivas: todos los inmuebles disponibles cuentan con reservas en los últimos <strong>@Model.DiasInactividad</strong> días.
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning-subtle border border-warning-subtle text-dark d-flex align-items-center mb-3 py-2">
+            <i class="bi bi-exclamation-triangle-fill text-warning me-2 fs-5"></i>
+            <div>
+                Se registran <strong>@Model.SinReservas.Count</strong> inmueble(s) disponible(s) sin reservas finalizadas en los últimos <strong>@Model.DiasInactividad</strong> días.
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;" class="text-center">Foto</th>
+                                <th>Dirección</th>
+                                <th>Propietario</th>
+                                <th>Tipo</th>
+                                <th class="text-end">Precio por Día</th>
+                                <th class="text-center">Última Reserva</th>
+                                <th class="text-center">Tiempo sin Reservas</th>
+                                <th class="text-end pe-3">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.SinReservas)
+                            {
+                                <tr>
+                                    <td class="text-center p-1">
+                                        @if (!string.IsNullOrEmpty(item.Inmueble.ImagenPortada))
+                                        {
+                                            <img src="@item.Inmueble.ImagenPortada" alt="Foto @item.Inmueble.Direccion" class="rounded object-fit-cover shadow-sm" style="width: 44px; height: 44px;" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'rounded bg-body-secondary d-flex align-items-center justify-content-center mx-auto\' style=\'width:44px;height:44px;\'><i class=\'bi bi-image text-muted\'></i></div>';" />
+                                        }
+                                        else
+                                        {
+                                            <div class="rounded bg-body-secondary d-flex align-items-center justify-content-center mx-auto" style="width: 44px; height: 44px;">
+                                                <i class="bi bi-image text-muted"></i>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold">@item.Inmueble.Direccion</div>
+                                        <div class="small text-muted">Capacidad: @item.Inmueble.Cupo personas</div>
+                                    </td>
+                                    <td>
+                                        <div>@(item.Inmueble.Propietario?.NombreCompleto ?? "-")</div>
+                                        <div class="small text-muted">Tel: @(item.Inmueble.Propietario?.Telefono ?? "-")</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary-subtle text-secondary border">@(item.Inmueble.Tipo?.Descripcion ?? "-")</span>
+                                    </td>
+                                    <td class="text-end fw-semibold text-nowrap">
+                                        @item.Inmueble.PrecioPorDia.ToString("C")
+                                    </td>
+                                    <td class="text-center text-nowrap">
+                                        @if (item.UltimaReserva.HasValue)
+                                        {
+                                            <span>@item.UltimaReserva.Value.ToString("dd/MM/yyyy")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">Nunca</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.DiasSinReserva.HasValue)
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-calendar-x me-1"></i>@item.DiasSinReserva días
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                                <i class="bi bi-exclamation-circle me-1"></i>Nunca reservado
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-3 text-nowrap">
+                                        <div class="d-inline-flex gap-1 align-items-center">
+                                            <a asp-controller="Inmuebles" asp-action="Details" asp-route-id="@item.Inmueble.Id"
+                                               class="btn btn-sm btn-outline-primary" title="Ver Inmueble">
+                                                <i class="bi bi-eye me-1"></i>Ver Inmueble
+                                            </a>
+                                            <a asp-controller="Reservas" asp-action="Create" asp-route-inmuebleId="@item.Inmueble.Id"
+                                               class="btn btn-sm btn-outline-success" title="Registrar Reserva">
+                                                <i class="bi bi-calendar-plus"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <!-- Tab: Más Reservados -->
+    @if (!Model.MasReservados.Any())
+    {
+        <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-info-circle-fill flex-shrink-0 me-2 fs-5"></i>
+            <div>No se registran reservas no canceladas en los últimos 365 días.</div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success-subtle border border-success-subtle text-dark d-flex align-items-center mb-3 py-2">
+            <i class="bi bi-trophy text-warning me-2 fs-5"></i>
+            <div>
+                Top <strong>@Model.MasReservados.Count</strong> de inmuebles con mayor cantidad de reservas registradas en los últimos 365 días.
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 70px;" class="text-center">Puesto</th>
+                                <th style="width: 50px;" class="text-center">Foto</th>
+                                <th>Dirección</th>
+                                <th>Propietario</th>
+                                <th>Tipo</th>
+                                <th class="text-end">Precio por Día</th>
+                                <th class="text-center">Total Reservas</th>
+                                <th class="text-end pe-3">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.MasReservados.Count; i++)
+                            {
+                                var item = Model.MasReservados[i];
+                                var puesto = i + 1;
+
+                                <tr>
+                                    <td class="text-center">
+                                        @if (puesto == 1)
+                                        {
+                                            <span class="badge bg-warning text-dark fs-6 px-2 py-1 shadow-sm" title="Primer Puesto">
+                                                <i class="bi bi-trophy-fill me-1"></i>#1
+                                            </span>
+                                        }
+                                        else if (puesto == 2)
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle fs-6 px-2 py-1 shadow-sm" title="Segundo Puesto">
+                                                <i class="bi bi-award-fill me-1"></i>#2
+                                            </span>
+                                        }
+                                        else if (puesto == 3)
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-6 px-2 py-1 shadow-sm" title="Tercer Puesto">
+                                                <i class="bi bi-award me-1"></i>#3
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-dark border fs-6 px-2 py-1">
+                                                #@puesto
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-center p-1">
+                                        @if (!string.IsNullOrEmpty(item.Inmueble.ImagenPortada))
+                                        {
+                                            <img src="@item.Inmueble.ImagenPortada" alt="Foto @item.Inmueble.Direccion" class="rounded object-fit-cover shadow-sm" style="width: 44px; height: 44px;" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'rounded bg-body-secondary d-flex align-items-center justify-content-center mx-auto\' style=\'width:44px;height:44px;\'><i class=\'bi bi-image text-muted\'></i></div>';" />
+                                        }
+                                        else
+                                        {
+                                            <div class="rounded bg-body-secondary d-flex align-items-center justify-content-center mx-auto" style="width: 44px; height: 44px;">
+                                                <i class="bi bi-image text-muted"></i>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold">@item.Inmueble.Direccion</div>
+                                        <div class="small text-muted">Capacidad: @item.Inmueble.Cupo personas</div>
+                                    </td>
+                                    <td>
+                                        <div>@(item.Inmueble.Propietario?.NombreCompleto ?? "-")</div>
+                                        <div class="small text-muted">Tel: @(item.Inmueble.Propietario?.Telefono ?? "-")</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary-subtle text-secondary border">@(item.Inmueble.Tipo?.Descripcion ?? "-")</span>
+                                    </td>
+                                    <td class="text-end fw-semibold text-nowrap">
+                                        @item.Inmueble.PrecioPorDia.ToString("C")
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary rounded-pill fs-6 px-3 py-2">
+                                            <i class="bi bi-calendar2-check me-1"></i>@item.TotalReservas
+                                        </span>
+                                    </td>
+                                    <td class="text-end pe-3 text-nowrap">
+                                        <div class="d-inline-flex gap-1 align-items-center">
+                                            <a asp-controller="Inmuebles" asp-action="Details" asp-route-id="@item.Inmueble.Id"
+                                               class="btn btn-sm btn-outline-primary" title="Ver Inmueble">
+                                                <i class="bi bi-eye me-1"></i>Ver Inmueble
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}

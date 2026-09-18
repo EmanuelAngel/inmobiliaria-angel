@@ -73,10 +73,22 @@ public class InformesController(
         return View(viewModel);
     }
 
-    // GET: Informes/RendimientoInmuebles (Próximo - Fase 4)
-    public IActionResult RendimientoInmuebles()
+    // GET: Informes/RendimientoInmuebles
+    public IActionResult RendimientoInmuebles(string tab = "mas-reservados", int diasInactividad = 30)
     {
-        TempData["Mensaje"] = "El módulo de Rendimiento de Inmuebles estará disponible próximamente.";
-        return RedirectToAction(nameof(Index));
+        var diasClamped = Math.Clamp(diasInactividad, 1, 365);
+        var tabNormalizada = string.Equals(tab?.Trim(), "sin-reservas", StringComparison.OrdinalIgnoreCase)
+            ? "sin-reservas"
+            : "mas-reservados";
+
+        var viewModel = new RendimientoInmueblesViewModel
+        {
+            TabActiva = tabNormalizada,
+            DiasInactividad = diasClamped,
+            MasReservados = _repositorioInmueble.ObtenerMasReservados(dias: 365, limite: 10),
+            SinReservas = _repositorioInmueble.ObtenerSinReservas(diasClamped)
+        };
+
+        return View(viewModel);
     }
 }

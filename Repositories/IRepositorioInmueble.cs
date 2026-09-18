@@ -10,5 +10,7 @@ public interface IRepositorioInmueble : IRepositorio<Inmueble>
     int ObtenerCantidad(string? estado = null, int? propietarioId = null);
     int CambiarEstado(int id, string nuevoEstado);
     IList<Inmueble> ObtenerDisponiblesEntreFechas(DateOnly desde, DateOnly hasta);
+    IList<InmuebleRankingItem> ObtenerMasReservados(int dias = 365, int limite = 10);
+    IList<InmuebleSinReservaItem> ObtenerSinReservas(int dias = 30);
 }
 
