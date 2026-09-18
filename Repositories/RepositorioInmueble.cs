@@ -438,6 +438,65 @@ public class RepositorioInmueble(IConfiguration configuration) : RepositorioBase
         return lista;
     }
 
+    public IList<Inmueble> ObtenerDisponiblesEntreFechas(DateOnly desde, DateOnly hasta)
+    {
+        var lista = new List<Inmueble>();
+
+        using var conexion = new MySqlConnection(ConnectionString);
+        const string query = """
+            SELECT
+                i.id,
+                i.propietario_id,
+                i.tipo_id,
+                i.direccion,
+                i.cupo,
+                i.precio_por_dia,
+                i.porcentaje_senia,
+                i.latitud,
+                i.longitud,
+                i.imagen_portada,
+                i.estado,
+                p.nombre AS propietario_nombre,
+                p.apellido AS propietario_apellido,
+                p.dni AS propietario_dni,
+                p.email AS propietario_email,
+                p.telefono AS propietario_telefono,
+                p.activo AS propietario_activo,
+                t.descripcion AS tipo_descripcion,
+                t.activo AS tipo_activo
+            FROM
+                INMUEBLE i
+                INNER JOIN PROPIETARIO p ON i.propietario_id = p.id
+                INNER JOIN TIPO_INMUEBLE t ON i.tipo_id = t.id
+            WHERE
+                i.estado = @estadoInmueble
+                AND i.id NOT IN (
+                    SELECT r.inmueble_id
+                    FROM RESERVA r
+                    WHERE r.estado = @estadoReserva
+                      AND r.fecha_desde <= @hasta
+                      AND COALESCE(r.fecha_fin_anticipado, r.fecha_hasta) >= @desde
+                )
+            ORDER BY
+                i.direccion;
+        """;
+
+        using var comando = new MySqlCommand(query, conexion);
+        comando.Parameters.AddWithValue("@estadoInmueble", EstadoInmueble.Disponible.ToString());
+        comando.Parameters.AddWithValue("@estadoReserva", EstadoReserva.Activa.ToString());
+        comando.Parameters.AddWithValue("@desde", desde.ToDateTime(TimeOnly.MinValue));
+        comando.Parameters.AddWithValue("@hasta", hasta.ToDateTime(TimeOnly.MinValue));
+
+        conexion.Open();
+        using var reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(MapearConJoins(reader));
+        }
+
+        return lista;
+    }
+
     private static Inmueble MapearBase(MySqlDataReader reader)
     {
         var estadoRaw = reader.GetString(reader.GetOrdinal("estado"));

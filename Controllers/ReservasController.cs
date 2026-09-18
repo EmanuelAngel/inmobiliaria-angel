@@ -74,9 +74,25 @@ public class ReservasController(
     }
 
     // GET: Reservas/Create
-    public IActionResult Create()
+    public IActionResult Create(int? inmuebleId = null, DateOnly? fechaDesde = null, DateOnly? fechaHasta = null)
     {
-        return View();
+        var reserva = new Reserva
+        {
+            InmuebleId = inmuebleId ?? 0,
+            FechaDesde = fechaDesde ?? DateOnly.FromDateTime(DateTime.Today),
+            FechaHasta = fechaHasta ?? DateOnly.FromDateTime(DateTime.Today.AddDays(1))
+        };
+
+        if (reserva.InmuebleId > 0)
+        {
+            RepoblarNavegacion(reserva);
+            if (reserva.Inmueble != null)
+            {
+                reserva.MontoPorDia = reserva.Inmueble.PrecioPorDia;
+            }
+        }
+
+        return View(reserva);
     }
 
     // POST: Reservas/Create

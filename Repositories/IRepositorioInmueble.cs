@@ -9,4 +9,6 @@ public interface IRepositorioInmueble : IRepositorio<Inmueble>
     IList<Inmueble> ObtenerPorDisponibilidad(string? estado, int? propietarioId = null, int nroDePagina = 1, int tamDePagina = 12);
     int ObtenerCantidad(string? estado = null, int? propietarioId = null);
     int CambiarEstado(int id, string nuevoEstado);
+    IList<Inmueble> ObtenerDisponiblesEntreFechas(DateOnly desde, DateOnly hasta);
 }
+

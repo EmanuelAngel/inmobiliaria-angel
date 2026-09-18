@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "Centro de Informes y Consultas";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1"><i class="bi bi-bar-chart-line text-primary me-2"></i>@ViewData["Title"]</h2>
+        <p class="text-secondary mb-0">Acceso a consultas analíticas, control de disponibilidad y monitoreo operativo.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Card 1: Disponibilidad por Fechas -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 border-top border-primary border-3">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3 me-3">
+                        <i class="bi bi-calendar-range fs-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-0">Disponibilidad por Fechas</h5>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle mt-1">Disponible</span>
+                    </div>
+                </div>
+                <p class="card-text text-secondary flex-grow-1">
+                    Consulte el catálogo de propiedades libres para un período específico (fecha desde y hasta) y registre reservas de forma directa.
+                </p>
+                <div class="pt-3 border-top">
+                    <a asp-action="Disponibilidad" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1"></i> Consultar Disponibilidad
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2: Monitoreo de Reservas -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 border-top border-info border-3">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="p-3 bg-info bg-opacity-10 text-info rounded-3 me-3">
+                        <i class="bi bi-clock-history fs-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-0">Monitoreo de Reservas</h5>
+                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle mt-1">Próximo</span>
+                    </div>
+                </div>
+                <p class="card-text text-secondary flex-grow-1">
+                    Supervise las reservas vigentes en tiempo real y filtre los contratos próximos a vencer en los siguientes 7, 15 o 30 días.
+                </p>
+                <div class="pt-3 border-top">
+                    <a asp-action="MonitoreoReservas" class="btn btn-outline-secondary w-100 disabled" tabindex="-1" aria-disabled="true">
+                        <i class="bi bi-lock me-1"></i> Fase 3 (Próximo)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3: Rendimiento de Inmuebles -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 border-top border-warning border-3">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3 me-3">
+                        <i class="bi bi-graph-up-arrow fs-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-0">Rendimiento de Inmuebles</h5>
+                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle mt-1">Próximo</span>
+                    </div>
+                </div>
+                <p class="card-text text-secondary flex-grow-1">
+                    Ranking de las propiedades más reservadas en los últimos 365 días y detección de inmuebles sin ocupación reciente.
+                </p>
+                <div class="pt-3 border-top">
+                    <a asp-action="RendimientoInmuebles" class="btn btn-outline-secondary w-100 disabled" tabindex="-1" aria-disabled="true">
+                        <i class="bi bi-lock me-1"></i> Fase 4 (Próximo)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
