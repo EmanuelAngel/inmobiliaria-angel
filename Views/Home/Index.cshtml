@@ -1,14 +1,247 @@
+@using System.Globalization
 @{
     ViewData["Title"] = "Inicio";
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    var nombreCompleto = User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value;
+    var nombreAMostrar = !string.IsNullOrWhiteSpace(nombreCompleto) ? nombreCompleto : (User.Identity?.Name ?? "Usuario");
+    var esAdmin = User.IsInRole("Administrador");
+    var cultureEs = new CultureInfo("es-AR");
+    var fechaHoy = DateTime.Now.ToString("dddd d 'de' MMMM, yyyy", cultureEs);
+    fechaHoy = char.ToUpper(fechaHoy[0]) + fechaHoy[1..];
 }
 
 <div class="container py-4">
-    <div class="p-5 mb-4 bg-body-tertiary rounded-3 border">
-        <div class="container-fluid py-3">
-            <h1 class="display-5 fw-bold">Sistema de Gestión Inmobiliaria</h1>
-            <p class="col-md-10 fs-5 text-secondary mb-0">
-                Proyecto desarrollado para la materia <strong>Laboratorio de Programación II</strong> — Tecnicatura Universitaria en Desarrollo de Software (Universidad de La Punta).
-            </p>
+    @if (!isAuthenticated)
+    {
+        <!-- ================================================================= -->
+        <!-- PORTADA: USUARIO NO AUTENTICADO                                  -->
+        <!-- ================================================================= -->
+        <div class="p-5 mb-5 bg-body rounded-4 border shadow-sm text-center text-md-start">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-2 rounded-pill mb-3">
+                        <i class="bi bi-shield-check me-1"></i> Plataforma de Gestión Interna
+                    </span>
+                    <h1 class="display-5 fw-bold text-body-emphasis mb-3">Agencia Angel</h1>
+                    <p class="lead text-secondary mb-4" style="max-width: 65ch;">
+                        Sistema integral para la administración operativa de alquileres temporarios, contratos de reserva sin solapamiento, liquidaciones y control de penalizaciones.
+                    </p>
+                    <div class="d-flex flex-wrap align-items-center gap-3 justify-content-center justify-content-md-start">
+                        <a asp-controller="Usuarios" asp-action="Login" class="btn btn-primary btn-lg px-4 gap-2 d-inline-flex align-items-center">
+                            <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                        </a>
+                        <span class="text-secondary small">
+                            <i class="bi bi-lock me-1"></i> Acceso restringido al personal operativo y administrativo
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center d-none d-lg-block">
+                    <i class="bi bi-buildings text-secondary opacity-25" style="font-size: 8rem;"></i>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!-- Puntos clave del sistema -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100 border shadow-sm bg-body rounded-3 p-2">
+                    <div class="card-body">
+                        <div class="p-3 bg-secondary bg-opacity-10 text-secondary rounded-3 d-inline-block mb-3">
+                            <i class="bi bi-calendar2-check fs-4"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Disponibilidad en Tiempo Real</h5>
+                        <p class="card-text text-secondary small mb-0">
+                            Validación estricta de cruce de fechas por inmueble para garantizar cero solapamientos en las reservas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border shadow-sm bg-body rounded-3 p-2">
+                    <div class="card-body">
+                        <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 d-inline-block mb-3">
+                            <i class="bi bi-cash-stack fs-4"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Cobranzas y Liquidación</h5>
+                        <p class="card-text text-secondary small mb-0">
+                            Registro ordenado de señas, cobro de saldos y cálculo automatizado de multas por cancelación anticipada (25% o 50%).
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border shadow-sm bg-body rounded-3 p-2">
+                    <div class="card-body">
+                        <div class="p-3 bg-secondary bg-opacity-10 text-secondary rounded-3 d-inline-block mb-3">
+                            <i class="bi bi-shield-lock fs-4"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Monitoreo y Auditoría</h5>
+                        <p class="card-text text-secondary small mb-0">
+                            Trazabilidad completa por operador, consultas de rendimiento anual e informes de vencimientos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-secondary small py-2">
+            Laboratorio de Programación II · Tecnicatura Universitaria en Desarrollo de Software (ULP)
+        </div>
+    }
+    else
+    {
+        <!-- ================================================================= -->
+        <!-- ESTACIÓN DE TRABAJO: USUARIO AUTENTICADO                          -->
+        <!-- ================================================================= -->
+        <div class="p-4 p-md-5 mb-4 bg-body rounded-4 border shadow-sm">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <h2 class="display-6 fw-bold mb-0">¡Hola, @nombreAMostrar!</h2>
+                        <span class="badge @(esAdmin ? "bg-danger" : "bg-secondary")">
+                            @(esAdmin ? "Administrador" : "Empleado")
+                        </span>
+                    </div>
+                    <p class="text-secondary mb-0">
+                        <i class="bi bi-calendar3 me-1"></i> @fechaHoy &nbsp;·&nbsp;
+                        <i class="bi bi-person-circle me-1"></i> @User.Identity?.Name
+                    </p>
+                </div>
+                <div>
+                    <a asp-controller="Informes" asp-action="Index" class="btn btn-outline-primary d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-bar-chart-line"></i> Centro de Informes
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 1: ACCIONES RÁPIDAS DEL MOSTRADOR -->
+        <h4 class="fw-bold mb-3">Operaciones de mostrador</h4>
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-lg-3">
+                <div class="card h-100 border shadow-sm bg-body rounded-3">
+                    <div class="card-body text-center p-4 d-flex flex-column">
+                        <div class="p-3 bg-secondary bg-opacity-10 text-secondary rounded-circle d-inline-block mb-3 mx-auto">
+                            <i class="bi bi-search fs-3"></i>
+                        </div>
+                        <h6 class="card-title fw-bold text-body">Buscar Disponibilidad</h6>
+                        <p class="card-text text-secondary small flex-grow-1 mb-3">Consultar inmuebles libres por fecha y crear reservas</p>
+                        <a asp-controller="Informes" asp-action="Disponibilidad" class="btn btn-sm btn-outline-primary w-100">
+                            Consultar fechas
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card h-100 border shadow-sm bg-body rounded-3">
+                    <div class="card-body text-center p-4 d-flex flex-column">
+                        <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle d-inline-block mb-3 mx-auto">
+                            <i class="bi bi-calendar-plus fs-3"></i>
+                        </div>
+                        <h6 class="card-title fw-bold text-body">Nueva Reserva</h6>
+                        <p class="card-text text-secondary small flex-grow-1 mb-3">Registrar un nuevo contrato de alquiler temporario</p>
+                        <a asp-controller="Reservas" asp-action="Create" class="btn btn-sm btn-success text-white w-100">
+                            Crear reserva
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card h-100 border shadow-sm bg-body rounded-3">
+                    <div class="card-body text-center p-4 d-flex flex-column">
+                        <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-circle d-inline-block mb-3 mx-auto">
+                            <i class="bi bi-cash-stack fs-3"></i>
+                        </div>
+                        <h6 class="card-title fw-bold text-body">Registrar Pago</h6>
+                        <p class="card-text text-secondary small flex-grow-1 mb-3">Emitir recibo de seña o liquidación de saldo</p>
+                        <a asp-controller="Pagos" asp-action="Create" class="btn btn-sm btn-warning text-white w-100">
+                            Registrar cobro
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card h-100 border shadow-sm bg-body rounded-3">
+                    <div class="card-body text-center p-4 d-flex flex-column">
+                        <div class="p-3 bg-secondary bg-opacity-10 text-secondary rounded-circle d-inline-block mb-3 mx-auto">
+                            <i class="bi bi-building fs-3"></i>
+                        </div>
+                        <h6 class="card-title fw-bold text-body">Gestión de Inmuebles</h6>
+                        <p class="card-text text-secondary small flex-grow-1 mb-3">Catálogo, precios por día y suspensión de oferta</p>
+                        <a asp-controller="Inmuebles" asp-action="Index" class="btn btn-sm btn-outline-secondary w-100">
+                            Ver catálogo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: CARTERA DE CLIENTES -->
+        <div class="card border bg-body rounded-3 p-3 mb-4 shadow-sm">
+            <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <div class="text-secondary small">
+                    <i class="bi bi-people me-1"></i> <strong>Cartera de Clientes:</strong> Padrón directo de propietarios e inquilinos registrados en el sistema.
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-controller="Propietarios" asp-action="Index" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-person-badge"></i> Propietarios
+                    </a>
+                    <a asp-controller="Inquilinos" asp-action="Index" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-people"></i> Inquilinos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: SUPERVISIÓN Y CONTROL (EXCLUSIVO ADMINISTRADOR) -->
+        @if (esAdmin)
+        {
+            <div class="card border bg-body rounded-3 p-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-danger">Administración</span>
+                            <h5 class="fw-bold mb-0">Supervisión y Control del Sistema</h5>
+                        </div>
+                        <span class="text-secondary small d-none d-md-inline">Herramientas exclusivas para el rol Administrador</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a asp-controller="Usuarios" asp-action="Index" class="card h-100 text-decoration-none border bg-body p-3 shadow-sm hover-shadow">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-people-fill text-danger fs-3"></i>
+                                    <div>
+                                        <div class="fw-bold text-body">Gestión de Usuarios</div>
+                                        <small class="text-secondary">Altas, bajas lógicas y roles</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a asp-controller="Informes" asp-action="MonitoreoReservas" class="card h-100 text-decoration-none border bg-body p-3 shadow-sm hover-shadow">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-clock-history text-secondary fs-3"></i>
+                                    <div>
+                                        <div class="fw-bold text-body">Monitoreo de Vencimientos</div>
+                                        <small class="text-secondary">Reservas a vencer en 7, 15 y 30 días</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a asp-controller="Informes" asp-action="RendimientoInmuebles" class="card h-100 text-decoration-none border bg-body p-3 shadow-sm hover-shadow">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-graph-up-arrow text-secondary fs-3"></i>
+                                    <div>
+                                        <div class="fw-bold text-body">Rendimiento Anual</div>
+                                        <small class="text-secondary">Ocupación y unidades sin rotación</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
 </div>

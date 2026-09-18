@@ -32,8 +32,8 @@
         }
         <nav class="navbar navbar-expand-md bg-body border-bottom mb-4 app-navbar">
             <div class="container-fluid">
-                <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-buildings-fill brand-icon"></i> Inmobiliaria Angel
+                <a class="navbar-brand fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">
+                    Agencia Angel
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                         aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -130,8 +130,9 @@
                             var rolTexto = esAdmin ? "Administrador" : "Empleado";
 
                             <div class="dropdown">
-                                <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2 py-1 px-2"
-                                        type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 py-1 px-2"
+                                        type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                        title="@nombreAMostrar" aria-label="@nombreAMostrar">
                                     @if (!string.IsNullOrEmpty(avatarUrl))
                                     {
                                         <img src="@avatarUrl" alt="@nombreAMostrar" class="rounded-circle object-fit-cover" width="28" height="28" />
@@ -140,13 +141,17 @@
                                     {
                                         <i class="bi bi-person-circle fs-5"></i>
                                     }
-                                    <span class="d-none d-lg-inline fw-semibold">@nombreAMostrar</span>
-                                    <span class="badge @badgeClass ms-1">@rolTexto</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenuDropdown">
-                                    <li class="px-3 py-2 border-bottom d-lg-none">
-                                        <div class="fw-bold">@nombreAMostrar</div>
-                                        <small class="text-muted">@User.Identity?.Name</small>
+                                    <li class="px-3 py-2 border-bottom">
+                                        <div class="d-flex align-items-center justify-content-between gap-2">
+                                            <span class="fw-bold text-truncate">@nombreAMostrar</span>
+                                            <span class="badge @badgeClass">@rolTexto</span>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(User.Identity?.Name) && User.Identity?.Name != nombreAMostrar)
+                                        {
+                                            <small class="text-muted d-block text-truncate">@User.Identity?.Name</small>
+                                        }
                                     </li>
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2" asp-controller="Usuarios" asp-action="Perfil">
