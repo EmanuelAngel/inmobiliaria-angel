@@ -34,7 +34,7 @@
                             <select asp-for="InmuebleId" class="form-select select2-inmuebles">
                                 @if (Model?.Inmueble != null)
                                 {
-                                    <option value="@Model.Inmueble.Id" selected>
+                                    <option value="@Model.Inmueble.Id" selected data-precio="@Model.Inmueble.PrecioPorDia.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)">
                                         @Model.Inmueble.Direccion (@Model.Inmueble.Tipo?.Descripcion)
                                     </option>
                                 }
@@ -62,6 +62,12 @@
                                 <input asp-for="MontoPorDia" type="number" step="0.01" min="0.01" class="form-control" placeholder="0.00" />
                             </div>
                             <span asp-validation-for="MontoPorDia" class="text-danger"></span>
+                            <div id="precio-referencia" class="form-text text-muted" style="display: none;">
+                                Precio base: <strong id="precio-referencia-valor"></strong> / día
+                                <button type="button" id="btn-aplicar-precio-base" class="btn btn-link btn-sm p-0 ms-1 text-decoration-none" style="vertical-align: baseline;">
+                                    (usar precio base)
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -99,7 +105,7 @@
                 }
             });
 
-            $('.select2-inmuebles').select2({
+            var selectInmuebles = $('.select2-inmuebles').select2({
                 theme: 'bootstrap-5',
                 placeholder: 'Escriba para buscar por dirección...',
                 allowClear: true,
@@ -117,6 +123,47 @@
                     processResults: function (data) { return { results: data.results }; }
                 }
             });
+
+            var precioBaseActual = null;
+
+            function actualizarPrecioReferencia(precio) {
+                var num = parseFloat(precio);
+                if (!isNaN(num) && num > 0) {
+                    precioBaseActual = num;
+                    var formateado = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(num);
+                    $('#precio-referencia-valor').text(formateado);
+                    $('#precio-referencia').show();
+                } else {
+                    precioBaseActual = null;
+                    $('#precio-referencia').hide();
+                }
+            }
+
+            selectInmuebles.on('select2:select', function (e) {
+                var data = e.params.data;
+                if (data && data.precio !== undefined) {
+                    actualizarPrecioReferencia(data.precio);
+                    var $monto = $('#MontoPorDia');
+                    if (!$monto.val() || parseFloat($monto.val()) === 0) {
+                        $monto.val(parseFloat(data.precio).toFixed(2));
+                    }
+                }
+            });
+
+            selectInmuebles.on('select2:clear select2:unselect', function () {
+                actualizarPrecioReferencia(null);
+            });
+
+            $('#btn-aplicar-precio-base').on('click', function () {
+                if (precioBaseActual !== null) {
+                    $('#MontoPorDia').val(precioBaseActual.toFixed(2));
+                }
+            });
+
+            var $opcionInicial = $('.select2-inmuebles option:selected');
+            if ($opcionInicial.length && $opcionInicial.data('precio')) {
+                actualizarPrecioReferencia($opcionInicial.data('precio'));
+            }
         });
     </script>
 }

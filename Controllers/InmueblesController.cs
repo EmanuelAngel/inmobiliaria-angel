@@ -387,7 +387,8 @@ public class InmueblesController(
             .Select(i => new
             {
                 id = i.Id,
-                text = $"{i.Direccion} ({i.Tipo?.Descripcion})"
+                text = $"{i.Direccion} ({i.Tipo?.Descripcion})",
+                precio = i.PrecioPorDia
             });
 
         return Json(new { results = resultados });
