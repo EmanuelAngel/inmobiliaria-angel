@@ -170,4 +170,95 @@ Para que el rol de Administrador aporte un valor de producto auténtico y no se 
 - **Autorización y Seguridad:** 
   - Solo el rol `Administrador` posee permisos de creación, edición y baja sobre artículos (`[Authorize(Roles = "Administrador")]`).
   - El rol `Usuario` accede con permisos de solo lectura (`GET`).
-- **Impacto en el modelo:** Incorporaría una entidad `Articulo` (o `Publicacion`) vinculada a `Categoria` (clasificación compartida con hábitos) y `Usuario` (autor).
+- **Impacto en el modelo:** Incorpora la entidad `Articulo` vinculada a `Categoria` (clasificación compartida con hábitos) y `Usuario` (autor con rol Administrador).
+
+#### Diagrama ER Extendido (Con Módulo de Artículos)
+
+```mermaid
+erDiagram
+    ROL ||--o{ USUARIO : "asigna rol a"
+    USUARIO ||--o{ HABITO : "posee (Usuario)"
+    CATEGORIA ||--o{ HABITO : "clasifica"
+    HABITO ||--o{ REGISTRO_HABITO : "registra historial en"
+    
+    USUARIO ||--o{ ARTICULO : "redacta (Admin)"
+    CATEGORIA ||--o{ ARTICULO : "tematiza"
+
+    ROL {
+        int id PK
+        string nombre
+    }
+
+    USUARIO {
+        int id PK
+        int rol_id FK
+        string nombre
+        string email
+        string password_hash
+        string avatar_url
+        boolean activo
+    }
+
+    CATEGORIA {
+        int id PK
+        string nombre
+        string color_hex
+        string icono
+        string descripcion
+        boolean activo
+    }
+
+    HABITO {
+        int id PK
+        int usuario_id FK
+        int categoria_id FK
+        string titulo
+        string tipo_habito
+        decimal meta_valor
+        string unidad_medida
+        string frecuencia
+        boolean activo
+    }
+
+    REGISTRO_HABITO {
+        int id PK
+        int habito_id FK
+        date fecha
+        decimal valor_alcanzado
+        decimal meta_objetivo
+        boolean completado
+        string notas
+        string archivo_adjunto_url
+        datetime creado_en
+    }
+
+    ARTICULO {
+        int id PK
+        int usuario_id FK
+        int categoria_id FK
+        string titulo
+        string resumen
+        string contenido_markdown
+        string imagen_portada_url
+        string pdf_estudio_url
+        datetime fecha_publicacion
+        boolean activo
+    }
+```
+
+#### Dinámica de Relaciones y Permisos:
+1. **`CATEGORIA` como eje compartido:** Una misma categoría (ej. *"Sueño & Recuperación"* o *"Foco Profundo"*) agrupa tanto los hábitos que el usuario se propone seguir, como los artículos científicos que el Admin publica al respecto.
+2. **`USUARIO` con doble rol en el dominio:**
+   - Si `rol == 'Usuario'`: posee y opera sobre sus filas de `HABITO` y `REGISTRO_HABITO`.
+   - Si `rol == 'Administrador'`: es el único que puede insertar/modificar filas en `ARTICULO` (su `usuario_id` queda grabado como autor para auditoría).
+3. **Manejo de archivos desacoplado:**
+   - El usuario común usa archivos para evidencias de su progreso (`archivo_adjunto_url` en `REGISTRO_HABITO`).
+   - El admin usa archivos para enriquecer el contenido educativo (`imagen_portada_url` y `pdf_estudio_url` en `ARTICULO`).
+
+#### Enfoque de Edición de Artículos (Decisión de Diseño Frontend):
+- **Estrategia adoptada:** Editor *Split-View* en tiempo real con Markdown.
+- **Mecánica:** Panel dividido con `<textarea>` a la izquierda para redacción ágil en Markdown estándar (`#`, `**`, `-`, etc.) y vista previa reactiva instantánea a la derecha renderizada con `@tailwindcss/typography` (`prose`).
+- **Justificación técnica:** 
+  - Evita la sobrecarga y conflictos de manipulación de DOM de editores WYSIWYG pesados (TipTap, Quill).
+  - Previene riesgos de seguridad por XSS al no almacenar ni renderizar HTML crudo sin control.
+  - Ofrece excelente experiencia de usuario (DX/UX) con una implementación limpia y sin dependencias frágiles en SvelteKit.
