@@ -8,35 +8,41 @@ Documento de especificación de interfaz y UX para la propuesta de Habit Tracker
 
 | Parámetro | Definición |
 |---|---|
-| **Enfoque de diseño** | **Mobile-First**: la experiencia primordial se concibe para pantallas de smartphone y se expande progresivamente a desktop. |
-| **Estilo estético** | **Detallado, táctil e informativo**: adiós al minimalismo vacío; tarjetas ricas en datos, bordes sutiles, micro-interacciones claras y jerarquía visual densa pero ordenada. |
-| **Soporte de temas** | **Dual (Light / Dark) de alto contraste**: fondos oscuros profundos (con contrastes nítidos para legibilidad bajo sol o de noche) y paleta diurna limpia. |
-| **Acentos temáticos** | **Codificación por color según categoría**: verde esmeralda para Salud/Cuerpo, violeta/índigo para Estudio/Dev, ámbar para Enfoque, etc. |
+| **Enfoque de diseño** | **Mobile-First**: layout vertical de una sola columna apilada, optimizado para uso rápido con una sola mano. |
+| **Estilo estético** | **Estructurado, uniforme y limpio**: tarjetas de ancho completo apiladas verticalmente, con idéntica anatomía y altura consistente. |
+| **Tema visual** | **Modo Claro (Light Theme) como principal**: fondos claros con sombras suaves, bordes nítidos y badges de acento temáticos por categoría. |
+| **Navegación** | Top Bar fija con saludo, fecha y avatar de usuario. Bottom Nav flotante reducida a 3 secciones clave: *Today*, *Habits*, *Articles*. |
 
 ---
 
 ## 2. Topología de Navegación
 
 ### A. Pantallas Móviles (< 768px)
-- **Top App Bar fija:** Saludo/fecha de hoy, racha global acumulada y avatar del usuario con acceso rápido a perfil.
-- **Área de contenido scrolleable:** Listado vertical de tarjetas de hábitos de "Hoy", con filtros rápidos horizontales por categoría en chips deslizables.
-- **Bottom Navigation Bar fija (inferior):** Barra de navegación con 4 destinos clave de fácil alcance con el pulgar:
-  1. 🏠 **Hoy:** Dashboard diario de check-ins rápidos.
-  2. 📊 **Mis Hábitos:** Gestión detallada, archivo y creación de nuevos hábitos.
-  3. 📚 **Artículos:** Módulo de ciencia de hábitos y lecturas curadas por el Admin.
-  4. 👤 **Perfil:** Ajustes, avatar y administración de cuenta.
-
-### B. Pantallas Desktop (≥ 768px)
-- **Sidebar lateral colapsable:** A la izquierda, absorbe la navegación del bottom bar más acciones de soporte y gestión.
-- **Layout de dos columnas:**
-  - Columna principal (65%): Feed de hábitos de hoy con mini-heatmaps expandidos.
-  - Columna lateral (35%): Resumen del día, artículo destacado de la semana y accesos rápidos de auditoría.
+- **Top App Bar:** Saludo personalizado (*"Good morning, Alex!"*), fecha actual y avatar del usuario a la derecha (elimina la necesidad de pestaña de perfil en la barra inferior).
+- **Filtros de categoría:** Chips horizontales compactos (*All*, *Health*, *Work*, *Study*).
+- **Feed principal:** Pila vertical de tarjetas uniformes (una debajo de la otra), con espaciado constante y sin layouts asimétricos.
+- **Bottom Navigation Bar (3 destinos):**
+  1. 📅 **Today:** Dashboard de check-ins diarios.
+  2. 📋 **Habits:** Listado general, configuración y altas de hábitos.
+  3. 📰 **Articles:** Blog de ciencia del hábito curado por el Admin.
 
 ---
 
-## 3. Anatomía Detallada de la Tarjeta de Hábito
+## 3. Anatomía de la Tarjeta Uniforme (Últimos 7 Días)
 
-Cada tarjeta de hábito se aleja del to-do plano y se estructura como un módulo de control táctil con densidad informativa:
+Cada tarjeta comparte una estructura geométrica idéntica para evitar sobrecarga cognitiva:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ [Salud]  Hydration                         [-] 6/8 cups [+]│  <-- Header, Categoría y Stepper
+├──────────────────────────────────────────────────────────┤
+│   Mon    Tue    Wed    Thu    Fri    Sat    Sun          │  <-- Tira semanal de 7 días
+│  [ ✔ ]  [ ✔ ]  [ ✔ ]  [ ✔ ]  [ ✔ ]  [ ✔ ]  [ ✔ ]         │  (Mini-heatmap de consistencia)
+└──────────────────────────────────────────────────────────┘
+```
+
+- **Mini-heatmap semanal:** Solo muestra los **últimos 7 días** (Lunes a Domingo) en microcuadros redondeados con check de completitud. 
+- **Heatmap histórico (30/60/365 días):** Se delega a la vista de detalle de cada hábito al tocar la tarjeta, manteniendo el feed diario limpio y veloz.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
