@@ -55,7 +55,7 @@ Cada tarjeta comparte una estructura geométrica idéntica para evitar sobrecarg
 │ Mini-Heatmap (Últimos 30 días):                           │
 │ 🟩🟩🟩⬜🟩🟩🟩🟩🟩🟩🟩🟩⬜🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩  │  <-- Consistencia individual
 ├──────────────────────────────────────────────────────────┤
-│ [📎 Adjuntar evidencia/nota]       [Último registro: 14:30]│  <-- Acciones secundarias
+│ [📝 Nota rápida]                   [Último registro: 14:30]│  <-- Acciones secundarias
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -75,9 +75,7 @@ Cada tarjeta comparte una estructura geométrica idéntica para evitar sobrecarg
 
 ---
 
-## 4. Flujo de Subida de Evidencia (Requerimiento Cátedra)
+## 4. Flujo de Notas Rápidas y Cero Fricción
 
-- Dentro de cada tarjeta de hábito, un icono discreto de clip `[📎]` permite abrir un drawer inferior (*bottom sheet* en móvil) para:
-  1. Agregar una nota o reflexión del día.
-  2. Subir un archivo de comprobante (foto de lectura, captura de código, comprobante o PDF).
-- Si la tarjeta ya tiene archivo adjunto, muestra una miniatura badge con acceso directo para visualizarlo o reemplazarlo.
+- Dentro de cada tarjeta de hábito, un icono discreto de libreta `[📝]` permite abrir un drawer inferior (*bottom sheet* en móvil) para registrar una nota breve o reflexión del día.
+- **Sin fricción de archivos:** El registro diario no exige subir fotos ni adjuntos. El requisito de manejo de archivos de la cátedra se concentra naturalmente en la subida de avatares y en las imágenes de portada de los artículos de divulgación gestionados por el Administrador.

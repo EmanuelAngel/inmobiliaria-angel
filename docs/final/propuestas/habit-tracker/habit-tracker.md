@@ -25,30 +25,30 @@ Las herramientas actuales de productividad fallan en los extremos:
 - **Gestores to-do genéricos (Google Tasks, Todoist):** tratan a los hábitos como tareas descartables; no comprenden cadencia, frecuencia ni rachas acumulativas.
 - **Documentación libre (Notion, Obsidian):** introducen demasiada fricción operativa y pasos para registrar un hábito cotidiano de 2 segundos.
 - **Apps comerciales dedicadas:** en su mayoría imponen modelos de suscripción abusivos ($40-60 USD/anuales), bloatware, o esquemas de gamificación infantil que distraen del foco.
-- **Falta de sustento y aprendizaje:** la mayoría de las apps exigen registrar hábitos pero no proveen información sobre *por qué* o *cómo* construirlos de forma sostenible.
+- **Falta de contexto:** exigen registrar hábitos mecánicamente sin brindar información sobre cómo construirlos y sostenerlos de forma efectiva.
 
 ### La Solución
 Un sistema centralizado, minimalista y libre de fricción enfocado en la **consistencia y el conocimiento**:
 - Hábitos configurables tanto cuantitativos (ej. tomar 8 vasos de agua, leer 20 páginas) como cualitativos/booleanos (ej. meditar, entrenar).
 - Hábitos de reducción o abstinencia (*quit habits*, contador de días limpios).
-- Visualización de alto impacto visual mediante un **heatmap de consistencia** (estilo gráfico de contribuciones de GitHub) e informes periódicos (semanales y mensuales).
-- Registro de reflexiones o evidencias adjuntas (archivos PDF de rutinas, imágenes de progreso).
-- **Módulo de Ciencia del Hábito (Blog/Artículos):** espacio educativo donde el Administrador publica artículos periódicos sobre bienestar, sueño, foco y mindfulness, con papers o guías en PDF descargables.
+- Visualización mediante un **heatmap de consistencia** (estilo gráfico de actividad de GitHub) e informes periódicos (semanales y mensuales).
+- **Módulo de Ciencia del Hábito (Blog/Artículos):** espacio donde el Administrador publica artículos periódicos sobre bienestar, sueño, foco y mindfulness, con enlace directo a la fuente o estudio original.
 
 ---
 
 ## 3. Alcance y Límites del MVP
 
 ### Dentro del Alcance (MVP para Promoción)
-- **Autenticación y Seguridad:** Registro, login por JWT, roles diferenciados (`Administrador` y `Usuario`), y gestión de avatar con validación de archivo.
+- **Autenticación y Seguridad:** Registro, login por JWT, roles diferenciados (`Administrador` y `Usuario`), y gestión de avatar con subida y validación de imagen.
 - **Gestión de Hábitos y Categorías:** ABM completo de Categorías (Salud, Estudio, Trabajo, etc.) y Hábitos (frecuencia, metas cuantitativas/booleanas).
-- **Registro Diario (*Check-in*):** Actualización ágil de valores diarios, notas breves y subida de archivos adjuntos de evidencia (comprobante, foto de avance o PDF de rutina).
-- **Visualización y Métricas:** Dashboard diario con interacción inmediata y visualización de consistencia histórica mediante heatmap.
+- **Registro Diario (*Check-in*):** Actualización inmediata de valores diarios y notas breves de reflexión (sin fricción de subida de archivos).
+- **Visualización y Métricas:** Dashboard diario (*Today*) con mini-heatmap semanal por tarjeta y visualización de consistencia histórica.
 - **Módulo de Artículos / Ciencia del Hábito (Rol Admin):**
   - Publicación y mantenimiento de artículos educativos por parte del Administrador.
   - Editor en **Split-View** con redacción en Markdown a la izquierda y preview reactivo estilizado con `@tailwindcss/typography` a la derecha.
-  - Soporte de subida de imagen de portada y **PDF de estudio científico/guía adjunta**.
-  - Acceso de lectura para usuarios con descarga directa del PDF.
+  - Subida y almacenamiento de **imagen de portada** en el servidor (cumpliendo el requerimiento de archivos de la cátedra de forma natural).
+  - Enlace al recurso o estudio externo original (`fuente_url`).
+  - Feed de lectura para usuarios con acceso público autenticado.
 - **Búsqueda y Paginación:** Búsqueda asíncrona (AJAX) para vincular categorías/hábitos y paginado server-side para listados históricos de logs y artículos.
 
 ### Fuera de Alcance (Deliberadamente no contemplado)
@@ -91,8 +91,6 @@ erDiagram
     CATEGORIA {
         int id PK
         string nombre
-        string color_hex
-        string icono
         string descripcion
         boolean activo
     }
@@ -117,7 +115,6 @@ erDiagram
         decimal meta_objetivo
         boolean completado
         string notas
-        string archivo_adjunto_url
         datetime creado_en
     }
 
@@ -129,7 +126,7 @@ erDiagram
         string resumen
         string contenido_markdown
         string imagen_portada_url
-        string pdf_estudio_url
+        string fuente_url
         datetime fecha_publicacion
         boolean activo
     }
@@ -137,10 +134,10 @@ erDiagram
 
 ### Descripción de Entidades:
 1. **`Rol` & `Usuario`:** Autenticación por JWT, roles (`Administrador` y `Usuario`), avatar de perfil con subida de imagen al servidor.
-2. **`Categoria`:** Eje clasificador compartido. Una misma categoría (ej. *"Sueño & Recuperación"*, *"Foco Profundo"*) agrupa tanto hábitos personales como artículos educativos.
+2. **`Categoria`:** Clasificador de dominio limpio (`id`, `nombre`, `descripcion`, `activo`). Una misma categoría (ej. *"Sueño & Recuperación"*, *"Foco Profundo"*) agrupa tanto hábitos personales como artículos educativos.
 3. **`Habito`:** Define la regla del hábito (booleano, cuantitativo o abstinencia; valor meta, unidad y frecuencia).
-4. **`RegistroHabito` / `CheckIn`:** Registro diario de ejecución con valor alcanzado, estado de completitud, notas de reflexión y **archivo de respaldo adjunto** (evidencia, PDF de rutina, foto de progreso).
-5. **`Articulo`:** Pieza de contenido educativo redactada exclusivamente por el Administrador, con soporte de portada y **PDF de estudio científico adjunto**.
+4. **`RegistroHabito` / `CheckIn`:** Registro diario ágil con valor alcanzado, estado de completitud, notas de reflexión y fecha.
+5. **`Articulo`:** Publicación educativa redactada exclusivamente por el Administrador, con soporte de **imagen de portada** subida al servidor y enlace al estudio/fuente original.
 
 ---
 
@@ -150,7 +147,7 @@ erDiagram
 |---|---|
 | **Al menos 4 tablas relacionadas (1 a N)** | Se implementan 6 tablas: `Rol -> Usuario`, `Categoria -> Habito`, `Habito -> RegistroHabito`, `Categoria -> Articulo`, `Usuario -> Articulo`. |
 | **Seguridad con login, roles, `Authorize` y avatar** | Autenticación con JWT Bearer. Rol `Administrador` exclusivo para redactar/gestionar artículos y administrar categorías; rol `Usuario` para gestionar sus hábitos privados y leer artículos. Avatar con subida y validación. |
-| **Manejo de archivos adicional al avatar** | Doble caso de uso real: el `Usuario` adjunta evidencias/PDFs en sus registros de hábito (`RegistroHabito`), y el `Administrador` adjunta imágenes de portada y PDFs de papers científicos en sus artículos (`Articulo`). |
+| **Manejo de archivos adicional al avatar** | La entidad `Articulo` implementa subida y almacenamiento de **imágenes de portada**, con validación de tipo MIME y tamaño en el backend ASP.NET Core, resolviendo el requisito de manera orgánica sin sobrecargar al usuario diario. |
 | **Al menos un CRUD en framework frontend vía AJAX** | Toda la SPA está construida en SvelteKit; todos los CRUDs (Categorías, Hábitos, Check-ins, Artículos) se gestionan por peticiones HTTP asíncronas vía `fetch` a la WebAPI. |
 | **Listados con paginado en servidor** | Historiales de check-ins y listados de artículos se sirven mediante endpoints paginados en backend (`pageNumber`, `pageSize`, `totalRecords`). |
 | **Búsqueda vía AJAX de entidades relacionadas** | Al crear hábitos o artículos, la selección de categorías y filtros utiliza autocompletado asíncrono consultando a la API con parámetros de búsqueda. |
@@ -162,15 +159,15 @@ erDiagram
 
 1. **Dashboard Diario (Vista Principal - *Today*):**
    - Tarjetas apiladas uniformes con mini-heatmap semanal (últimos 7 días) y stepper/toggle directo.
-   - Drawer inferior para subir notas y adjuntos de evidencia rápida.
+   - Flujo rápido sin fricción para marcar progreso diario.
 2. **Gestión de Hábitos y Categorías (*Habits*):**
    - Listado general y configuración de hábitos activos/archivados.
    - Alta/edición de hábito con selector de categoría vía búsqueda asíncrona.
-   - Vista de detalle con heatmap extendido (30/60 días).
+   - Vista de detalle con heatmap histórico extendido.
 3. **Ciencia del Hábito y Lecturas (*Articles*):**
-   - Feed de artículos educativos en tarjetas con portada, categoría y resumen.
-   - Vista de lectura completa (`/articulos/[id]`) con botón de descarga para el PDF del estudio científico.
-   - *(Solo Administrador)*: Pantalla de redacción con **Editor Split-View** (Markdown a la izquierda, preview formateado a la derecha) y selector de archivos para portada y PDF.
+   - Feed de artículos educativos en tarjetas con portada, categoría, resumen y enlace a fuente.
+   - Vista de lectura completa (`/articulos/[id]`).
+   - *(Solo Administrador)*: Pantalla de redacción con **Editor Split-View** (Markdown a la izquierda, preview formateado a la derecha) y selector de imagen de portada.
 4. **Perfil y Configuración:**
    - Edición de perfil, cambio de contraseña y subida/recorte de avatar.
 5. **Panel de Gestión de Categorías y Usuarios (Solo Admin):**
