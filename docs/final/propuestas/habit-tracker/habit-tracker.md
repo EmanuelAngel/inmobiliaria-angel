@@ -1,6 +1,18 @@
 # Propuesta: Habit Tracker & Blog
 
-Especificación técnica de la propuesta de proyecto final para la asignatura.
+**Alumno:** Angel Emanuel  
+**Fecha:** 02/10/2026  
+
+---
+
+## Tabla de Contenidos
+1. [Ficha Técnica](#1-ficha-técnica)
+2. [Descripción del Sistema](#2-descripción-del-sistema)
+3. [Alcance (MVP)](#3-alcance-mvp)
+4. [Modelo de Datos](#4-modelo-de-datos)
+5. [Cumplimiento de Requerimientos de Cátedra](#5-cumplimiento-de-requerimientos-de-cátedra)
+6. [Vistas de la SPA (SvelteKit)](#6-vistas-de-la-spa-sveltekit)
+7. [Detalle de Campos: Hábitos vs. Registros](#7-detalle-de-campos-hábitos-vs-registros)
 
 ---
 
@@ -8,6 +20,8 @@ Especificación técnica de la propuesta de proyecto final para la asignatura.
 
 | Parámetro | Detalle |
 |---|---|
+| **Alumno** | Angel Emanuel |
+| **Fecha** | 02/10/2026 |
 | **Sistema** | Habit Tracker con módulo editorial de artículos |
 | **Backend** | ASP.NET Core WebAPI (.NET 10) |
 | **Frontend** | SvelteKit SPA (`adapter-static`, modo cliente) |
