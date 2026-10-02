@@ -20,8 +20,6 @@
 
 | Parámetro | Detalle |
 |---|---|
-| **Alumno** | Angel Emanuel |
-| **Fecha** | 02/10/2026 |
 | **Sistema** | Habit Tracker con módulo editorial de artículos |
 | **Backend** | ASP.NET Core WebAPI (.NET 10) |
 | **Frontend** | SvelteKit SPA (`adapter-static`, modo cliente) |
