@@ -56,6 +56,10 @@ erDiagram
     CATEGORIA ||--o{ HABITO : "clasifica"
     HABITO ||--o{ REGISTRO_HABITO : "acumula historial en"
     
+    USUARIO ||--o{ RUTINA : "organiza en"
+    RUTINA ||--o{ RUTINA_HABITO : "incluye"
+    HABITO ||--o{ RUTINA_HABITO : "compone"
+
     USUARIO ||--o{ ARTICULO : "redacta"
     CATEGORIA ||--o{ ARTICULO : "tematiza"
 
@@ -104,6 +108,21 @@ erDiagram
         datetime creado_en
     }
 
+    RUTINA {
+        int id PK
+        int usuario_id FK
+        string nombre
+        string descripcion
+        boolean activo
+    }
+
+    RUTINA_HABITO {
+        int id PK
+        int rutina_id FK
+        int habito_id FK
+        int orden
+    }
+
     ARTICULO {
         int id PK
         int usuario_id FK
@@ -124,12 +143,15 @@ erDiagram
 3. **`CATEGORIA`:** Agrupa hábitos y artículos por tema (ej. Salud, Estudio, Trabajo).
 4. **`HABITO`:** Regla o meta definida por el usuario (tipo cuantitativo, sí/no o abstinencia; valor meta y frecuencia).
 5. **`REGISTRO_HABITO`:** Registro diario de un hábito en una fecha concreta. Guarda el valor alcanzado, la meta fija a esa fecha y si se completó.
-6. **`ARTICULO`:** Publicación en Markdown creada por administradores, vinculada a una categoría y con imagen de portada en el servidor.
+6. **`RUTINA`:** Agrupación de hábitos para un momento del día (ej. Mañana, Noche) definida por el usuario.
+7. **`RUTINA_HABITO`:** Tabla intermedia (N:M) que asocia hábitos a una rutina y define su orden de ejecución.
+8. **`ARTICULO`:** Publicación en Markdown creada por administradores, vinculada a una categoría y con imagen de portada en el servidor.
 
 ### 2.3. Descripción de Relaciones no Triviales
 
 * **`CATEGORIA` como clasificador compartido:** Permite asociar tanto hábitos como artículos a una misma categoría.
 * **Restricción de fecha en `REGISTRO_HABITO`:** Restricción `UNIQUE(habito_id, fecha)` para que exista un solo registro por hábito por día. La meta queda fija en el registro para no alterar el historial si el usuario cambia su meta después.
+* **`RUTINA` y `HABITO` (relación N:M vía `RUTINA_HABITO`):** Permite organizar hábitos en bloques según el momento del día. Un hábito puede pertenecer a múltiples rutinas (o a ninguna) y una rutina agrupa varios hábitos ordenados. El registro diario (`REGISTRO_HABITO`) se mantiene independiente de la rutina, vinculado directamente al hábito.
 * **Dependencia de dos tablas en `ARTICULO` y `HABITO`:** `HABITO` depende de `USUARIO` y `CATEGORIA`. `ARTICULO` depende de `USUARIO` y `CATEGORIA`.
 
 ---
@@ -152,6 +174,7 @@ erDiagram
 * **CRUD de Usuarios:** Alta en registro, edición de datos personales/avatar y gestión de estado por el Administrador.
 * **CRUD de Categorías:** Alta, modificación, listado y baja lógica (solo Administrador).
 * **CRUD de Hábitos:** Alta, edición de metas, archivado/baja lógica y listado individual por usuario.
+* **CRUD de Rutinas:** Alta, edición de orden de hábitos, baja lógica y filtrado en pantalla principal.
 * **CRUD de Registros de Hábitos:** Creación diaria rápida (sí/no o contador), actualización de valores o notas, consulta de historial y anulación/reinicio del día.
 * **CRUD de Artículos:** Alta con editor Markdown e imagen de portada, edición, listado paginado y baja lógica (solo Administrador; lectura para usuarios autenticados).
 * **Visualización de consistencia:** Cuadrícula de 7 días por tarjeta y vista histórica en detalle.
@@ -177,7 +200,7 @@ erDiagram
 
 | Requerimiento Cátedra | Implementación |
 |---|---|
-| **Mínimo 6 tablas relacionadas (1 a N y entidades compuestas)** | 6 tablas: `Rol`, `Usuario`, `Categoria`, `Habito`, `RegistroHabito`, `Articulo`. `Habito` y `Articulo` dependen de dos entidades. |
+| **Mínimo 6 tablas relacionadas (1 a N y entidades compuestas)** | 8 tablas: `Rol`, `Usuario`, `Categoria`, `Habito`, `RegistroHabito`, `Rutina`, `RutinaHabito`, `Articulo`. Relación N:M entre `Rutina` y `Habito` mediante `RutinaHabito`. |
 | **Seguridad: login, roles, `Authorize` y avatar** | Autenticación con JWT. Rol `Administrador` gestiona categorías y publica artículos; rol `Usuario` gestiona hábitos y lee artículos. Subida de avatar con validación. |
 | **Manejo de archivos adicional al avatar** | Subida y almacenamiento de imágenes de portada en `Articulo` (solo Administrador). |
 | **Al menos un CRUD vía AJAX en framework reactivo** | SPA en SvelteKit; todos los CRUDs se comunican por peticiones asíncronas a la WebAPI. |
@@ -186,9 +209,10 @@ erDiagram
 | **Web API REST con JWT** | Consumo directo desde la SPA con token Bearer y colección exportada para pruebas. |
 
 ### 3.5. Vistas de la SPA (SvelteKit)
-* **/today**: Pantalla principal con cuadrícula semanal y marcado rápido del día.
+* **/today**: Pantalla principal con selector de rutinas, cuadrícula semanal y marcado rápido del día.
 * **/habits**: Listado general de hábitos activos y archivados.
 * **/habits/[id]**: Detalle individual con cuadrícula histórica y edición de la meta.
+* **/routines**: Gestión y ordenamiento de rutinas.
 * **/articles**: Catálogo paginado de artículos.
 * **/articles/[id]**: Lectura del artículo con Markdown renderizado.
 * **/articles/nuevo** *(Admin)*: Editor de artículos con selector de imagen de portada.
