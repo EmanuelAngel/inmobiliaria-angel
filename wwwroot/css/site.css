@@ -240,7 +240,6 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
   color: var(--bs-body-color);
   background-color: var(--bs-body-bg);
   -webkit-font-smoothing: antialiased;
